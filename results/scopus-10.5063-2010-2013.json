@@ -1,0 +1,22 @@
+{
+    "search-results": {
+        "opensearch:totalResults": "0",
+        "opensearch:startIndex": "0",
+        "opensearch:itemsPerPage": "0",
+        "opensearch:Query": {
+            "@role": "request",
+            "@searchTerms": "ALL:10.5063",
+            "@startPage": "0"
+        },
+        "link": [{
+            "@_fa": "true",
+            "@ref": "self",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2010-2013&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@type": "application/json"
+        }],
+        "entry": [{
+            "@_fa": "true",
+            "error": "Result set was empty"
+        }]
+    }
+}
