@@ -11,22 +11,22 @@
         "link": [{
             "@_fa": "true",
             "@ref": "self",
-            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
             "@type": "application/json"
         }, {
             "@_fa": "true",
             "@ref": "first",
-            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
             "@type": "application/json"
         }, {
             "@_fa": "true",
             "@ref": "next",
-            "@href": "https://api.elsevier.com/content/search/scopus?start=25&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=25&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
             "@type": "application/json"
         }, {
             "@_fa": "true",
             "@ref": "last",
-            "@href": "https://api.elsevier.com/content/search/scopus?start=4&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=4&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
             "@type": "application/json"
         }],
         "entry": [{
@@ -362,8 +362,8 @@
             "subtype": "ar",
             "subtypeDescription": "Article",
             "source-id": "29602",
-            "openaccess": "0",
-            "openaccessFlag": false
+            "openaccess": "1",
+            "openaccessFlag": true
         }, {
             "@_fa": "true",
             "link": [{
@@ -1121,7 +1121,7 @@
             "prism:coverDate": "2018-01-01",
             "prism:coverDisplayDate": "2018",
             "prism:doi": "10.5334/jors.184",
-            "citedby-count": "2",
+            "citedby-count": "3",
             "affiliation": [{
                 "@_fa": "true",
                 "affilname": "University of Illinois at Urbana-Champaign",

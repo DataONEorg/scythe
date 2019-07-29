@@ -1,8 +1,9 @@
-APIKEY=715b412c00f0b95e918a3e7abe6e6ee4
+APIKEY=de69d7664651081fab89bb0f101e9a9e
 
 # KNB
- curl https://api.elsevier.com/content/search/scopus?query=ALL:10.5063\&date=2014-2016\&APIKey=${APIKEY} -o results/scopus-10.5063-2014-2016.json
  curl https://api.elsevier.com/content/search/scopus?query=ALL:10.5063\&date=2010-2013\&APIKey=${APIKEY} -o results/scopus-10.5063-2010-2013.json
+ curl https://api.elsevier.com/content/search/scopus?query=ALL:10.5063\&date=2014-2016\&APIKey=${APIKEY} -o results/scopus-10.5063-2014-2016.json
+ curl https://api.elsevier.com/content/search/scopus?query=ALL:10.5063\&date=2017-2019\&APIKey=${APIKEY}\&start=0 -o results/scopus-10.5063-2017-2019-pg1.json
  curl https://api.elsevier.com/content/search/scopus?query=ALL:10.5063\&date=2017-2019\&APIKey=${APIKEY}\&start=26 -o results/scopus-10.5063-2017-2019-pg2.json
 
  # ADC
