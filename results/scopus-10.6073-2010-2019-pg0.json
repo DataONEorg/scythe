@@ -1,0 +1,1283 @@
+{
+    "search-results": {
+        "opensearch:totalResults": "173",
+        "opensearch:startIndex": "0",
+        "opensearch:itemsPerPage": "25",
+        "opensearch:Query": {
+            "@role": "request",
+            "@searchTerms": "ALL:10.6073",
+            "@startPage": "0"
+        },
+        "link": [{
+            "@_fa": "true",
+            "@ref": "self",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.6073&date=2010-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@type": "application/json"
+        }, {
+            "@_fa": "true",
+            "@ref": "first",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.6073&date=2010-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@type": "application/json"
+        }, {
+            "@_fa": "true",
+            "@ref": "next",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=25&count=25&query=ALL%3A10.6073&date=2010-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@type": "application/json"
+        }, {
+            "@_fa": "true",
+            "@ref": "last",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=148&count=25&query=ALL%3A10.6073&date=2010-2019&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@type": "application/json"
+        }],
+        "entry": [{
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85069003259"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85069003259?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85069003259&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85069003259&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85069003259",
+            "dc:identifier": "SCOPUS_ID:85069003259",
+            "eid": "2-s2.0-85069003259",
+            "dc:title": "A compilation of global bio-optical in situ data for ocean-colour satellite applications - Version two",
+            "dc:creator": "Valente A.",
+            "prism:publicationName": "Earth System Science Data",
+            "prism:issn": "18663508",
+            "prism:eIssn": "18663516",
+            "prism:volume": "11",
+            "prism:issueIdentifier": "3",
+            "prism:pageRange": "1037-1068",
+            "prism:coverDate": "2019-07-15",
+            "prism:coverDisplayDate": "15 July 2019",
+            "prism:doi": "10.5194/essd-11-1037-2019",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Faculdade de Ciências, Universidade de Lisboa",
+                "affiliation-city": "Lisbon",
+                "affiliation-country": "Portugal"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "21100284918",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85068449565"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85068449565?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85068449565&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85068449565&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85068449565",
+            "dc:identifier": "SCOPUS_ID:85068449565",
+            "eid": "2-s2.0-85068449565",
+            "dc:title": "Biases in lake water quality sampling and implications for macroscale research",
+            "dc:creator": "Stanley E.",
+            "prism:publicationName": "Limnology and Oceanography",
+            "prism:eIssn": "19395590",
+            "prism:volume": "64",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": "1572-1585",
+            "prism:coverDate": "2019-07-01",
+            "prism:coverDisplayDate": "July 2019",
+            "prism:doi": "10.1002/lno.11136",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Wisconsin-Madison",
+                "affiliation-city": "Madison",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "29576",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065465994"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065465994?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065465994&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065465994&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065465994",
+            "dc:identifier": "SCOPUS_ID:85065465994",
+            "eid": "2-s2.0-85065465994",
+            "dc:title": "On the importance of accounting for intraspecific genomic relatedness in multi-species studies",
+            "dc:creator": "Joly S.",
+            "prism:publicationName": "Methods in Ecology and Evolution",
+            "prism:eIssn": "2041210X",
+            "prism:volume": "10",
+            "prism:issueIdentifier": "7",
+            "prism:pageRange": "994-1001",
+            "prism:coverDate": "2019-07-01",
+            "prism:coverDisplayDate": "July 2019",
+            "prism:doi": "10.1111/2041-210X.13184",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Montreal",
+                "affiliation-city": "Montreal",
+                "affiliation-country": "Canada"
+            }, {
+                "@_fa": "true",
+                "affilname": "Montreal Botanical Garden",
+                "affiliation-city": "Montreal",
+                "affiliation-country": "Canada"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "21100217611",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065666835"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065666835?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065666835&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065666835&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065666835",
+            "dc:identifier": "SCOPUS_ID:85065666835",
+            "eid": "2-s2.0-85065666835",
+            "dc:title": "Investigating dune-building feedback at the plant level: Insights from a multispecies field experiment",
+            "dc:creator": "Mullins E.",
+            "prism:publicationName": "Earth Surface Processes and Landforms",
+            "prism:issn": "01979337",
+            "prism:eIssn": "10969837",
+            "prism:volume": "44",
+            "prism:issueIdentifier": "9",
+            "prism:pageRange": "1734-1747",
+            "prism:coverDate": "2019-07-01",
+            "prism:coverDisplayDate": "July 2019",
+            "prism:doi": "10.1002/esp.4607",
+            "citedby-count": "1",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "The University of North Carolina at Chapel Hill",
+                "affiliation-city": "Chapel Hill",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "25751",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85067389940"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85067389940?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85067389940&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85067389940&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85067389940",
+            "dc:identifier": "SCOPUS_ID:85067389940",
+            "eid": "2-s2.0-85067389940",
+            "dc:title": "Changes in coral reef community structure in response to year-long incubations under contrasting pCO<inf>2</inf> regimes",
+            "dc:creator": "Edmunds P.",
+            "prism:publicationName": "Marine Biology",
+            "prism:issn": "00253162",
+            "prism:volume": "166",
+            "prism:issueIdentifier": "7",
+            "prism:pageRange": null,
+            "prism:coverDate": "2019-07-01",
+            "prism:coverDisplayDate": "1 July 2019",
+            "prism:doi": "10.1007/s00227-019-3540-2",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "California State University, Northridge",
+                "affiliation-city": "Northridge",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "94",
+            "source-id": "12165",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065699355"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065699355?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065699355&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065699355&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065699355",
+            "dc:identifier": "SCOPUS_ID:85065699355",
+            "eid": "2-s2.0-85065699355",
+            "dc:title": "The combined effects of an extreme heatwave and wildfire on tallgrass prairie vegetation",
+            "dc:creator": "Ratajczak Z.",
+            "prism:publicationName": "Journal of Vegetation Science",
+            "prism:issn": "11009233",
+            "prism:eIssn": "16541103",
+            "prism:volume": "30",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": "687-697",
+            "prism:coverDate": "2019-07-01",
+            "prism:coverDisplayDate": "July 2019",
+            "prism:doi": "10.1111/jvs.12750",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Wisconsin-Madison",
+                "affiliation-city": "Madison",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "London School of Economics and Political Science",
+                "affiliation-city": "London",
+                "affiliation-country": "United Kingdom"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "19263",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065790172"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065790172?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065790172&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065790172&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065790172",
+            "dc:identifier": "SCOPUS_ID:85065790172",
+            "eid": "2-s2.0-85065790172",
+            "dc:title": "Species insurance trumps spatial insurance in stabilizing biomass of a marine macroalgal metacommunity",
+            "dc:creator": "Lamy T.",
+            "prism:publicationName": "Ecology",
+            "prism:issn": "00129658",
+            "prism:volume": "100",
+            "prism:issueIdentifier": "7",
+            "prism:pageRange": null,
+            "prism:coverDate": "2019-07-01",
+            "prism:coverDisplayDate": "July 2019",
+            "prism:doi": "10.1002/ecy.2719",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of California, Santa Barbara",
+                "affiliation-city": "Santa Barbara",
+                "affiliation-country": "United States"
+            }],
+            "pubmed-id": "31081945",
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e02719",
+            "source-id": "20308",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065705510"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065705510?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065705510&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065705510&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065705510",
+            "dc:identifier": "SCOPUS_ID:85065705510",
+            "eid": "2-s2.0-85065705510",
+            "dc:title": "Connectivity in coastal systems: Barrier island vegetation influences upland migration in a changing climate",
+            "dc:creator": "Zinnert J.",
+            "prism:publicationName": "Global Change Biology",
+            "prism:issn": "13541013",
+            "prism:eIssn": "13652486",
+            "prism:volume": "25",
+            "prism:issueIdentifier": "7",
+            "prism:pageRange": "2419-2430",
+            "prism:coverDate": "2019-07-01",
+            "prism:coverDisplayDate": "July 2019",
+            "prism:doi": "10.1111/gcb.14635",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Virginia Commonwealth University",
+                "affiliation-city": "Richmond",
+                "affiliation-country": "United States"
+            }],
+            "pubmed-id": "30932269",
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "15131",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85063942597"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85063942597?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85063942597&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85063942597&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85063942597",
+            "dc:identifier": "SCOPUS_ID:85063942597",
+            "eid": "2-s2.0-85063942597",
+            "dc:title": "Inorganic carbon fixation in ice-covered lakes of the McMurdo Dry Valleys",
+            "dc:creator": "Vick-Majors T.",
+            "prism:publicationName": "Antarctic Science",
+            "prism:issn": "09541020",
+            "prism:eIssn": "13652079",
+            "prism:volume": "31",
+            "prism:issueIdentifier": "3",
+            "prism:pageRange": "123-132",
+            "prism:coverDate": "2019-06-01",
+            "prism:coverDisplayDate": "1 June 2019",
+            "prism:doi": "10.1017/S0954102019000075",
+            "pii": "S0954102019000075",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Montana State University",
+                "affiliation-city": "Bozeman",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of Montana Missoula",
+                "affiliation-city": "Missoula",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "13040",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85068202955"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85068202955?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85068202955&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85068202955&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85068202955",
+            "dc:identifier": "SCOPUS_ID:85068202955",
+            "eid": "2-s2.0-85068202955",
+            "dc:title": "To improve ecological understanding, collect infection data",
+            "dc:creator": "Gehman A.",
+            "prism:publicationName": "Ecosphere",
+            "prism:eIssn": "21508925",
+            "prism:volume": "10",
+            "prism:issueIdentifier": "6",
+            "prism:pageRange": null,
+            "prism:coverDate": "2019-06-01",
+            "prism:coverDisplayDate": "June 2019",
+            "prism:doi": "10.1002/ecs2.2770",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "The University of Georgia",
+                "affiliation-city": "Athens",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "The University of British Columbia",
+                "affiliation-city": "Vancouver",
+                "affiliation-country": "Canada"
+            }, {
+                "@_fa": "true",
+                "affilname": "Hakai Institute",
+                "affiliation-city": "Victoria",
+                "affiliation-country": "Canada"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e02770",
+            "source-id": "21100307458",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85067309195"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85067309195?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85067309195&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85067309195&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85067309195",
+            "dc:identifier": "SCOPUS_ID:85067309195",
+            "eid": "2-s2.0-85067309195",
+            "dc:title": "Spatiotemporal Controls on Observed Daytime Ozone Deposition Velocity Over Northeastern U.S. Forests During Summer",
+            "dc:creator": "Clifton O.",
+            "prism:publicationName": "Journal of Geophysical Research: Atmospheres",
+            "prism:issn": "2169897X",
+            "prism:eIssn": "21698996",
+            "prism:volume": "124",
+            "prism:issueIdentifier": "10",
+            "prism:pageRange": "5612-5628",
+            "prism:coverDate": "2019-05-27",
+            "prism:coverDisplayDate": "27 May 2019",
+            "prism:doi": "10.1029/2018JD029073",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Lamont-Doherty Earth Observatory",
+                "affiliation-city": "Palisades",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "National Center for Atmospheric Research",
+                "affiliation-city": "Boulder",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "28428",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85058111822"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85058111822?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85058111822&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85058111822&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85058111822",
+            "dc:identifier": "SCOPUS_ID:85058111822",
+            "eid": "2-s2.0-85058111822",
+            "dc:title": "Response and Recovery of Low-Salinity Marsh Plant Communities to Presses and Pulses of Elevated Salinity",
+            "dc:creator": "Li F.",
+            "prism:publicationName": "Estuaries and Coasts",
+            "prism:issn": "15592723",
+            "prism:eIssn": "15592731",
+            "prism:volume": "42",
+            "prism:issueIdentifier": "3",
+            "prism:pageRange": "708-718",
+            "prism:coverDate": "2019-05-15",
+            "prism:coverDisplayDate": "15 May 2019",
+            "prism:doi": "10.1007/s12237-018-00490-1",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Houston",
+                "affiliation-city": "Houston",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "4700152445",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065584024"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065584024?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065584024&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065584024&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065584024",
+            "dc:identifier": "SCOPUS_ID:85065584024",
+            "eid": "2-s2.0-85065584024",
+            "dc:title": "Sea-level rise and storm surges structure coastal forests into persistence and regeneration niches",
+            "dc:creator": "Kearney W.",
+            "prism:publicationName": "PLoS ONE",
+            "prism:eIssn": "19326203",
+            "prism:volume": "14",
+            "prism:issueIdentifier": "5",
+            "prism:pageRange": null,
+            "prism:coverDate": "2019-05-01",
+            "prism:coverDisplayDate": "May 2019",
+            "prism:doi": "10.1371/journal.pone.0215977",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Boston University",
+                "affiliation-city": "Boston",
+                "affiliation-country": "United States"
+            }],
+            "pubmed-id": "31048905",
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e0215977",
+            "source-id": "10600153309",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065647321"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065647321?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065647321&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065647321&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065647321",
+            "dc:identifier": "SCOPUS_ID:85065647321",
+            "eid": "2-s2.0-85065647321",
+            "dc:title": "Live fast, die young: Accelerated growth, mortality, and turnover in street trees",
+            "dc:creator": "Smith I.",
+            "prism:publicationName": "PLoS ONE",
+            "prism:eIssn": "19326203",
+            "prism:volume": "14",
+            "prism:issueIdentifier": "5",
+            "prism:pageRange": null,
+            "prism:coverDate": "2019-05-01",
+            "prism:coverDisplayDate": "May 2019",
+            "prism:doi": "10.1371/journal.pone.0215846",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Boston University",
+                "affiliation-city": "Boston",
+                "affiliation-country": "United States"
+            }],
+            "pubmed-id": "31067257",
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e0215846",
+            "source-id": "10600153309",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85058210112"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85058210112?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85058210112&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85058210112&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85058210112",
+            "dc:identifier": "SCOPUS_ID:85058210112",
+            "eid": "2-s2.0-85058210112",
+            "dc:title": "Neighborhood diversity simultaneously increased and decreased susceptibility to contrasting herbivores in an early stage forest diversity experiment",
+            "dc:creator": "Grossman J.",
+            "prism:publicationName": "Journal of Ecology",
+            "prism:issn": "00220477",
+            "prism:eIssn": "13652745",
+            "prism:volume": "107",
+            "prism:issueIdentifier": "3",
+            "prism:pageRange": "1492-1505",
+            "prism:coverDate": "2019-05-01",
+            "prism:coverDisplayDate": "May 2019",
+            "prism:doi": "10.1111/1365-2745.13097",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Minnesota Twin Cities",
+                "affiliation-city": "Minneapolis",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "Harvard University",
+                "affiliation-city": "Cambridge",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "29602",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065175187"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85065175187?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85065175187&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85065175187&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85065175187",
+            "dc:identifier": "SCOPUS_ID:85065175187",
+            "eid": "2-s2.0-85065175187",
+            "dc:title": "Evidence for Edge Enhancements of Soil Respiration in Temperate Forests",
+            "dc:creator": "Smith I.",
+            "prism:publicationName": "Geophysical Research Letters",
+            "prism:issn": "00948276",
+            "prism:eIssn": "19448007",
+            "prism:volume": "46",
+            "prism:issueIdentifier": "8",
+            "prism:pageRange": "4278-4287",
+            "prism:coverDate": "2019-04-28",
+            "prism:coverDisplayDate": "28 April 2019",
+            "prism:doi": "10.1029/2019GL082459",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Boston University",
+                "affiliation-city": "Boston",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "27962",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85058406259"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85058406259?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85058406259&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85058406259&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85058406259",
+            "dc:identifier": "SCOPUS_ID:85058406259",
+            "eid": "2-s2.0-85058406259",
+            "dc:title": "Consequences of ignoring spatial variation in population trend when conducting a power analysis",
+            "dc:creator": "Weiser E.",
+            "prism:publicationName": "Ecography",
+            "prism:issn": "09067590",
+            "prism:eIssn": "16000587",
+            "prism:volume": "42",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": "836-844",
+            "prism:coverDate": "2019-04-01",
+            "prism:coverDisplayDate": "April 2019",
+            "prism:doi": "10.1111/ecog.04093",
+            "citedby-count": "1",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Upper Midwest Environmental Sciences Center",
+                "affiliation-city": "La Crosse",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "20276",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85061013690"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85061013690?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85061013690&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85061013690&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85061013690",
+            "dc:identifier": "SCOPUS_ID:85061013690",
+            "eid": "2-s2.0-85061013690",
+            "dc:title": "Predicting coral community recovery using multi-species population dynamics models",
+            "dc:creator": "Kayal M.",
+            "prism:publicationName": "Ecology Letters",
+            "prism:issn": "1461023X",
+            "prism:eIssn": "14610248",
+            "prism:volume": "22",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": "605-615",
+            "prism:coverDate": "2019-04-01",
+            "prism:coverDisplayDate": "April 2019",
+            "prism:doi": "10.1111/ele.13203",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of California, Santa Barbara",
+                "affiliation-city": "Santa Barbara",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "Centre de Recherche sur les Ecosystèmes Marins (CREM)",
+                "affiliation-city": null,
+                "affiliation-country": "France"
+            }, {
+                "@_fa": "true",
+                "affilname": "CEntre de Formation et de Recherche sur les Environnements Méditerranéens",
+                "affiliation-city": "Perpignan",
+                "affiliation-country": "France"
+            }],
+            "pubmed-id": "30714295",
+            "prism:aggregationType": "Journal",
+            "subtype": "le",
+            "subtypeDescription": "Letter",
+            "source-id": "14599",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85063865895"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85063865895?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85063865895&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85063865895&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85063865895",
+            "dc:identifier": "SCOPUS_ID:85063865895",
+            "eid": "2-s2.0-85063865895",
+            "dc:title": "Winter Precipitation and Summer Temperature Predict Lake Water Quality at Macroscales",
+            "dc:creator": "Collins S.",
+            "prism:publicationName": "Water Resources Research",
+            "prism:issn": "00431397",
+            "prism:eIssn": "19447973",
+            "prism:volume": "55",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": "2708-2721",
+            "prism:coverDate": "2019-04-01",
+            "prism:coverDisplayDate": "April 2019",
+            "prism:doi": "10.1029/2018WR023088",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Wisconsin-Madison",
+                "affiliation-city": "Madison",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of Wyoming",
+                "affiliation-city": "Laramie",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "18854",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85063680103"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85063680103?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85063680103&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85063680103&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85063680103",
+            "dc:identifier": "SCOPUS_ID:85063680103",
+            "eid": "2-s2.0-85063680103",
+            "dc:title": "Using sea-ice to calibrate a dynamic trophic model for the Western Antarctic Peninsula",
+            "dc:creator": "Dahood A.",
+            "prism:publicationName": "PLoS ONE",
+            "prism:eIssn": "19326203",
+            "prism:volume": "14",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": null,
+            "prism:coverDate": "2019-04-01",
+            "prism:coverDisplayDate": "April 2019",
+            "prism:doi": "10.1371/journal.pone.0214814",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "National Oceanic and Atmospheric Administration",
+                "affiliation-city": "Washington, D.C.",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of California, Santa Cruz",
+                "affiliation-city": "Santa Cruz",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "George Mason University, Fairfax Campus",
+                "affiliation-city": "Fairfax",
+                "affiliation-country": "United States"
+            }],
+            "pubmed-id": "30939156",
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e0214814",
+            "source-id": "10600153309",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85062608337"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85062608337?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85062608337&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85062608337&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85062608337",
+            "dc:identifier": "SCOPUS_ID:85062608337",
+            "eid": "2-s2.0-85062608337",
+            "dc:title": "Marine heatwaves threaten global biodiversity and the provision of ecosystem services",
+            "dc:creator": "Smale D.",
+            "prism:publicationName": "Nature Climate Change",
+            "prism:issn": "1758678X",
+            "prism:eIssn": "17586798",
+            "prism:volume": "9",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": "306-312",
+            "prism:coverDate": "2019-04-01",
+            "prism:coverDisplayDate": "1 April 2019",
+            "prism:doi": "10.1038/s41558-019-0412-1",
+            "citedby-count": "6",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Western Australia",
+                "affiliation-city": "Perth",
+                "affiliation-country": "Australia"
+            }, {
+                "@_fa": "true",
+                "affilname": "Marine Biological Association",
+                "affiliation-city": "Plymouth",
+                "affiliation-country": "United Kingdom"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "le",
+            "subtypeDescription": "Letter",
+            "source-id": "21100198409",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85060158252"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85060158252?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85060158252&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85060158252&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85060158252",
+            "dc:identifier": "SCOPUS_ID:85060158252",
+            "eid": "2-s2.0-85060158252",
+            "dc:title": "Drivers and Management Implications of Long-Term Cisco Oxythermal Habitat Decline in Lake Mendota, WI",
+            "dc:creator": "Magee M.",
+            "prism:publicationName": "Environmental Management",
+            "prism:issn": "0364152X",
+            "prism:eIssn": "14321009",
+            "prism:volume": "63",
+            "prism:issueIdentifier": "3",
+            "prism:pageRange": "396-407",
+            "prism:coverDate": "2019-03-15",
+            "prism:coverDisplayDate": "15 March 2019",
+            "prism:doi": "10.1007/s00267-018-01134-7",
+            "citedby-count": "1",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Wisconsin-Madison",
+                "affiliation-city": "Madison",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "Wisconsin Department Natural Resources",
+                "affiliation-city": "Madison",
+                "affiliation-country": "United States"
+            }],
+            "pubmed-id": "30645675",
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "21478",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85055883428"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85055883428?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85055883428&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85055883428&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85055883428",
+            "dc:identifier": "SCOPUS_ID:85055883428",
+            "eid": "2-s2.0-85055883428",
+            "dc:title": "Controls on Sediment Suspension, Flux, and Marsh Deposition near a Bay-Marsh Boundary",
+            "dc:creator": "Duvall M.",
+            "prism:publicationName": "Estuaries and Coasts",
+            "prism:issn": "15592723",
+            "prism:eIssn": "15592731",
+            "prism:volume": "42",
+            "prism:issueIdentifier": "2",
+            "prism:pageRange": "403-424",
+            "prism:coverDate": "2019-03-15",
+            "prism:coverDisplayDate": "15 March 2019",
+            "prism:doi": "10.1007/s12237-018-0478-4",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Virginia",
+                "affiliation-city": "Charlottesville",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "Duke University Marine Laboratory",
+                "affiliation-city": "Beaufort",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "4700152445",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85060091557"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85060091557?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85060091557&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85060091557&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "full-text",
+                "@href": "https://api.elsevier.com/content/article/eid/1-s2.0-S0272771418308291"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85060091557",
+            "dc:identifier": "SCOPUS_ID:85060091557",
+            "eid": "2-s2.0-85060091557",
+            "dc:title": "Groundwater discharge dynamics into a salt marsh tidal river",
+            "dc:creator": "Peterson R.",
+            "prism:publicationName": "Estuarine, Coastal and Shelf Science",
+            "prism:issn": "02727714",
+            "prism:volume": "218",
+            "prism:pageRange": "324-333",
+            "prism:coverDate": "2019-03-05",
+            "prism:coverDisplayDate": "5 March 2019",
+            "prism:doi": "10.1016/j.ecss.2019.01.007",
+            "pii": "S0272771418308291",
+            "citedby-count": "0",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Coastal Carolina University",
+                "affiliation-city": "Conway",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "26844",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85054310519"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85054310519?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85054310519&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85054310519&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85054310519",
+            "dc:identifier": "SCOPUS_ID:85054310519",
+            "eid": "2-s2.0-85054310519",
+            "dc:title": "Contingent factors explain average divergence in functional composition over 88 years of old field succession",
+            "dc:creator": "Clark A.",
+            "prism:publicationName": "Journal of Ecology",
+            "prism:issn": "00220477",
+            "prism:eIssn": "13652745",
+            "prism:volume": "107",
+            "prism:issueIdentifier": "2",
+            "prism:pageRange": "545-558",
+            "prism:coverDate": "2019-03-01",
+            "prism:coverDisplayDate": "March 2019",
+            "prism:doi": "10.1111/1365-2745.13070",
+            "citedby-count": "2",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Minnesota Twin Cities",
+                "affiliation-city": "Minneapolis",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "Helmholtz Zentrum für Umweltforschung",
+                "affiliation-city": "Leipzig",
+                "affiliation-country": "Germany"
+            }, {
+                "@_fa": "true",
+                "affilname": "Universität Leipzig",
+                "affiliation-city": "Leipzig",
+                "affiliation-country": "Germany"
+            }, {
+                "@_fa": "true",
+                "affilname": "Synthesis Centre for Biodiversity Sciences (sDiv)",
+                "affiliation-city": "Leipzig",
+                "affiliation-country": "Germany"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "29602",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }]
+    }
+}

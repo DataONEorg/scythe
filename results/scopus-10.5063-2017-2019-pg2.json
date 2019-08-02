@@ -1,0 +1,170 @@
+{
+    "search-results": {
+        "opensearch:totalResults": "29",
+        "opensearch:startIndex": "26",
+        "opensearch:itemsPerPage": "25",
+        "opensearch:Query": {
+            "@role": "request",
+            "@searchTerms": "ALL:10.5063",
+            "@startPage": "26"
+        },
+        "link": [{
+            "@_fa": "true",
+            "@ref": "self",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=26&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
+            "@type": "application/json"
+        }, {
+            "@_fa": "true",
+            "@ref": "first",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
+            "@type": "application/json"
+        }, {
+            "@_fa": "true",
+            "@ref": "prev",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=1&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
+            "@type": "application/json"
+        }, {
+            "@_fa": "true",
+            "@ref": "last",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=4&count=25&query=ALL%3A10.5063&date=2017-2019&apiKey=de69d7664651081fab89bb0f101e9a9e",
+            "@type": "application/json"
+        }],
+        "entry": [{
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84999054124"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84999054124?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84999054124&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84999054124&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84999054124",
+            "dc:identifier": "SCOPUS_ID:84999054124",
+            "eid": "2-s2.0-84999054124",
+            "dc:title": "Informing conservation strategies for the endangered Atlantic sturgeon using acoustic telemetry and multi-state mark–recapture models",
+            "dc:creator": "Melnychuk M.",
+            "prism:publicationName": "Journal of Applied Ecology",
+            "prism:issn": "00218901",
+            "prism:eIssn": "13652664",
+            "prism:volume": "54",
+            "prism:issueIdentifier": "3",
+            "prism:pageRange": "914-925",
+            "prism:coverDate": "2017-06-01",
+            "prism:coverDisplayDate": "June 2017",
+            "prism:doi": "10.1111/1365-2664.12799",
+            "citedby-count": "3",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Washington, Seattle",
+                "affiliation-city": "Seattle",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "29547",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85041545353"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85041545353?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85041545353&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85041545353&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85041545353",
+            "dc:identifier": "SCOPUS_ID:85041545353",
+            "eid": "2-s2.0-85041545353",
+            "dc:title": "Understory dominance and the new climax: Impacts of Japanese knotweed (Fallopia japonica) invasion on native plant diversity and recruitment in a riparian woodland",
+            "dc:creator": "Wilson M.",
+            "prism:publicationName": "Biodiversity Data Journal",
+            "prism:eIssn": "13142828",
+            "prism:volume": "5",
+            "prism:pageRange": null,
+            "prism:coverDate": "2017-01-01",
+            "prism:coverDisplayDate": "2017",
+            "prism:doi": "10.3897/BDJ.5.e20577",
+            "citedby-count": "1",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Friends of the Verde River",
+                "affiliation-city": null,
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e20577",
+            "source-id": "21100808899",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85060345897"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85060345897?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85060345897&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85060345897&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85060345897",
+            "dc:identifier": "SCOPUS_ID:85060345897",
+            "eid": "2-s2.0-85060345897",
+            "dc:title": "Marine and coastal cultural ecosystem services: Knowledge gaps and research priorities",
+            "dc:creator": "Rodrigues Garcia J.",
+            "prism:publicationName": "One Ecosystem",
+            "prism:eIssn": "23678194",
+            "prism:volume": "2",
+            "prism:pageRange": null,
+            "prism:coverDate": "2017-01-01",
+            "prism:coverDisplayDate": "2017",
+            "prism:doi": "10.3897/oneeco.2.e12290",
+            "citedby-count": "27",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Universidad de Santiago de Compostela",
+                "affiliation-city": "Santiago de Compostela",
+                "affiliation-country": "Spain"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "re",
+            "subtypeDescription": "Review",
+            "article-number": "e12290",
+            "source-id": "21100905834",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }]
+    }
+}

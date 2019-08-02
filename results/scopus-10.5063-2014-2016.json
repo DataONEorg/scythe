@@ -1,0 +1,563 @@
+{
+    "search-results": {
+        "opensearch:totalResults": "11",
+        "opensearch:startIndex": "0",
+        "opensearch:itemsPerPage": "11",
+        "opensearch:Query": {
+            "@role": "request",
+            "@searchTerms": "ALL:10.5063",
+            "@startPage": "0"
+        },
+        "link": [{
+            "@_fa": "true",
+            "@ref": "self",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2014-2016&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@type": "application/json"
+        }, {
+            "@_fa": "true",
+            "@ref": "first",
+            "@href": "https://api.elsevier.com/content/search/scopus?start=0&count=25&query=ALL%3A10.5063&date=2014-2016&apiKey=715b412c00f0b95e918a3e7abe6e6ee4",
+            "@type": "application/json"
+        }],
+        "entry": [{
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84999740054"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84999740054?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84999740054&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84999740054&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84999740054",
+            "dc:identifier": "SCOPUS_ID:84999740054",
+            "eid": "2-s2.0-84999740054",
+            "dc:title": "An explicit GIS-based river basin framework for aquatic ecosystem conservation in the Amazon",
+            "dc:creator": "Venticinque E.",
+            "prism:publicationName": "Earth System Science Data",
+            "prism:issn": "18663508",
+            "prism:eIssn": "18663516",
+            "prism:volume": "8",
+            "prism:issueIdentifier": "2",
+            "prism:pageRange": "651-661",
+            "prism:coverDate": "2016-11-23",
+            "prism:coverDisplayDate": "23 November 2016",
+            "prism:doi": "10.5194/essd-8-651-2016",
+            "citedby-count": "14",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Universidade Federal do Rio Grande do Norte",
+                "affiliation-city": "Natal",
+                "affiliation-country": "Brazil"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "21100284918",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85006822951"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85006822951?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85006822951&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85006822951&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85006822951",
+            "dc:identifier": "SCOPUS_ID:85006822951",
+            "eid": "2-s2.0-85006822951",
+            "dc:title": "Drought resistance across California ecosystems: Evaluating changes in carbon dynamics using satellite imagery",
+            "dc:creator": "Malone S.",
+            "prism:publicationName": "Ecosphere",
+            "prism:eIssn": "21508925",
+            "prism:volume": "7",
+            "prism:issueIdentifier": "11",
+            "prism:pageRange": null,
+            "prism:coverDate": "2016-11-01",
+            "prism:coverDisplayDate": "1 November 2016",
+            "prism:doi": "10.1002/ecs2.1561",
+            "citedby-count": "10",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "USDA Forest Service Rocky Mountain Research Station",
+                "affiliation-city": "Fort Collins",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e01561",
+            "source-id": "21100307458",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84975797041"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84975797041?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84975797041&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84975797041&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84975797041",
+            "dc:identifier": "SCOPUS_ID:84975797041",
+            "eid": "2-s2.0-84975797041",
+            "dc:title": "How far will a behaviourally flexible invasive bird go to innovate?",
+            "dc:creator": "Logan C.",
+            "prism:publicationName": "Royal Society Open Science",
+            "prism:eIssn": "20545703",
+            "prism:volume": "3",
+            "prism:issueIdentifier": "6",
+            "prism:pageRange": null,
+            "prism:coverDate": "2016-06-15",
+            "prism:coverDisplayDate": "15 June 2016",
+            "prism:doi": "10.1098/rsos.160247",
+            "citedby-count": "6",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Cambridge",
+                "affiliation-city": "Cambridge",
+                "affiliation-country": "United Kingdom"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of California, Santa Barbara",
+                "affiliation-city": "Santa Barbara",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "160247",
+            "source-id": "21100446014",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84963959648"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84963959648?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84963959648&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84963959648&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84963959648",
+            "dc:identifier": "SCOPUS_ID:84963959648",
+            "eid": "2-s2.0-84963959648",
+            "dc:title": "Hunting, food subsidies, and mesopredator release: The dynamics of crop-raiding baboons in a managed landscape",
+            "dc:creator": "Taylor R.",
+            "prism:publicationName": "Ecology",
+            "prism:issn": "00129658",
+            "prism:volume": "97",
+            "prism:issueIdentifier": "4",
+            "prism:pageRange": "951-960",
+            "prism:coverDate": "2016-04-01",
+            "prism:coverDisplayDate": "1 April 2016",
+            "prism:doi": "10.1890/15-0885.1",
+            "citedby-count": "8",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of South Florida, Tampa",
+                "affiliation-city": "Tampa",
+                "affiliation-country": "United States"
+            }],
+            "pubmed-id": "27220211",
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "20308",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84963944051"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84963944051?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84963944051&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84963944051&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84963944051",
+            "dc:identifier": "SCOPUS_ID:84963944051",
+            "eid": "2-s2.0-84963944051",
+            "dc:title": "Western scrub-jays do not appear to attend to functionality in Aesop's Fable experiments",
+            "dc:creator": "Logan C.",
+            "prism:publicationName": "PeerJ",
+            "prism:eIssn": "21678359",
+            "prism:volume": "2016",
+            "prism:issueIdentifier": "2",
+            "prism:pageRange": null,
+            "prism:coverDate": "2016-01-01",
+            "prism:coverDisplayDate": "2016",
+            "prism:doi": "10.7717/peerj.1707",
+            "citedby-count": "14",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Cambridge",
+                "affiliation-city": "Cambridge",
+                "affiliation-country": "United Kingdom"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of California, Santa Barbara",
+                "affiliation-city": "Santa Barbara",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "1707",
+            "source-id": "21100239256",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84955600859"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84955600859?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84955600859&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84955600859&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84955600859",
+            "dc:identifier": "SCOPUS_ID:84955600859",
+            "eid": "2-s2.0-84955600859",
+            "dc:title": "Assessing conservation status of resident and migrant birds on Hispaniola with mist-netting",
+            "dc:creator": "Lloyd J.",
+            "prism:publicationName": "PeerJ",
+            "prism:eIssn": "21678359",
+            "prism:volume": "2016",
+            "prism:issueIdentifier": "1",
+            "prism:pageRange": null,
+            "prism:coverDate": "2016-01-01",
+            "prism:coverDisplayDate": "2016",
+            "prism:doi": "10.7717/peerj.1541",
+            "citedby-count": "3",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "Vermont Center for Ecostudies",
+                "affiliation-city": "Norwich",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e1541",
+            "source-id": "21100239256",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84971570063"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84971570063?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84971570063&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84971570063&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84971570063",
+            "dc:identifier": "SCOPUS_ID:84971570063",
+            "eid": "2-s2.0-84971570063",
+            "dc:title": "Behavioral flexibility and problem solving in an invasive bird",
+            "dc:creator": "Logan C.",
+            "prism:publicationName": "PeerJ",
+            "prism:eIssn": "21678359",
+            "prism:volume": "2016",
+            "prism:issueIdentifier": "5",
+            "prism:pageRange": null,
+            "prism:coverDate": "2016-01-01",
+            "prism:coverDisplayDate": "2016",
+            "prism:doi": "10.7717/peerj.1975",
+            "citedby-count": "19",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Cambridge",
+                "affiliation-city": "Cambridge",
+                "affiliation-country": "United Kingdom"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of California, Santa Barbara",
+                "affiliation-city": "Santa Barbara",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e1975",
+            "source-id": "21100239256",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85006056611"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/85006056611?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85006056611&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=85006056611&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/85006056611",
+            "dc:identifier": "SCOPUS_ID:85006056611",
+            "eid": "2-s2.0-85006056611",
+            "dc:title": "Eurasian jays do not copy the choices of conspecifics, but they do show evidence of stimulus enhancement",
+            "dc:creator": "Miller R.",
+            "prism:publicationName": "PeerJ",
+            "prism:eIssn": "21678359",
+            "prism:volume": "2016",
+            "prism:issueIdentifier": "12",
+            "prism:pageRange": null,
+            "prism:coverDate": "2016-01-01",
+            "prism:coverDisplayDate": "2016",
+            "prism:doi": "10.7717/peerj.2746",
+            "citedby-count": "1",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Cambridge",
+                "affiliation-city": "Cambridge",
+                "affiliation-country": "United Kingdom"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e2746",
+            "source-id": "21100239256",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84981531933"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84981531933?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84981531933&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84981531933&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84981531933",
+            "dc:identifier": "SCOPUS_ID:84981531933",
+            "eid": "2-s2.0-84981531933",
+            "dc:title": "Behavioral flexibility in an invasive bird is independent of other behaviors",
+            "dc:creator": "Logan C.",
+            "prism:publicationName": "PeerJ",
+            "prism:eIssn": "21678359",
+            "prism:volume": "2016",
+            "prism:issueIdentifier": "7",
+            "prism:pageRange": null,
+            "prism:coverDate": "2016-01-01",
+            "prism:coverDisplayDate": "2016",
+            "prism:doi": "10.7717/peerj.2215",
+            "citedby-count": "3",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Cambridge",
+                "affiliation-city": "Cambridge",
+                "affiliation-country": "United Kingdom"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of California, Santa Barbara",
+                "affiliation-city": "Santa Barbara",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e2215",
+            "source-id": "21100239256",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84945199181"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84945199181?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84945199181&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84945199181&origin=inward"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84945199181",
+            "dc:identifier": "SCOPUS_ID:84945199181",
+            "eid": "2-s2.0-84945199181",
+            "dc:title": "Can endocranial volume be estimated accurately fromexternal skull measurements in great-tailed grackles (Quiscalus mexicanus)?",
+            "dc:creator": "Logan C.",
+            "prism:publicationName": "PeerJ",
+            "prism:eIssn": "21678359",
+            "prism:volume": "2015",
+            "prism:issueIdentifier": "6",
+            "prism:pageRange": null,
+            "prism:coverDate": "2015-01-01",
+            "prism:coverDisplayDate": "2015",
+            "prism:doi": "10.7717/peerj.1000",
+            "citedby-count": "3",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Cambridge",
+                "affiliation-city": "Cambridge",
+                "affiliation-country": "United Kingdom"
+            }, {
+                "@_fa": "true",
+                "affilname": "University of California, Santa Barbara",
+                "affiliation-city": "Santa Barbara",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "article-number": "e1000",
+            "source-id": "21100239256",
+            "openaccess": "1",
+            "openaccessFlag": true
+        }, {
+            "@_fa": "true",
+            "link": [{
+                "@_fa": "true",
+                "@ref": "self",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84930747744"
+            }, {
+                "@_fa": "true",
+                "@ref": "author-affiliation",
+                "@href": "https://api.elsevier.com/content/abstract/scopus_id/84930747744?field=author,affiliation"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus",
+                "@href": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=84930747744&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "scopus-citedby",
+                "@href": "https://www.scopus.com/inward/citedby.uri?partnerID=HzOxMe3b&scp=84930747744&origin=inward"
+            }, {
+                "@_fa": "true",
+                "@ref": "full-text",
+                "@href": "https://api.elsevier.com/content/article/eid/1-s2.0-S2212613914000361"
+            }],
+            "prism:url": "https://api.elsevier.com/content/abstract/scopus_id/84930747744",
+            "dc:identifier": "SCOPUS_ID:84930747744",
+            "eid": "2-s2.0-84930747744",
+            "dc:title": "Modeling denitrification in an agricultural catchment in Central New York",
+            "dc:creator": "Barclay J.",
+            "prism:publicationName": "Sustainability of Water Quality and Ecology",
+            "prism:issn": "22126139",
+            "prism:volume": "5",
+            "prism:pageRange": "49-63",
+            "prism:coverDate": "2015-01-01",
+            "prism:coverDisplayDate": "1 March 2015",
+            "prism:doi": "10.1016/j.swaqe.2014.12.007",
+            "pii": "S2212613914000361",
+            "citedby-count": "3",
+            "affiliation": [{
+                "@_fa": "true",
+                "affilname": "University of Connecticut",
+                "affiliation-city": "Storrs",
+                "affiliation-country": "United States"
+            }, {
+                "@_fa": "true",
+                "affilname": "Cornell University",
+                "affiliation-city": "Ithaca",
+                "affiliation-country": "United States"
+            }],
+            "prism:aggregationType": "Journal",
+            "subtype": "ar",
+            "subtypeDescription": "Article",
+            "source-id": "21100305331",
+            "openaccess": "0",
+            "openaccessFlag": false
+        }]
+    }
+}
