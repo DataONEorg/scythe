@@ -29,11 +29,10 @@ elsevier <- results %>%
   filter(!is.na(pii))
 
 
-
 ## save content of the elsevier article query to an xml file
 dsets <- list()
 for (i in 1:nrow(elsevier)){
-  system(paste0("curl https://api.elsevier.com/content/article/pii/", elsevier$pii[i],"?APIKey=985f23cdfde84bdcb15229504fb644b4 -o ~/dataone-citations/temp_content/", elsevier$pii[i],".xml;"))
+  system(paste0("curl https://api.elsevier.com/content/article/pii/", elsevier$pii[i],"?APIKey=985f23cdfde84bdcb15229504fb644b4\\&view=META_ABS_REF -o ~/dataone-citations/temp_content/", elsevier$pii[i],".xml;"))
 }
 
 ## look for KNB/ADC shoulders within the xml file for each document, and retrieve the document DOI

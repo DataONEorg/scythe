@@ -3,5 +3,4 @@
 .RData
 .Ruserdata
 *.Rproj
-temp_content/
-results/
+/temp_content/*
