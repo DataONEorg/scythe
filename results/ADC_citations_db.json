@@ -1,0 +1,108 @@
+{"resultDetails": {
+        "citations": [
+            {
+                "source_id": "10.1016/j.csr.2016.02.008",
+                "journal": "Continental Shelf Research",
+                "link_publication_date": "2017-05-31",
+                "page": "154-164",
+                "origin": "I.J. Smith, H. Eicken, A.R. Mahoney, R. Van Hale, A.J. Gough, Y. Fukamachi, J. Jones",
+                "source_url": "https://doi.org/10.1016/j.csr.2016.02.008",
+                "title": "Surface water mass composition changes captured by cores of Arctic land-fast sea ice",
+                "publisher": "Elsevier BV",
+                "target_id": "10.5065/D6MW2F2H",
+                "year_of_publishing": 2016,
+                "volume": "118"
+            },
+            {
+                "source_id": "10.1007/s11111-016-0259-6",
+                "journal": "Population and Environment",
+                "link_publication_date": "2017-05-31",
+                "page": "115-133",
+                "origin": "Lawrence C. Hamilton, Kei Saito, Philip A. Loring, Richard B. Lammers, Henry P. Huntington",
+                "source_url": "https://doi.org/10.1007/s11111-016-0259-6",
+                "title": "Climigration? Population and climate change in Arctic Alaska",
+                "publisher": "Springer Nature",
+                "target_id": "10.5065/D6930R6J",
+                "year_of_publishing": 2016,
+                "volume": "38"
+            },
+            {
+                "source_id": "10.1080/15481603.2016.1230084",
+                "journal": "GIScience & Remote Sensing",
+                "link_publication_date": "2017-06-01",
+                "page": "707-722",
+                "origin": "Lincoln H Pitcher, Laurence C. Smith, Colin J. Gleason, Kang Yang",
+                "source_url": "https://doi.org/10.1080/15481603.2016.1230084",
+                "title": "CryoSheds: a GIS modeling framework for delineating land-ice watersheds for the Greenland Ice Sheet",
+                "publisher": "Informa UK Limited",
+                "target_id": "10.5065/D6JH3J7Z",
+                "year_of_publishing": 2016,
+                "volume": "53"
+            },
+            {
+                "source_id": "10.1002/2015JC011318",
+                "journal": "Journal of Geophysical Research: Oceans",
+                "link_publication_date": "2017-06-01",
+                "page": "980-997",
+                "origin": "Daisuke Hirano, Yasushi Fukamachi, Eiji Watanabe, Kay I. Ohshima, Katsushi Iwamoto, Andrew R. Mahoney, Hajo Eicken, Daisuke Simizu, Takeshi Tamura",
+                "source_url": "https://doi.org/10.1002/2015JC011318",
+                "title": "A wind-driven, hybrid latent and sensible heat coastal polynya off Barrow, Alaska",
+                "publisher": "American Geophysical Union (AGU)",
+                "target_id": "10.5065/D6BG2KW9",
+                "year_of_publishing": 2016,
+                "volume": "121"
+            },
+            {
+                "source_id": "10.5194/tc-10-2923-2016",
+                "journal": "The Cryosphere",
+                "link_publication_date": "2018-09-07",
+                "page": "2923-2940",
+                "origin": "Megan O&amp;apos;Sadnick, Malcolm Ingham, Hajo Eicken, Erin Pettit",
+                "source_url": "https://doi.org/10.5194/tc-10-2923-2016",
+                "title": "In situ field measurements of the temporal evolution of low-frequency sea-ice dielectric properties in relation to temperature, salinity, and microstructure",
+                "publisher": "Copernicus GmbH",
+                "target_id": "10.5065/D6MW2F2H",
+                "year_of_publishing": 2016,
+                "volume": "10"
+            },
+            {
+                "source_id": "10.5194/tc-9-305-2015",
+                "journal": "The Cryosphere",
+                "link_publication_date": "2018-09-07",
+                "page": "305-329",
+                "origin": "P. J. Griewank, D. Notz",
+                "source_url": "https://doi.org/10.5194/tc-9-305-2015",
+                "title": "A 1-D modelling study of Arctic sea-ice salinity",
+                "publisher": "Copernicus GmbH",
+                "target_id": "10.5065/D63X84KG",
+                "year_of_publishing": 2015,
+                "volume": "9"
+            },
+            {
+                "source_id": "10.5194/tc-10-2923-2016",
+                "journal": "The Cryosphere",
+                "link_publication_date": "2018-09-07",
+                "page": "2923-2940",
+                "origin": "Megan O&amp;apos;Sadnick, Malcolm Ingham, Hajo Eicken, Erin Pettit",
+                "source_url": "https://doi.org/10.5194/tc-10-2923-2016",
+                "title": "In situ field measurements of the temporal evolution of low-frequency sea-ice dielectric properties in relation to temperature, salinity, and microstructure",
+                "publisher": "Copernicus GmbH",
+                "target_id": "10.5065/D63X84KG",
+                "year_of_publishing": 2016,
+                "volume": "10"
+            },
+            {
+                "source_id": "10.5194/amt-9-3641-2016",
+                "journal": "Atmospheric Measurement Techniques",
+                "link_publication_date": "2018-09-07",
+                "page": "3641-3659",
+                "origin": "Penny M. Rowe, Christopher J. Cox, Von P. Walden",
+                "source_url": "https://doi.org/10.5194/amt-9-3641-2016",
+                "title": "Toward autonomous surface-based infrared remote sensing of polar clouds: cloud-height retrievals",
+                "publisher": "Copernicus GmbH",
+                "target_id": "10.5065/D61J97TT",
+                "year_of_publishing": 2016,
+                "volume": "9"
+            }
+        ]
+    }}
