@@ -4,3 +4,7 @@
 .Ruserdata
 *.Rproj
 /temp_content/*
+
+/SASAP_citations
+/DBO_citations
+/results
