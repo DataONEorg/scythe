@@ -33,8 +33,10 @@ for (i in 1:length(dois)){
 # find the number of results per DOI
 res <- lapply(t, function(x){x$`search-results`$`opensearch:totalResults`})
 
+# filter out DOIs with no results
 t_working <- t[which(res != 0)]
 
+# pull out information for datasets with results
 t_results <- lapply(t_working, function(x){
   x$`search-results`$entry$search <- x$`search-results`$`opensearch:Query`$`@searchTerms`
   return(x$`search-results`$entry)
@@ -43,6 +45,7 @@ t_results <- lapply(t_working, function(x){
 
 results <- do.call(bind_rows, t_results)
 
+# trim out unnecessary information
 results_slim <- results %>% 
   dplyr::select(`prism:doi`, search) %>% 
   mutate(search = gsub("ALL:", "", search)) %>% 
