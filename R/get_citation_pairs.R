@@ -2,6 +2,8 @@ library(jsonlite)
 library(dplyr)
 library(xml2)
 
+# this will only find citations to 100% open access journals
+
 ## bash SCOPUS queries
 # APIKEY=985f23cdfde84bdcb15229504fb644b4
 # 

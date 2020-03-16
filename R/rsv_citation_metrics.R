@@ -1,4 +1,4 @@
-# parse SCOPUS results
+# get citation metrics for reverse site visit
 
 library(dplyr)
 library(jsonlite)
