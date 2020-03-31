@@ -1,4 +1,4 @@
-library(crossref)
+library(rcrossref)
 library(jsonlite)
 library(bib2df)
 

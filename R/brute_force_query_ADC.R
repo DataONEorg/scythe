@@ -1,6 +1,7 @@
 library(jsonlite)
 library(dplyr)
 library(xml2)
+library(curl)
 
 ## bash SCOPUS queries
 # APIKEY=985f23cdfde84bdcb15229504fb644b4
@@ -52,6 +53,7 @@ results_slim <- results %>%
   rename(journal = `prism:doi`,
          adc_dataset = search)
 
+# left col - citer, right col - citee
 write.csv(results_slim, "~/dataone-citations/results/brute_force_results.csv", row.names = F)
 
 

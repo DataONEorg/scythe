@@ -1,3 +1,5 @@
+# SASAP only dois
+
 library(jsonlite)
 library(dplyr)
 library(xml2)
@@ -40,9 +42,8 @@ t_results <- lapply(t_working, function(x){
   return(x$`search-results`$entry)
   })
 
-
 results <- do.call(bind_rows, t_results)
-
+View(results)
 
 
 
