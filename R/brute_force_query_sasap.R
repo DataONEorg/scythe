@@ -5,8 +5,8 @@ library(dplyr)
 library(xml2)
 
 ## bash SCOPUS queries
-# APIKEY=985f23cdfde84bdcb15229504fb644b4
-# 
+# Need to use our API key in links below (saved separately)
+#
 # # multi-page ADC
 # for pg in 0 26; do curl https://api.elsevier.com/content/search/scopus?query=ALL:10.18739\&date=2009-2019\&APIKey=${APIKEY}\&start=${pg} -o results/scopus-10.18739-2009-2019-pg${pg}.json; done
 # 
