@@ -3,7 +3,7 @@ library(dplyr)
 library(xml2)
 
 ## bash SCOPUS queries
-# APIKEY=985f23cdfde84bdcb15229504fb644b4
+# APIKEY=
 # 
 # # multi-page ADC
 # for pg in 0 26; do curl https://api.elsevier.com/content/search/scopus?query=ALL:10.18739\&date=2009-2019\&APIKey=${APIKEY}\&start=${pg} -o results/scopus-10.18739-2009-2019-pg${pg}.json; done
@@ -27,7 +27,7 @@ dois <- grep("doi", result$identifier, value = T) %>%
 # brute force query SCOPUS for each DOI
 t <- list()
 for (i in 1:length(dois)){
-  t[[i]] <- fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:",dois[i],"&APIKey=ae55f95a9d2f56c21147d3f9f6c4eef0")))
+  t[[i]] <- fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:",dois[i],"&APIKey=")))
 }
 
 # find the number of results per DOI
