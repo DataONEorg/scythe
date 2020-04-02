@@ -18,6 +18,10 @@ for (i in 1:length(files)){
   adc <- bind_rows(adc, res$`search-results`$entry)
 }
 
+# ^ throws: Error in if (is.character(txt) && length(txt) == 1 && nchar(txt, type = "bytes") <  : 
+#           missing value where TRUE/FALSE needed
+
+
 dbo <- read_eml("~/ArcticSupport/DBO_Page/DBOpage.xml")
 
 dbo_researchers <- eml_get_simple(dbo$filterGroup$choiceFilter[[2]]$choice, "label")
