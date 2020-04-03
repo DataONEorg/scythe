@@ -5,6 +5,9 @@
 # rdatacite package
 # opencitations.net
 
+
+#' Brute force query
+#'
 #' @import dplyr
 #' @import jsonlite
 #' @import xml2

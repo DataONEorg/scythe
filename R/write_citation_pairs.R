@@ -1,3 +1,5 @@
+#' Write citation pairs
+#'
 #' @import rcrossref
 #' @import jsonlite
 #' @import bib2df
