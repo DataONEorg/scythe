@@ -8,12 +8,6 @@ branches:
   - master
   - develop
 
-addons:
-  apt:
-    packages:
-      - librdf0
-      - librdf0-dev
-
 after_success:
     - Rscript -e 'covr::codecov()'
 
