@@ -3,5 +3,10 @@
 language: R
 cache: packages
 
+branches:
+  only:
+  - master
+  - develop
+
 after_success:
     - Rscript -e 'covr::codecov()'
