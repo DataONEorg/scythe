@@ -11,6 +11,14 @@ Description: What the package does (one paragraph).
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
+Imports:
+      bib2df,
+      curl,
+      dataone,
+      dplyr,
+      jsonlite,
+      rcrossref,
+      xml2
 Suggests: 
     testthat (>= 2.1.0),
     covr
