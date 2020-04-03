@@ -33,7 +33,7 @@ We use the pull-request model for contributions. See [GitHub's help on pull-requ
 
 In short:
 
-- add an [issue](https://github.com/NCEAS/metacat/issues) describing your planned changes, or add a comment to an existing issue;
+- add an [issue](https://github.com/DataONEorg/scythe/issues) describing your planned changes, or add a comment to an existing issue;
 - on GitHub, fork the [scythe repository](https://github.com/DataONEorg/scythe)
 - on your computer, clone your forked copy of the repository
 - checkout the `develop` branch and commit your changes
@@ -45,7 +45,7 @@ In short:
 
 Development is managed through the git repository at https://github.com/DataONEorg/scythe.  The repository is organized into several branches, each with a specific purpose. In GitHub, users will normally see the `master` branch, which therefore should reflect the current stable release of the package (rather than confusing people with in-progress proposed changes that are not yet released). Consequently, we will use a [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/)-inspired release model in which the `master` branch always reflects the current stable release, a `develop` branch is used for merging finished proposals being prepared for the next release, and `feature` branches are used for creating changes to implement specific proposals.  For minor changes that don't require review, such as spelling corrections, grammatical rewording, etc., maintainers can commit changes directly to the `develop` branch, and other contributors can do a pull request directly against the `develop` branch.  The use of feature branches is really focused on managing proposals that need discussion, review, and a decision by the team. Maintainers will make judgement calls on whether an feature branch is needed, and might convert contributed pull requests to a feature branch if they determine that one  is needed.
 
-**master**. The `master` branch represents the stable branch that contains the current release. ANybody installing the package will, therefore, by default get the stable release.  
+**master**. The `master` branch represents the stable branch that contains the current release. Anybody installing the package will, therefore, by default get the stable release.  
 
 **develop**. Development takes place on the `develop` branch, which represents the 
 changes being planned for the next release. This is where the next release is fully tested,
