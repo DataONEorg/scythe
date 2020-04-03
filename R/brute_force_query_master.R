@@ -10,6 +10,7 @@
 #' @import xml2
 #' @import curl
 #' @import dataone
+#' @importFrom utils write.csv
 brute_force_query_master <- function() {
     ## bash SCOPUS queries
     # Need to use our API key in links below (saved separately)
@@ -33,7 +34,7 @@ brute_force_query_master <- function() {
                 as = "data.frame"
         )
     dois <- grep("doi", result$identifier, value = T) %>%
-        gsub("doi:", "", .)
+        gsub("doi:", "", .data$.)
 
     # brute force query SCOPUS for each DOI
     t <- list()
@@ -64,11 +65,11 @@ brute_force_query_master <- function() {
 
     # trim out unnecessary information
     results_slim <- results %>%
-        dplyr::select(`prism:doi`, search) %>%
+        dplyr::select(.data$`prism:doi`, search) %>%
         mutate(search = gsub("ALL:", "", search)) %>%
         rename(
-            journal = `prism:doi`,
-            adc_dataset = search
+            journal = .data$`prism:doi`,
+            adc_dataset = .data$search
         )
 
     # left col - citer, right col - citee
