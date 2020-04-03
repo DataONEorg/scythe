@@ -1,5 +1,5 @@
 
-APIKEY=985f23cdfde84bdcb15229504fb644b4
+APIKEY=NULL
 
 # multi-page ADC
  for pg in 0 26 52; do curl https://api.elsevier.com/content/search/scopus?query=ALL:10.18739\&date=2000-2019\&APIKey=${APIKEY}\&start=${pg} -o results/scopus-10.18739-2009-2019-pg${pg}.json; done

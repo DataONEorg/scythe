@@ -1,0 +1,19 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+cache: packages
+
+branches:
+  only:
+  - master
+  - develop
+
+addons:
+  apt:
+    packages:
+      - librdf0
+      - librdf0-dev
+
+after_success:
+    - Rscript -e 'covr::codecov()'
+
