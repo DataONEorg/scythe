@@ -4,10 +4,9 @@
 #'
 #' @return tibble of matching publication identifiers
 #' @export
-#' @import rplos
+#' @import fulltext
 #' @examples
 citation_search <- function(identifier) {
-    #identifier = "10.18739/A22274"
-    psearch <- searchplos(q=identifier, limit=1000)
-    return(psearch$data)
+    results <- fulltext::ft_search(identifier, from=c("plos"))
+    return(results$plos$data)
 }
