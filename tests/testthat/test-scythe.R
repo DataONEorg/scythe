@@ -1,6 +1,8 @@
 test_that("scythe", {
 
-    # Overall tests of the scythe package go here
+    # Overall tests of the scythe package go here. These require the network, so
+    # skip on CRAN
+    skip_on_cran()
 
     # For now, ensure the test framework works
     expect_equal(2 * 2, 4)
