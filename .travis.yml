@@ -13,6 +13,8 @@ addons:
     packages:
       - librdf0
       - librdf0-dev
+      - libpoppler-cpp-dev
+      - poppler-data
 
 after_success:
     - Rscript -e 'covr::codecov()'
