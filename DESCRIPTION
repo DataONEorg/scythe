@@ -18,8 +18,11 @@ Imports:
       dplyr,
       jsonlite,
       rcrossref,
+      rplos,
       xml2
 Suggests: 
-    testthat (>= 2.1.0),
-    covr
+    covr,
+    fulltext,
+    purrr,
+    testthat (>= 2.1.0)
 RoxygenNote: 7.0.2

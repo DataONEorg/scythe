@@ -4,6 +4,10 @@ test_that("scythe", {
     # skip on CRAN
     skip_on_cran()
 
+    library(fulltext)
+    library(rplos)
+    library(purrr)
+
     # For now, ensure the test framework works
     expect_equal(2 * 2, 4)
 
@@ -12,6 +16,15 @@ test_that("scythe", {
     citations <- read.csv(citations_file, stringsAsFactors = FALSE)
     expect_s3_class(citations, "data.frame")
 
-    # TODO: Use scythe to search for each of these citations, and verify they are found
+    # Use scythe to search for a single citation, and verify it is found
+    identifier = "10.18739/A22274"
+    results <- citation_search(identifier)
+    expect_equivalent(results$id[[1]], "10.1371/journal.pone.0213037")
 
+    # Use scythe to search for each of the citations, and verify they are found
+    pmap(citations, function(...) {
+        current <- tibble(...)
+        results <- citation_search(current$dataone_pid)
+        expect_equivalent(results$id[[1]], current$pub_id)
+    })
 })
