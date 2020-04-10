@@ -11,3 +11,5 @@
 
 key.txt
 
+# Ignore Vim's swap files
+.*.swp
