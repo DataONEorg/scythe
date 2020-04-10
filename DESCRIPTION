@@ -23,7 +23,6 @@ Imports:
       xml2
 Suggests: 
     covr,
-    fulltext,
     purrr,
     testthat (>= 2.1.0)
 RoxygenNote: 7.0.2

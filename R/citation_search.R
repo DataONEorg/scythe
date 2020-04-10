@@ -4,7 +4,7 @@
 #'
 #' @return tibble of matching publication identifiers
 #' @export
-#' @import fulltext
+#' @importFrom fulltext ft_search
 #' @examples
 citation_search <- function(identifier) {
     results <- fulltext::ft_search(identifier, from=c("plos"))
