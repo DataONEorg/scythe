@@ -10,7 +10,7 @@
 citation_search <- function(identifiers) {
     
     if (any(!grepl("10\\.|urn:uuid", identifiers))){
-        stop(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
+        warning(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
     }
     
     results <- rbind(citation_search_plos(identifiers) 
@@ -35,7 +35,7 @@ citation_search <- function(identifiers) {
 citation_search_plos <- function(identifiers) {
     
     if (any(!grepl("10\\.|urn:uuid", identifiers))){
-        stop(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
+        warning(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
     }
   
     # search for identifier
