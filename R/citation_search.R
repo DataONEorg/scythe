@@ -9,6 +9,10 @@
 #' result <- citation_search_plos(identifiers)
 citation_search <- function(identifiers) {
     
+    if (any(!grepl("10\\.|urn:uuid", identifiers))){
+        stop(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
+    }
+    
     results <- rbind(citation_search_plos(identifiers) 
                      #, citation_search_scopus(idenfiers), ...
     )
@@ -29,6 +33,10 @@ citation_search <- function(identifiers) {
 #' result <- citation_search_plos(identifiers)
 #' 
 citation_search_plos <- function(identifiers) {
+    
+    if (any(!grepl("10\\.|urn:uuid", identifiers))){
+        stop(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
+    }
   
     # search for identifier
     results <- lapply(identifiers, function(x){
