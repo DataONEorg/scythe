@@ -2,16 +2,16 @@
 % Please edit documentation in R/citation_search.R
 \name{citation_search}
 \alias{citation_search}
-\title{Search for citations in text}
+\title{Search for citations in text across all APIs}
 \usage{
-citation_search(identifier)
+citation_search(identifiers)
 }
 \arguments{
-\item{identifier}{a vector of identifiers to be searched for}
+\item{identifiers}{a vector of identifiers to be searched for}
 }
 \value{
-tibble of matching publication identifiers
+tibble of matching dataset and publication identifiers
 }
 \description{
-Search for citations in text
+Search for citations in text across all APIs
 }
