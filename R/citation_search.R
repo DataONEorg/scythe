@@ -21,6 +21,10 @@ citation_search <- function(identifiers) {
 
 
 #' Search for citations in PLOS
+#' 
+#' This function searches for citations in PLOS. Requests are throttled
+#' at one identifier every 6 seconds so as to not overload the PLOS
+#' API.
 #'
 #' @param identifiers a vector of identifiers to be searched for
 #'
@@ -40,9 +44,12 @@ citation_search_plos <- function(identifiers) {
   
     # search for identifier
     results <- lapply(identifiers, function(x){
-     rplos::searchplos(q = x,
+        v <- rplos::searchplos(q = x,
                        fl = "id",
                        limit = 1000)
+        Sys.sleep(6)
+        return(v)
+
         }
     )
     
