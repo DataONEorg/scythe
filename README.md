@@ -39,6 +39,10 @@ library(scythe)
 # R example goes here
 ```
 
+### Authorization Credentials & API Key Management
+
+#### Scopus
+
 ## Acknowledgments
 Work on this package was supported by:
 
