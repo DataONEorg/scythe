@@ -41,7 +41,19 @@ library(scythe)
 
 ### Authorization Credentials & API Key Management
 
+Navigate to your home directory in the terminal and create an .Renviron in which to store your API keys.
+
+```
+touch .Renviron
+```
+
 #### Scopus
+
+In order to obtain a Scopus API key, make an account at the [Elseviers Developers Portal](https://dev.elsevier.com/) and create API key. Once you have your API key, store it in your .Renviron file as the variable ELSEVIER_SCOPUS_KEY.
+
+```
+ELSEVIER_SCOPUS_KEY = <your_api>
+```
 
 ## Acknowledgments
 Work on this package was supported by:
