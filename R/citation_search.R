@@ -39,15 +39,24 @@ citation_search <- function(identifiers) {
 citation_search_plos <- function(identifiers) {
     
     if (any(!grepl("10\\.|urn:uuid", identifiers))){
-        warning(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
+        warning(call. = FALSE,
+                "One or more identifiers does not appear to be a DOI or uuid",
+                immediate. = TRUE)
+    }
+    if (length(identifiers) > 1){
+        message(paste0("Your result will take ~", length(identifiers)*6 ," seconds to return, since this function is rate limited to one call every 6 seconds."))
+    }
+    
+    if (any(grepl("doi:|urn:uuid", identifiers))){
+        identifiers <- gsub("(doi:)|(urn:uuid:)", "", identifiers)
     }
   
     # search for identifier
     results <- lapply(identifiers, function(x){
-        v <- rplos::searchplos(q = x,
-                       fl = "id",
-                       limit = 1000)
         Sys.sleep(6)
+        v <- rplos::searchplos(q = x,
+                       fl = c("id","title"),
+                       limit = 1000)
         return(v)
 
         }
@@ -56,8 +65,10 @@ citation_search_plos <- function(identifiers) {
     plos_results <- list()
     # assign dataset identifier to each result
     for (i in 1:length(results)){
-        if (results[[i]]$meta$numFound == 0){
-            plos_results[[i]] <- data.frame(id = NA, dataset_id = identifiers[i])
+        if (results[[i]]$meta$numFound == 0 | is.null(results[[i]])){
+            plos_results[[i]] <- data.frame(id = NA,
+                                            dataset_id = identifiers[i],
+                                            title = NA)
         }
         else if (results[[i]]$meta$numFound > 0){
             plos_results[[i]] <- results[[i]]$data
@@ -65,9 +76,11 @@ citation_search_plos <- function(identifiers) {
         }
 
     }
+    
     # bind resulting tibbles
     plos_results <- do.call(rbind, plos_results)
     names(plos_results)[which(names(plos_results) == "id")] <- "article_id"
+    names(plos_results)[which(names(plos_results) == "title")] <- "article_title"
     
     return(plos_results)
 }
