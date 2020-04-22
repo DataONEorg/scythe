@@ -37,7 +37,7 @@ brute_force_query_master <- function() {
                 as = "data.frame"
         )
     dois <- grep("doi", result$identifier, value = T) %>%
-        gsub("doi:", "", .data$.)
+        gsub(pattern="doi:", replacement="")
 
     # brute force query SCOPUS for each DOI
     t <- list()
@@ -82,3 +82,5 @@ brute_force_query_master <- function() {
         row.names = F
     )
 }
+
+
