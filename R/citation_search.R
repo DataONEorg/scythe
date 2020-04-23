@@ -50,6 +50,9 @@ citation_search_plos <- function(identifiers) {
     if (any(grepl("doi:|urn:uuid", identifiers))){
         identifiers <- gsub("(doi:)|(urn:uuid:)", "", identifiers)
     }
+    if (any(grepl(":", identifiers))){ 
+        identifiers <- gsub(":", "", identifiers) # handle other problematic colons
+    }
   
     # search for identifier
     results <- lapply(identifiers, function(x){
