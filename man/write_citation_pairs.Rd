@@ -4,8 +4,19 @@
 \alias{write_citation_pairs}
 \title{Write citation pairs}
 \usage{
-write_citation_pairs()
+write_citation_pairs(citation_list, path)
+}
+\arguments{
+\item{citation_list}{(data.frame) data.frame of citation pairs containing variables article_id and dataset_id}
+
+\item{path}{(char) path to write JSON citation pairs to}
 }
 \description{
 Write citation pairs
+}
+\examples{
+pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
+                    dataset_id = "10.18739/A22274")
+                            
+write_citation_pairs(citation_list = pairs, path = "citation_pairs.json")
 }

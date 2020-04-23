@@ -13,7 +13,9 @@ citation_search_plos(identifiers)
 tibble of matching dataset and publication identifiers
 }
 \description{
-Search for citations in PLOS
+This function searches for citations in PLOS. Requests are throttled
+at one identifier every 6 seconds so as to not overload the PLOS
+API.
 }
 \examples{
 
