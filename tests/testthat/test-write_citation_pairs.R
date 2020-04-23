@@ -1,8 +1,8 @@
-test_that("write citation pairs", {
-    # TODO: This is an example test, to be fortified when functionality is added
-
-    # Tests of the write_citation_pairs() function go here
-
-    # Be sure the testing framework runs properly
-    expect_equal(2 * 2, 4)
+test_that("write_citation_pairs checks input correctly", {
+    
+    pairs <- data.frame(test_name = "10.1371/journal.pone.0213037",
+                        dataset_id = "10.18739/A22274")
+    
+    expect_error(write_citation_pairs(citation_list = pairs, path = t))
+    
 })
