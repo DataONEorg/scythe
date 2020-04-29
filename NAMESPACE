@@ -2,6 +2,7 @@
 
 export(citation_search)
 export(citation_search_plos)
+export(scythe_set_key)
 export(write_citation_pairs)
 import(curl)
 import(dataone)
