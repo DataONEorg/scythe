@@ -17,7 +17,7 @@ scythe_set_key <- function(scopus_key = NULL, bmc_key = NULL){
     
     if (!("scythe" %in% kr_list)){
         message("No scythe keyring found. Creating keyring...")
-        keyring_create("scythe")
+        keyring::keyring_create("scythe")
     }
     if ("scythe" %in% kr_list){
         message("Scythe keyring already exists. You may overwrite previously set keys.")
