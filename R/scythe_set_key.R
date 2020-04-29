@@ -1,36 +1,38 @@
 #' Set API keys for search services
+#' 
+#' This function sets API keys using the `keyring` package. `keyring`
+#' uses your operating system's credential store to securely keep
+#' track of key-value pairs. Running this function for the first time will
+#' prompt you to set a password for your keyring, should you need to lock
+#' or unlock it. See `keyring::keyring_unlock` for more details.
 #'
-#' @param identifiers a vector of identifiers to be searched for
+#' @param scopus_key (char) SCOPUS API key value
+#' @param bmc_key (char) BMC API key value
 #'
 #' @export
-#' @examples
 
 scythe_set_key <- function(scopus_key = NULL, bmc_key = NULL){
     
-    message("Setting keyring backend to 'file'")
+    kr_list <- keyring::keyring_list()$keyring
     
-    options(keyring_backend = "file")
-    
-    if (!("scythe" %in% keyring::keyring_list()$keyring)){
-        kr <- keyring::backend_file$new()
-        kr$keyring_create("scythe")
+    if (!("scythe" %in% kr_list)){
+        message("No scythe keyring found. Creating keyring...")
+        keyring_create("scythe")
     }
-    if ("scythe" %in% keyring::keyring_list()$keyring){
-        message("Keyring already exists.")
+    if ("scythe" %in% kr_list){
+        message("Scythe keyring already exists. You may overwrite previously set keys.")
     }
-
-
 
     if (!is.null(scopus_key)){
-        keyring::key_set_with_value(service = "ELSEVIER_SCOPUS_KEY",
+        keyring::key_set_with_value(service = "scopus_key",
                                     password = scopus_key,
                                     keyring = "scythe")
     }
     
-    # if (!is.null(bmc_key)){
-    #     keyring::key_set_with_value(service = "SPRINGER_BMC_KEY",
-    #                                 password = bmc_key,
-    #                                 keyring = "scythe")
-    # }
+    if (!is.null(bmc_key)){
+        keyring::key_set_with_value(service = "bmc_key",
+                                    password = bmc_key,
+                                    keyring = "scythe")
+    }
 }
 
