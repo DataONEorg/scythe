@@ -41,19 +41,16 @@ library(scythe)
 
 ### Authorization Credentials & API Key Management
 
-The function `scythe_set_key` manages API keys using the [`keyring`](https://github.com/r-lib/keyring) package. `keyring` uses your operating system's credential store to securely keep track of key-value pairs. Running this function for the first time will prompt you to set a password for your keyring, should you need to lock or unlock it.
+The function `scythe_set_key()` manages API keys using the [`keyring`](https://github.com/r-lib/keyring) package. `keyring` uses your operating system's credential store to securely keep track of key-value pairs. Running `scythe_set_key()` for the first time will prompt you to set a password for your keyring, should you need to lock or unlock it. First, run the following line in order to be able to use the function in your code. 
+```
+source("R/scythe_set_key.R")
+```
 
 #### Scopus
 
-In order to obtain a Scopus API key, make an account at the [Elseviers Developers Portal](https://dev.elsevier.com/) and create API key. Once you have your API key, store it in your .Renviron file as the variable ELSEVIER_SCOPUS_KEY.
+To obtain a Scopus API key, make an account at the [Elseviers Developers Portal](https://dev.elsevier.com/) and create API key. Once you've obtained your key, you can use `scythe_set_key()` to securely set and access it in your code:
 
 ```
-ELSEVIER_SCOPUS_KEY = <your_api>
-```
-To set and access your Scopus API key you can run the following lines:
-
-```
-source("R/scythe_set_key.R")
 scythe_set_key(scopus_key = "YOUR_KEY")
 keyring::key_get("scopus_key", keyring = "scythe")
 ```
