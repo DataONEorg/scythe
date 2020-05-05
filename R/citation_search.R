@@ -167,17 +167,10 @@ citation_search_bmc <- function(identifiers) {
 #' 
 citation_search_scopus <- function(identifiers) {
   
-  if (any(!grepl("10\\.|urn:uuid", identifiers))){
-    warning(call. = FALSE,
-            "One or more identifiers does not appear to be a DOI or uuid",
-            immediate. = TRUE)
-  }
+  check_identifiers(identifiers)
+  
   if (length(identifiers) > 1){
     message(paste0("Your result will take ~", length(identifiers)*6 ," seconds to return, since this function is rate limited to one call every 6 seconds."))
-  }
-  
-  if (any(grepl("doi:|urn:uuid", identifiers))){
-    identifiers <- gsub("(doi:)|(urn:uuid:)", "", identifiers)
   }
   
   # search for identifier
