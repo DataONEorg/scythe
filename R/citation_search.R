@@ -150,6 +150,73 @@ citation_search_bmc <- function(identifiers) {
   
 }
 
+#' Search for citations in Scopus
+#' 
+#' This function searches for citations in Scopus. Requests are throttled
+#' 9 requests/second so as to not overload the Scopus API.
+#'
+#' @param identifiers a vector of identifiers to be searched for
+#'
+#' @return tibble of matching dataset and publication identifiers
+#' @export
+#' @importFrom rscopus scopus_search
+#' @examples
+#' 
+#' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
+#' result <- citation_search_scopus(identifiers)
+#' 
+citation_search_scopus <- function(identifiers) {
+  
+  if (any(!grepl("10\\.|urn:uuid", identifiers))){
+    warning(call. = FALSE,
+            "One or more identifiers does not appear to be a DOI or uuid",
+            immediate. = TRUE)
+  }
+  if (length(identifiers) > 1){
+    message(paste0("Your result will take ~", length(identifiers)*6 ," seconds to return, since this function is rate limited to one call every 6 seconds."))
+  }
+  
+  if (any(grepl("doi:|urn:uuid", identifiers))){
+    identifiers <- gsub("(doi:)|(urn:uuid:)", "", identifiers)
+  }
+  
+  # search for identifier
+  results <- lapply(identifiers, function(x){
+    #Sys.sleep(6)
+    v <- rscopus::scopus_search(query = x,
+                                api_key = APIKEY, # need fix
+                                headers = c("id","title"),
+                                max_count = 1000,
+                                wait_time = 0.12)
+    return(v)
+    
+  }
+  )
+  
+  scopus_results <- list()
+  # assign dataset identifier to each result
+  for (i in 1:length(results)){
+    if (results[[i]]$meta$numFound == 0 | is.null(results[[i]])){
+      scopus_results[[i]] <- data.frame(id = NA,
+                                        dataset_id = identifiers[i],
+                                        title = NA)
+    }
+    else if (results[[i]]$meta$numFound > 0){
+      scopus_results[[i]] <- results[[i]]$data
+      scopus_results[[i]]$dataset_id <- identifiers[i]
+    }
+    
+  }
+  
+  # bind resulting tibbles
+  scopus_results <- do.call(rbind, scopus_results)
+  names(scopus_results)[which(names(scopus_results) == "id")] <- "article_id"
+  names(scopus_results)[which(names(scopus_results) == "title")] <- "article_title"
+  
+  return(scopus_results)
+}
+
+
 # Check identifiers to remove characters that interfere with query strings
 
 check_identifiers <- function(identifiers){
