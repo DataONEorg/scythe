@@ -169,13 +169,14 @@ citation_search_scopus <- function(identifiers) {
   
   check_identifiers(identifiers)
   
-  if (length(identifiers) > 1){
-    message(paste0("Your result will take ~", length(identifiers)*6 ," seconds to return, since this function is rate limited to one call every 6 seconds."))
+  if (length(identifiers) > 8){
+    message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per seconds."))
   }
+  
+  tmp <- keyring::key_get("scopus_key", keyring = "scythe")
   
   # search for identifier
   results <- lapply(identifiers, function(x){
-    #Sys.sleep(6)
     v <- rscopus::scopus_search(query = x,
                                 api_key = APIKEY, # need fix
                                 headers = c("id","title"),
