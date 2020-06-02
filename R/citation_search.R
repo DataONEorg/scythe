@@ -177,6 +177,7 @@ citation_search_scopus <- function(identifiers) {
   
   results <- list()
   for (i in 1:length(identifiers)) {
+    Sys.sleep(0.12)
     results[[i]] <-
       fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], paste("&APIKey=",tmp, sep=""))))
   }
