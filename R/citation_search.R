@@ -178,8 +178,7 @@ citation_search_scopus <- function(identifiers) {
   results <- list()
   for (i in 1:length(identifiers)) {
     results[[i]] <-
-      fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], "&APIKey=ae55f95a9d2f56c21147d3f9f6c4eef0")
-      ))
+      fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], paste("&APIKey=",tmp, sep=""))))
   }
   
   # initialize df for storing results in orderly fashion
