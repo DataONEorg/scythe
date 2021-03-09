@@ -16,6 +16,7 @@ Imports:
       curl,
       dplyr,
       jsonlite,
+      keyring,
       rcrossref,
       rplos,
       xml2
