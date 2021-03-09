@@ -15,6 +15,7 @@ addons:
       - librdf0-dev
       - libpoppler-cpp-dev
       - poppler-data
+      - libsodium-dev 
 
 after_success:
     - Rscript -e 'covr::codecov()'
