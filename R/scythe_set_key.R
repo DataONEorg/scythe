@@ -7,11 +7,11 @@
 #' or unlock it. See `keyring::keyring_unlock` for more details.
 #'
 #' @param scopus_key (char) SCOPUS API key value
-#' @param bmc_key (char) BMC API key value
+#' @param springer_key (char) Springer API key value
 #'
 #' @export
 
-scythe_set_key <- function(scopus_key = NULL, bmc_key = NULL){
+scythe_set_key <- function(scopus_key = NULL, springer_key = NULL){
     
     kr_list <- keyring::keyring_list()$keyring
     
@@ -29,9 +29,9 @@ scythe_set_key <- function(scopus_key = NULL, bmc_key = NULL){
                                     keyring = "scythe")
     }
     
-    if (!is.null(bmc_key)){
-        keyring::key_set_with_value(service = "bmc_key",
-                                    password = bmc_key,
+    if (!is.null(springer_key)){
+        keyring::key_set_with_value(service = "springer_key",
+                                    password = springer_key,
                                     keyring = "scythe")
     }
 }

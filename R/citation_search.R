@@ -14,7 +14,7 @@ citation_search <- function(identifiers) {
     }
     
     results <- rbind(citation_search_plos(identifiers), 
-                     citation_search_bmc(identifiers)
+                     citation_search_springer(identifiers)
                      )
     
 }
@@ -78,9 +78,9 @@ citation_search_plos <- function(identifiers) {
     return(plos_results)
 }
 
-#' Search for citations in BMC
+#' Search for citations from Springer
 #' 
-#' This function searches for citations in BMC. It requires that an API key
+#' This function searches for citations from Springer. It requires that an API key
 #' be obtained from [Springer](https://dev.springernature.com/) and set using
 #' `scythe_set_key()`. Requests are throttled at one identifier every second
 #' so as to not overload the PLOS API.
@@ -95,16 +95,16 @@ citation_search_plos <- function(identifiers) {
 #' @examples
 #' 
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
-#' result <- citation_search_bmc(identifiers)
+#' result <- citation_search_springer(identifiers)
 #' 
-citation_search_bmc <- function(identifiers) {
+citation_search_springer <- function(identifiers) {
   if (length(identifiers) > 1){
     message(paste0("Your result will take ~", length(identifiers)*1 ," seconds to return, since this function is rate limited to one call every second."))
   }
   
   identifiers <- check_identifiers(identifiers)
   
-  tmp <- keyring::key_get("bmc_key", keyring = "scythe")
+  tmp <- keyring::key_get("springer_key", keyring = "scythe")
   
   results <- list()
   for (i in 1:length(identifiers)) {
@@ -119,33 +119,33 @@ citation_search_bmc <- function(identifiers) {
   
 
   # assign dataset identifier to each result
-  bmc_results <- list()
+  springer_results <- list()
   for (i in 1:length(results)){
     if (as.numeric(results[[i]]$result$total) == 0 | is.null(results[[i]])){
-      bmc_results[[i]] <- data.frame(article_id = NA,
+      springer_results[[i]] <- data.frame(article_id = NA,
                                       dataset_id = identifiers[i],
                                      article_title = NA)
     }
     else if (as.numeric(results[[i]]$result$total) > 0){
       
-      bmc_results[[i]] <- data.frame(article_id = rep(NA, as.numeric(results[[i]]$result$total)),
+      springer_results[[i]] <- data.frame(article_id = rep(NA, as.numeric(results[[i]]$result$total)),
                                      dataset_id = rep(NA, as.numeric(results[[i]]$result$total)),
                                      article_title = rep(NA, as.numeric(results[[i]]$result$total)))
       
-      bmc_results[[i]]$article_id <- results[[i]]$records$identifier
-      bmc_results[[i]]$article_title <- results[[i]]$records$title
-      bmc_results[[i]]$dataset_id <- identifiers[i]
+      springer_results[[i]]$article_id <- results[[i]]$records$identifier
+      springer_results[[i]]$article_title <- results[[i]]$records$title
+      springer_results[[i]]$dataset_id <- identifiers[i]
     }
     
   }
   
   # bind resulting tibbles
-  bmc_results <- do.call(rbind, bmc_results)
+  springer_results <- do.call(rbind, springer_results)
   
   # remove doi: prefix for consistency
-  bmc_results$article_id <- gsub("doi:", "", bmc_results$article_id)
+  springer_results$article_id <- gsub("doi:", "", springer_results$article_id)
   
-  return(bmc_results)
+  return(springer_results)
   
   
 }

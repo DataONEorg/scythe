@@ -4,12 +4,12 @@
 \alias{scythe_set_key}
 \title{Set API keys for search services}
 \usage{
-scythe_set_key(scopus_key = NULL, bmc_key = NULL)
+scythe_set_key(scopus_key = NULL, springer_key = NULL)
 }
 \arguments{
 \item{scopus_key}{(char) SCOPUS API key value}
 
-\item{bmc_key}{(char) BMC API key value}
+\item{springer_key}{(char) Springer API key value}
 }
 \description{
 This function sets API keys using the `keyring` package. `keyring`
