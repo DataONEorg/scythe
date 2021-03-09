@@ -4,8 +4,6 @@ test_that("scythe", {
     # skip on CRAN
     skip_on_cran()
 
-    library(fulltext)
-    library(rplos)
     library(purrr)
 
     # Load a set of example citations that should be found by the API
@@ -20,7 +18,7 @@ test_that("scythe", {
 
     # Use scythe to search for each of the citations, and verify they are found
     pmap(citations, function(...) {
-        current <- tibble(...)
+        current <- dplyr::tibble(...)
         results <- suppressWarnings(citation_search(current$dataone_pid))
         expect_true(current$pub_id %in% results$article_id)
     })
