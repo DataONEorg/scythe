@@ -7,7 +7,6 @@
 #'
 #' @return tibble of matching dataset and publication identifiers
 #' @export
-#' @importFrom rscopus scopus_search
 #' @examples
 #' 
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
