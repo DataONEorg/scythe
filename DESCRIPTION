@@ -14,12 +14,9 @@ LazyData: true
 Imports:
       bib2df,
       curl,
-      dataone,
       dplyr,
-      fulltext,
       jsonlite,
       rcrossref,
-      rplos,
       xml2
 Suggests: 
     covr,
