@@ -15,8 +15,10 @@ write_citation_pairs(citation_list, path)
 Write citation pairs
 }
 \examples{
-pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
+\dontrun{
+#' pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
                     dataset_id = "10.18739/A22274")
                             
 write_citation_pairs(citation_list = pairs, path = "citation_pairs.json")
+}
 }

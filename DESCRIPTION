@@ -17,6 +17,7 @@ Imports:
       dplyr,
       jsonlite,
       rcrossref,
+      rplos,
       xml2
 Suggests: 
     covr,

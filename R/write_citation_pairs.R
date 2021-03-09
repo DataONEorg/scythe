@@ -2,14 +2,17 @@
 #'
 #' @param citation_list (data.frame) data.frame of citation pairs containing variables article_id and dataset_id
 #' @param path (char) path to write JSON citation pairs to
-#'
+#' @import dplyr
 #' @export
 #' 
 #' @examples
-#' pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
+#'\dontrun{
+#'#' pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
 #'                     dataset_id = "10.18739/A22274")
 #'                             
 #' write_citation_pairs(citation_list = pairs, path = "citation_pairs.json")
+#'}
+
 write_citation_pairs <- function(citation_list, path) {
     
     if (any(!(c("article_id", "dataset_id") %in% names(citation_list)))){
@@ -44,6 +47,6 @@ write_citation_pairs <- function(citation_list, path) {
         dplyr::mutate(id = NA, report = NA, metadata = NA, link_publication_date = Sys.Date()) #%>%
         #dplyr::mutate(publisher = ifelse(.data$publisher == "Elsevier {BV", "Elsevier", "Copernicus"))
 
-    write_json(cit_full, path)
+    jsonlite::write_json(cit_full, path)
 }
 
