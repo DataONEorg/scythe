@@ -14,7 +14,8 @@ citation_search <- function(identifiers) {
     }
     
     results <- rbind(citation_search_plos(identifiers), 
-                     citation_search_springer(identifiers)
+                     citation_search_springer(identifiers),
+                     citation_search_scopus(identifiers)
                      )
     
 }
