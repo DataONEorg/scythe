@@ -128,9 +128,9 @@ citation_search_bmc <- function(identifiers) {
     }
     else if (as.numeric(results[[i]]$result$total) > 0){
       
-      bmc_results[[i]] <- data.frame(article_id = NA,
-                                     dataset_id = NA,
-                                     article_title = NA)
+      bmc_results[[i]] <- data.frame(article_id = rep(NA, as.numeric(results[[i]]$result$total)),
+                                     dataset_id = rep(NA, as.numeric(results[[i]]$result$total)),
+                                     article_title = rep(NA, as.numeric(results[[i]]$result$total)))
       
       bmc_results[[i]]$article_id <- results[[i]]$records$identifier
       bmc_results[[i]]$article_title <- results[[i]]$records$title
