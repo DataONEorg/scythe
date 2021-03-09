@@ -47,7 +47,7 @@ citation_search_scopus <- function(identifiers) {
     
     # clean up dois
     scopus_results <- scopus_results %>%
-        mutate(dataset_id = gsub("ALL:", "", dataset_id))
+        dplyr::mutate(dataset_id = gsub("ALL:", "", dataset_id))
     
     return(scopus_results)
 }
