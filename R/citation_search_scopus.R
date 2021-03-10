@@ -6,7 +6,6 @@
 #' @param identifiers a vector of identifiers to be searched for
 #'
 #' @return tibble of matching dataset and publication identifiers
-#' @importFrom rlang `%||%`
 #' @export
 #' @examples
 #' 

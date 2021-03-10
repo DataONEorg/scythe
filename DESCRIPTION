@@ -18,7 +18,6 @@ Imports:
       jsonlite,
       keyring,
       rcrossref,
-      rlang,
       rplos
 Suggests: 
     covr,
