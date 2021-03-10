@@ -19,8 +19,7 @@ Imports:
       keyring,
       rcrossref,
       rlang,
-      rplos,
-      xml2
+      rplos
 Suggests: 
     covr,
     purrr,
