@@ -18,6 +18,7 @@ Imports:
       jsonlite,
       keyring,
       rcrossref,
+      rlang,
       rplos,
       xml2
 Suggests: 
