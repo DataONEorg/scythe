@@ -1,5 +1,5 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/scythe)](https://cran.r-project.org/package=scythe)
-[![Build Status](https://travis-ci.org/DataONEorg/scythe.png?branch=develop)](https://travis-ci.org/DataONEorg/scythe)
+[![R-CMD-check](https://github.com/DataONEorg/scythe/workflows/R-CMD-check/badge.svg)](https://github.com/DataONEorg/scythe/actions)
 [![Codecov test coverage](https://codecov.io/gh/DataONEorg/scythe/branch/develop/graph/badge.svg)](https://codecov.io/gh/DataONEorg/scythe?branch=develop)
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
