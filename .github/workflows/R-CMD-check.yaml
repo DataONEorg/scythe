@@ -26,9 +26,9 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
       - name: Create and populate .Renviron file
-           run: |
-            echo scopus_key="$SCOPUS_KEY" >> ~/.Renviron
-            echo springer_key="$SPRINGER_KEY" >> ~/.Renviron
+        run: |
+          echo scopus_key="$SCOPUS_KEY" >> ~/.Renviron
+          echo springer_key="$SPRINGER_KEY" >> ~/.Renviron
         shell: bash
       - name: Check
         run: |
