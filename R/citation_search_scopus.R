@@ -21,8 +21,8 @@ citation_search_scopus <- function(identifiers) {
         message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
     }
     
-    if (Sys.getenv("springer_key") != ""){
-        tmp <- Sys.getenv("springer_key")
+    if (Sys.getenv("SCOPUS_KEY") != ""){
+        tmp <- Sys.getenv("SCOPUS_KEY")
     } else tmp <- keyring::key_get("scopus_key", keyring = "scythe")
     
     

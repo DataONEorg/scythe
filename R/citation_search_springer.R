@@ -25,9 +25,9 @@ citation_search_springer <- function(identifiers) {
     
     identifiers <- check_identifiers(identifiers)
     
-    if (Sys.getenv("scopus_key") != ""){
-        tmp <- Sys.getenv("scopus_key")
-    } else tmp <- keyring::key_get("scopus_key", keyring = "scythe")
+    if (Sys.getenv("SPRINGER_KEY") != ""){
+        tmp <- Sys.getenv("SPRINGER_KEY")
+    } else tmp <- keyring::key_get("springer_key", keyring = "scythe")
     
     results <- list()
     for (i in 1:length(identifiers)) {
