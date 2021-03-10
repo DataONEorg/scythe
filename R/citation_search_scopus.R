@@ -6,6 +6,7 @@
 #' @param identifiers a vector of identifiers to be searched for
 #'
 #' @return tibble of matching dataset and publication identifiers
+#' @importFrom rlang `%||%`
 #' @export
 #' @examples
 #' 
@@ -20,7 +21,11 @@ citation_search_scopus <- function(identifiers) {
         message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
     }
     
-    tmp <- keyring::key_get("scopus_key", keyring = "scythe")
+    if (Sys.getenv("springer_key") == ""){
+        ekey <- NULL
+    } else ekey <- Sys.getenv("springer_key")
+    
+    tmp <- ekey %||% keyring::key_get("scopus_key", keyring = "scythe")
     
     results <- list()
     for (i in 1:length(identifiers)) {

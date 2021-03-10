@@ -10,6 +10,7 @@
 #' @return tibble of matching dataset and publication identifiers
 #' @importFrom jsonlite fromJSON
 #' @importFrom curl curl
+#' @importFrom rlang `%||%`
 #' @export
 
 #' @examples
@@ -24,7 +25,11 @@ citation_search_springer <- function(identifiers) {
     
     identifiers <- check_identifiers(identifiers)
     
-    tmp <- keyring::key_get("springer_key", keyring = "scythe")
+    if (Sys.getenv("springer_key") == ""){
+        ekey <- NULL
+    } else ekey <- Sys.getenv("springer_key")
+    
+    tmp <- ekey %||% keyring::key_get("springer_key", keyring = "scythe")
     
     results <- list()
     for (i in 1:length(identifiers)) {
