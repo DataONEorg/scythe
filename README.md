@@ -10,14 +10,14 @@
 - [**Submit Bugs and feature requests**](https://github.com/DataONEorg/scythe/issues)
 
 Automates the full text harvesting of dataset citations from various full text article databases, 
-including Scopus, PLOS, and Pubmed Central.
+including Scopus, PLOS, and Springer.
 
 ## Installation 
 
 ### Released version
 
 ```
-install.packages("scythe")
+remotes::install_github("DataONEorg/scythe@v0.9.0")
 ```
 
 The *scythe* R package should be available for use at this point.
