@@ -20,6 +20,7 @@ Imports:
       rplos
 Suggests: 
     covr,
+    parallel,
     purrr,
     testthat (>= 2.1.0)
 RoxygenNote: 7.1.1
