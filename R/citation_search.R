@@ -41,11 +41,10 @@ check_identifiers <- function(identifiers){
   }
   
   if (any(grepl("doi:|urn:uuid", identifiers))){
-    identifiers <- gsub("(doi:)|(urn:uuid:)", "", identifiers)
+    identifiers <- gsub("('doi:')|('urn:uuid:')", "", identifiers)
+    message("Identifier prefix (doi: or urn:uuid) has been stripped out of the search term.")
   }
-  if (any(grepl(":", identifiers))){ 
-    identifiers <- gsub(":", "", identifiers) # handle other problematic colons
-  }
+
   
   return(identifiers)
 }

@@ -41,8 +41,10 @@ citation_search_springer <- function(identifiers) {
         return()
     }
 
+    identifiers_enc <- URLencode(identifiers, reserved = T)
+    
     results <- list()
-    for (i in 1:length(identifiers)) {
+    for (i in 1:length(identifiers_enc)) {
         Sys.sleep(1)
         results[[i]] <- jsonlite::fromJSON(curl::curl(paste0("http://api.springernature.com/meta/v2/json?q=",
                                                              identifiers[i],
