@@ -1,22 +1,30 @@
 #' Search for citations in text across all APIs
 #'
 #' @param identifiers a vector of identifiers to be searched for
-#'
+#' @param sources a vector indicating which sources to query (one or more of plos, scopus, springer)
 #' @return tibble of matching dataset and publication identifiers
 #' @export
 #' @examples
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
-#' result <- citation_search_plos(identifiers)
-citation_search <- function(identifiers) {
+#' result <- citation_search(identifiers, sources = c("plos"))
+citation_search <- function(identifiers,
+                            sources = c("plos", "scopus", "springer")) {
     
     if (any(!grepl("10\\.|urn:uuid", identifiers))){
         warning(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
     }
     
-    results <- rbind(citation_search_plos(identifiers), 
-                     citation_search_springer(identifiers),
-                     citation_search_scopus(identifiers)
-                     )
+    if ("plos" %in% sources){
+      plos <- citation_search_plos(identifiers)
+    }
+  
+    if ("scopus" %in% sources){
+      scopus <- citation_search_scopus(identifiers)
+    }
+  
+    if (springer %in% sources){
+      springer <- citation_search_scopus(identifiers)
+    }
     
 }
 
