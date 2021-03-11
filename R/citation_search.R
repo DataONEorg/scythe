@@ -51,6 +51,7 @@ citation_search <- function(identifiers,
 
 
   result <- do.call(rbind, out)
+  row.names(result) <- NULL
   return(result)
     
 }
