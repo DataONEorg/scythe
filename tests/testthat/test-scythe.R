@@ -27,8 +27,8 @@ test_that("scythe", {
     # Use scythe to search for each of the citations, and verify they are found
     pmap(citations, function(...) {
         current <- dplyr::tibble(...)
-        results <- suppressWarnings(citation_search(current$dataone_pid),
-                                    sources = keyed_sources)
+        results <- suppressWarnings(citation_search(current$dataone_pid, 
+                                                    sources = keyed_sources))
         expect_true(current$pub_id %in% results$article_id)
     })
 })
