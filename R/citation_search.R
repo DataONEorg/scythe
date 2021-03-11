@@ -16,15 +16,18 @@ citation_search <- function(identifiers,
     
     if ("plos" %in% sources){
       plos <- citation_search_plos(identifiers)
-    }
+    } else plos <- NULL
   
     if ("scopus" %in% sources){
       scopus <- citation_search_scopus(identifiers)
-    }
+    } else scopus <- NULL
   
-    if (springer %in% sources){
-      springer <- citation_search_scopus(identifiers)
-    }
+    if ("springer" %in% sources){
+      springer <- citation_search_springer(identifiers)
+    } else springer <- NULL
+  
+  result <- rbind(plos, scopus, springer)
+  return(result)
     
 }
 
