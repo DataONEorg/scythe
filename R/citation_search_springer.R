@@ -41,7 +41,7 @@ citation_search_springer <- function(identifiers) {
         return()
     }
 
-    identifiers_enc <- URLencode(identifiers, reserved = T)
+    identifiers_enc <- utils::URLencode(identifiers, reserved = T)
     
     results <- list()
     for (i in 1:length(identifiers_enc)) {
