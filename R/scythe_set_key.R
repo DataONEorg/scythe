@@ -6,12 +6,12 @@
 #' prompt you to set a password for your keyring, should you need to lock
 #' or unlock it. See `keyring::keyring_unlock` for more details.
 #'
-#' @param service (char) Key service, one of "scopus" or "springer"
+#' @param source (char) Key source, one of "scopus" or "springer"
 #' @param secret (char) API key value
 #'
 #' @export
 
-scythe_set_key <- function(service, secret){
+scythe_set_key <- function(source, secret){
     
     if (!(service %in% c("springer", "scopus"))){
         stop("Please set the key service to be one of 'springer' or 'scopus.'",
@@ -24,11 +24,11 @@ scythe_set_key <- function(service, secret){
         message("No scythe keyring found. Creating keyring...")
         keyring::keyring_create("scythe")
     }
-    if ("scythe" %in% kr_list & service %in% keyring::key_list(keyring="scythe")$service){
+    if ("scythe" %in% kr_list & source %in% keyring::key_list(keyring="scythe")$service){
         message("Scythe key already exists. Previous key was overwritten.")
     }
 
-    keyring::key_set_with_value(service = service,
+    keyring::key_set_with_value(service = source,
                                 password = secret,
                                 keyring = "scythe")
 

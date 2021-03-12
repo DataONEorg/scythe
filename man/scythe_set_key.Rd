@@ -4,10 +4,10 @@
 \alias{scythe_set_key}
 \title{Set API keys for search services}
 \usage{
-scythe_set_key(service, secret)
+scythe_set_key(source, secret)
 }
 \arguments{
-\item{service}{(char) Key service, one of "scopus" or "springer"}
+\item{source}{(char) Key source, one of "scopus" or "springer"}
 
 \item{secret}{(char) API key value}
 }
