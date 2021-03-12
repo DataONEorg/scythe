@@ -7,7 +7,12 @@ test_that("scythe", {
     library(purrr)
 
     # Determine which keys have been set
-    keyed_sources <- gsub("_key", "", c(keyring::key_list(keyring="scythe")$service, "plos"))
+    keyed_sources <- unlist(lapply(c("scopus_key", "springer_key"), function(x){
+        if (!is.na(scythe_get_key(x))){
+            return(gsub("_key", "", x))
+        }
+        else return(NULL)
+    }))
 
     # Load a set of example citations that should be found by the API
     citations_file <- system.file("testdata","test-citations.csv",package="scythe")
