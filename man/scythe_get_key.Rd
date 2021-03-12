@@ -2,14 +2,26 @@
 % Please edit documentation in R/scythe_get_key.R
 \name{scythe_get_key}
 \alias{scythe_get_key}
-\title{Return which API keys are set}
+\title{Get API secret for a key source.}
 \usage{
-scythe_get_key()
+scythe_get_key(source)
+}
+\arguments{
+\item{source}{the name of the source service to look up}
 }
 \value{
-list A named list of key value pairs.
+character the secret value, or NA if not set
 }
 \description{
-This function looks for API keys for Scopus and Springer, and returns
-them if they are set.
+Look for API keys for services, which are represented as character strings.
+}
+\details{
+Secrets are typically stored in a keyring named "scythe" (see the keyring
+package), or, alternatively, in an environment variable with a name
+identical to "source".
+}
+\examples{
+\dontrun{
+scythe_get_key("scopus_key")
+}
 }

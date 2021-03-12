@@ -5,10 +5,9 @@ test_that("scythe", {
     skip_on_cran()
 
     library(purrr)
-    
+
     # Determine which keys have been set
-    t <- scythe_get_key()
-    keyed_sources <- c(gsub("_key", "", names(which(t != ""))), "plos")
+    keyed_sources <- gsub("_key", "", c(keyring::key_list(keyring="scythe")$service, "plos"))
 
     # Load a set of example citations that should be found by the API
     citations_file <- system.file("testdata","test-citations.csv",package="scythe")
@@ -21,13 +20,11 @@ test_that("scythe", {
     identifier <- "10.18739/A22274"
     results <- citation_search(identifier, sources = "plos")
     expect_true("10.1371/journal.pone.0213037" %in% results$article_id)
-    
-
 
     # Use scythe to search for each of the citations, and verify they are found
     pmap(citations, function(...) {
         current <- dplyr::tibble(...)
-        results <- suppressWarnings(citation_search(current$dataone_pid, 
+        results <- suppressWarnings(citation_search(current$dataone_pid,
                                                     sources = keyed_sources))
         expect_true(current$pub_id %in% results$article_id)
     })

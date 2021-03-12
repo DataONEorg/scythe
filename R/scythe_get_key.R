@@ -1,26 +1,30 @@
-#' Return which API keys are set
-#' 
-#' This function looks for API keys for Scopus and Springer, and returns
-#' them if they are set.
+#' Get API secret for a key source.
 #'
-#' @return list A named list of key value pairs.
+#' Look for API keys for services, which are represented as character strings.
+#'
+#' Secrets are typically stored in a keyring named "scythe" (see the keyring
+#' package), or, alternatively, in an environment variable with a name
+#' identical to "source".
+#'
+#' @param source the name of the source service to look up
+#' @return character the secret value, or NA if not set
 #'
 #' @export
-
-scythe_get_key <- function(){
-    
-    kr_list <- keyring::keyring_list()$keyring
-    
-    if ("scythe" %in% kr_list){
-        r <- list(scopus_key = keyring::key_get("scopus_key", keyring = "scythe"),
-             springer_key = keyring::key_get("springer_key", keyring = "scythe"))
+#' @examples
+#' \dontrun{
+#' scythe_get_key("scopus_key")
+#' }
+scythe_get_key <- function(source) {
+    secret <- NA
+    if (Sys.getenv(source) != "") {
+        secret <- Sys.getenv(source)
+    } else {
+        secret <- tryCatch({
+            keyring::key_get(source, keyring = "scythe")
+        },
+        error = function(cond) {
+            return(NA)
+        })
     }
-    if (!("scythe" %in% kr_list)){
-        r <- list(scopus_key = Sys.getenv("scopus_key"),
-                  springer_key = Sys.getenv("springer_key"))
-    }
-    
-    return(r)
-    
+    return(secret)
 }
-
