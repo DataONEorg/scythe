@@ -11,12 +11,11 @@
 #' @importFrom jsonlite fromJSON
 #' @importFrom curl curl
 #' @export
-
 #' @examples
-#'
+#' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 #' result <- citation_search_springer(identifiers)
-#'
+#' }
 citation_search_springer <- function(identifiers) {
     if (length(identifiers) > 1){
         message(paste0("Your result will take ~", length(identifiers)*1 ," seconds to return, since this function is rate limited to one call every second."))

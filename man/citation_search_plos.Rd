@@ -18,8 +18,8 @@ at one identifier every 6 seconds so as to not overload the PLOS
 API.
 }
 \examples{
-
+\dontrun{
 identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 result <- citation_search_plos(identifiers)
-
+}
 }

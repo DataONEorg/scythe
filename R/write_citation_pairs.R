@@ -4,30 +4,29 @@
 #' @param path (char) path to write JSON citation pairs to
 #' @import dplyr
 #' @export
-#' 
+#'
 #' @examples
-#'\dontrun{
-#'#' pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
+#' \dontrun{
+#' pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
 #'                     dataset_id = "10.18739/A22274")
-#'                             
 #' write_citation_pairs(citation_list = pairs, path = "citation_pairs.json")
-#'}
+#' }
 
 write_citation_pairs <- function(citation_list, path) {
-    
+
     if (any(!(c("article_id", "dataset_id") %in% names(citation_list)))){
         stop(.call = FALSE, "citations_list data.frame does not contain variables article_id and/or dataset_id")
     }
 
     # write list of citations to bib format
     bib <- rcrossref::cr_cn(dois = citation_list$article_id, format = "bibtex")
-    
+
     t <- tempfile()
     writeLines(unlist(bib), t)
 
     # import as a dataframe
     df <- bib2df::bib2df(t)
-    
+
     # assign article_id to data.frame
     df$dataset_id <- citation_list$dataset_id
 
