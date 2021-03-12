@@ -23,7 +23,7 @@ citation_search_springer <- function(identifiers) {
 
     identifiers <- check_identifiers(identifiers)
 
-    key <- scythe_get_key("springer_key")
+    key <- scythe_get_key("springer")
     if (is.na(key)) {
         warning("Skipping Springer search due to missing API key. Set an API key using scythe_set_key() to include Springer results.")
         return()

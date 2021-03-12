@@ -27,8 +27,8 @@ jobs:
         shell: Rscript {0}
       - name: Create and populate .Renviron file
         run: |
-          echo scopus_key=${{ secrets.SCOPUS_KEY }} >> ~/.Renviron
-          echo springer_key=${{ secrets.SPRINGER_KEY }} >> ~/.Renviron
+          echo scopus=${{ secrets.SCOPUS_KEY }} >> ~/.Renviron
+          echo springer=${{ secrets.SPRINGER_KEY }} >> ~/.Renviron
         shell: bash
       - name: Check
         run: |
