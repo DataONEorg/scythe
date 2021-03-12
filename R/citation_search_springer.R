@@ -24,32 +24,21 @@ citation_search_springer <- function(identifiers) {
 
     identifiers <- check_identifiers(identifiers)
 
-    if (Sys.getenv("springer_key") != ""){
-        tmp <- Sys.getenv("springer_key")
-    } else {
-        tmp <- tryCatch(
-            {
-                keyring::key_get("springer_key", keyring = "scythe")
-            },
-            error=function(cond) {
-                #message(paste("Key does not seem to exist in keyring"))
-                return(NA)
-            })
-    }
-    if (is.na(tmp)) {
+    key <- scythe_get_key("springer_key")
+    if (is.na(key)) {
         warning("Skipping Springer search due to missing API key. Set an API key using scythe_set_key() to include Springer results.")
         return()
     }
 
     identifiers_enc <- utils::URLencode(identifiers, reserved = T)
-    
+
     results <- list()
     for (i in 1:length(identifiers_enc)) {
         Sys.sleep(1)
         results[[i]] <- jsonlite::fromJSON(curl::curl(paste0("http://api.springernature.com/meta/v2/json?q=",
                                                              identifiers[i],
                                                              "&api_key=",
-                                                             tmp,
+                                                             key,
                                                              "&p=100")
         ))
     }

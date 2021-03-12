@@ -20,20 +20,8 @@ citation_search_scopus <- function(identifiers) {
         message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
     }
 
-    tmp <- NA
-    if (Sys.getenv("scopus_key") != ""){
-        tmp <- Sys.getenv("scopus_key")
-    } else {
-        tmp <- tryCatch(
-            {
-                keyring::key_get("scopus_key", keyring = "scythe")
-            },
-            error=function(cond) {
-                #message(paste("Key does not seem to exist in keyring"))
-                return(NA)
-            })
-    }
-    if (is.na(tmp)) {
+    key <- scythe_get_key("scopus_key")
+    if (is.na(key)) {
         warning("Skipping Scopus search due to missing API key. Set an API key using scythe_set_key() to include Scopus results.")
         return()
     }
@@ -42,7 +30,7 @@ citation_search_scopus <- function(identifiers) {
     for (i in 1:length(identifiers_enc)) {
         Sys.sleep(0.12)
         results[[i]] <-
-            fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], paste("&APIKey=",tmp, sep=""))))
+            fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], paste("&APIKey=",key, sep=""))))
     }
 
     # initialize df for storing results in orderly fashion
