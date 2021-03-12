@@ -16,43 +16,20 @@ citation_search <- function(identifiers,
     if (any(!grepl("10\\.|urn:uuid", identifiers))){
         warning(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
     }
-
-    tasks <- list(
-    job1 = function(){
-      if ("plos" %in% sources){
-        plos <- citation_search_plos(identifiers)
-      } else plos <- NULL
-    },
-    job2 = function(){
-      if ("scopus" %in% sources){
-        scopus <- citation_search_scopus(identifiers)
-      } else scopus <- NULL
-    },
-    job3 = function(){
-      if ("springer" %in% sources){
-        springer <- citation_search_springer(identifiers)
-      } else springer <- NULL
-    }
-    )
-
-
-  if ("parallel" %in% utils::installed.packages()){
-    out <- parallel::mclapply(
-      tasks,
-      function(f) f(),
-      mc.cores = 2,
-      mc.silent = FALSE
-    )
-  } else {
-    out <- lapply(
-      tasks,
-      function(f) f()
-    )
-
-  }
-
-
-  result <- do.call(rbind, out)
+    
+    if ("plos" %in% sources){
+      plos <- citation_search_plos(identifiers)
+    } else plos <- NULL
+  
+    if ("scopus" %in% sources){
+      scopus <- citation_search_scopus(identifiers)
+    } else scopus <- NULL
+  
+    if ("springer" %in% sources){
+      springer <- citation_search_springer(identifiers)
+    } else springer <- NULL
+  
+  result <- rbind(plos, scopus, springer)
   return(result)
 
 }
