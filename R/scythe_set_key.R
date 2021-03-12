@@ -13,8 +13,8 @@
 
 scythe_set_key <- function(source, secret){
     
-    if (!(service %in% c("springer", "scopus"))){
-        stop("Please set the key service to be one of 'springer' or 'scopus.'",
+    if (!(source %in% c("springer", "scopus"))){
+        stop("Please set the key source to be one of 'springer' or 'scopus.'",
              call. = FALSE)
     }
     
