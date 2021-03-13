@@ -43,18 +43,18 @@ In short:
 
 ## Development Workflow
 
-Development is managed through the git repository at https://github.com/DataONEorg/scythe.  The repository is organized into several branches, each with a specific purpose. In GitHub, users will normally see the `master` branch, which therefore should reflect the current stable release of the package (rather than confusing people with in-progress proposed changes that are not yet released). Consequently, we will use a [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/)-inspired release model in which the `master` branch always reflects the current stable release, a `develop` branch is used for merging finished proposals being prepared for the next release, and `feature` branches are used for creating changes to implement specific proposals.  For minor changes that don't require review, such as spelling corrections, grammatical rewording, etc., maintainers can commit changes directly to the `develop` branch, and other contributors can do a pull request directly against the `develop` branch.  The use of feature branches is really focused on managing proposals that need discussion, review, and a decision by the team. Maintainers will make judgement calls on whether an feature branch is needed, and might convert contributed pull requests to a feature branch if they determine that one  is needed.
+Development is managed through the git repository at https://github.com/DataONEorg/scythe.  The repository is organized into several branches, each with a specific purpose. In GitHub, users will normally see the `main` branch, which therefore should reflect the current stable release of the package (rather than confusing people with in-progress proposed changes that are not yet released). Consequently, we will use a [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/)-inspired release model in which the `main` branch always reflects the current stable release, a `develop` branch is used for merging finished proposals being prepared for the next release, and `feature` branches are used for creating changes to implement specific proposals.  For minor changes that don't require review, such as spelling corrections, grammatical rewording, etc., maintainers can commit changes directly to the `develop` branch, and other contributors can do a pull request directly against the `develop` branch.  The use of feature branches is really focused on managing proposals that need discussion, review, and a decision by the team. Maintainers will make judgement calls on whether an feature branch is needed, and might convert contributed pull requests to a feature branch if they determine that one  is needed.
 
-**master**. The `master` branch represents the stable branch that contains the current release. Anybody installing the package will, therefore, by default get the stable release.  
+**main**. The `main` branch represents the stable branch that contains the current release. Anybody installing the package will, therefore, by default get the stable release.  
 
 **develop**. Development takes place on the `develop` branch, which represents the 
 changes being planned for the next release. This is where the next release is fully tested,
 and all feature changes should be merged onto `develop` and tested.
 
 
-When a set of features are mature and tested and ready for release, they are merged onto the `develop` branch to await the next release.  The tip of the develop branch always represents the set of features that have been staged for the next release. The version number in all configuration files and the README on the master branch follows [semantic versioning](https://semver.org/) and should always be set to either:
+When a set of features are mature and tested and ready for release, they are merged onto the `develop` branch to await the next release.  The tip of the develop branch always represents the set of features that have been staged for the next release. The version number in all configuration files and the README on the main branch follows [semantic versioning](https://semver.org/) and should always be set to either:
 
-- the current release version, if on `master`. For example, `2.8.5`.
+- the current release version, if on `main`. For example, `2.8.5`.
 - if on `develop`, the planned next release number with a `beta` designator or release candidate `rc` designator appended as appropriate.  For example, `2.8.6-beta1` or `2.9.0-rc1`.
 
 **feature**. Feature branches should be named as `feature_##_short_title` where `##` is the issue number from github that the feature is implementing.
@@ -74,7 +74,7 @@ changes that are desired in a release are merged into the `develop` branch, we r
 the full set of tests on a clean checkout, and conduct any code reviews needed. A pull request
 can be used for that review, or it can be done directly for simpler sets of changes.
 Once review is completed, make sure all version numbers are set correctly and 
-documentation is complete on `develop`, and then merge to `master`, and tag that merge 
+documentation is complete on `develop`, and then merge to `main`, and tag that merge 
 commit as the release. We use tag names of the form `v1.2.3` that reflect the version
 of the release.  If we are submitting to CRAN, we generally do not tag the release
 until it has been accepted by CRAN.
@@ -87,7 +87,7 @@ Any new code developed should include a robust set of unit tests for each public
 method, as well as integration tests from new feature sets.  Tests should fully
 exercise the feature to ensure that it responds correctly to both good data inputs
 as well as various classes of corrupt or bad data.  All tests should pass before
-the `develop` branch is merged to master, and all tests should pass before the `master`
+the `develop` branch is merged to main, and all tests should pass before the `main`
 branch is tagged as a release.
 
 **Continuous integration**. We can use Travis for some of our repositories.

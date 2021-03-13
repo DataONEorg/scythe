@@ -5,3 +5,4 @@
 ^codecov\.yml$
 ^CONTRIBUTING\.md$
 ^api-scopus-search.sh$
+^\.github$

@@ -1,27 +1,38 @@
 #' Write citation pairs
 #'
-#' @import rcrossref
-#' @import jsonlite
-#' @import bib2df
+#' @param citation_list (data.frame) data.frame of citation pairs containing variables article_id and dataset_id
+#' @param path (char) path to write JSON citation pairs to
 #' @import dplyr
-#' @importFrom utils read.csv page
-#' @importFrom graphics title
-write_citation_pairs <- function() {
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' pairs <- data.frame(article_id = "10.1371/journal.pone.0213037",
+#'                     dataset_id = "10.18739/A22274")
+#' write_citation_pairs(citation_list = pairs, path = "citation_pairs.json")
+#' }
 
-    # manually generated citations list
-    cit <- read.csv("DBO_citations/citationlist.csv", stringsAsFactors = F)
+write_citation_pairs <- function(citation_list, path) {
+
+    if (any(!(c("article_id", "dataset_id") %in% names(citation_list)))){
+        stop(.call = FALSE, "citations_list data.frame does not contain variables article_id and/or dataset_id")
+    }
 
     # write list of citations to bib format
-    bib <- cr_cn(dois = cit$publicationDOI, format = "bibtex")
-    writeLines(unlist(bib), "DBO_citations/all_citations.bib" )
+    bib <- rcrossref::cr_cn(dois = citation_list$article_id, format = "bibtex")
+
+    t <- tempfile()
+    writeLines(unlist(bib), t)
 
     # import as a dataframe
-    df <- bib2df("~/dataone-citations/DBO_citations/all_citations.bib")
-    df$datasetID <- cit$datasetID
+    df <- bib2df::bib2df(t)
+
+    # assign article_id to data.frame
+    df$dataset_id <- citation_list$dataset_id
 
     # rename for database ingest
     cit_full <- df %>%
-        rename(target_id = .data$datasetID,
+        dplyr::rename(target_id = .data$dataset_id,
                source_id = .data$DOI,
                source_url = .data$URL,
                origin = .data$AUTHOR,
@@ -31,10 +42,10 @@ write_citation_pairs <- function() {
                volume = .data$VOLUME,
                page = .data$PAGES,
                year_of_publishing = .data$YEAR) %>%
-        select(.data$target_id, .data$source_id, .data$source_url, .data$origin, .data$title, .data$publisher, .data$journal, .data$volume, .data$page, .data$year_of_publishing) %>%
-        mutate(id = NA, report = NA, metadata = NA, link_publication_date = NA) %>%
-        mutate(publisher = ifelse(.data$publisher == "Elsevier {BV", "Elsevier", "Copernicus"))
+        dplyr::select(.data$target_id, .data$source_id, .data$source_url, .data$origin, .data$title, .data$publisher, .data$journal, .data$volume, .data$page, .data$year_of_publishing) %>%
+        dplyr::mutate(id = NA, report = NA, metadata = NA, link_publication_date = Sys.Date()) #%>%
+        #dplyr::mutate(publisher = ifelse(.data$publisher == "Elsevier {BV", "Elsevier", "Copernicus"))
 
-    write_json(cit_full, "~/dataone-citations/DBO_citations/citations_export.json")
+    jsonlite::write_json(cit_full, path)
 }
 

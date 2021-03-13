@@ -1,25 +1,25 @@
 Package: scythe
 Title: Harvest and register data package citations 
-Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Version: 0.9.0
+Authors@R: c(
+    person("Jeanette", "Clark", role = c("aut", "cre"), email = "jeanetteclark@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-4703-1974")),
+    person("Matthew B.", "Jones", role = "aut", email = "jones@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-0077-4738")),
+    person("Maya", "Samet", role = "aut", email = "samet@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-5248-9712"))
+    )
+Description: Harvests data package citations from several API sources, including PLOS, Scopus, and Springer.
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
 Imports:
       bib2df,
       curl,
-      dataone,
       dplyr,
       jsonlite,
+      keyring,
       rcrossref,
-      xml2
+      rplos
 Suggests: 
-    testthat (>= 2.1.0),
-    covr
-RoxygenNote: 7.0.2
+    covr,
+    purrr,
+    testthat (>= 2.1.0)
+RoxygenNote: 7.1.1
