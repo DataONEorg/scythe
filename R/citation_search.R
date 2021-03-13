@@ -12,26 +12,21 @@
 #' }
 citation_search <- function(identifiers,
                             sources = c("plos", "scopus", "springer")) {
+  if (any(!grepl("10\\.|urn:uuid", identifiers))) {
+    warning(call. = FALSE,
+            "One or more identifiers does not appear to be a DOI or uuid")
+  }
 
-    if (any(!grepl("10\\.|urn:uuid", identifiers))){
-        warning(call. = FALSE, "One or more identifiers does not appear to be a DOI or uuid")
-    }
-    
-    if ("plos" %in% sources){
-      plos <- citation_search_plos(identifiers)
-    } else plos <- NULL
-  
-    if ("scopus" %in% sources){
-      scopus <- citation_search_scopus(identifiers)
-    } else scopus <- NULL
-  
-    if ("springer" %in% sources){
-      springer <- citation_search_springer(identifiers)
-    } else springer <- NULL
-  
-  result <- rbind(plos, scopus, springer)
+  # run the 'citation_search_*' function for each source
+  for (source in sources) {
+    search_function <- paste0(source, " <- citation_search_", source, "(identifiers)")
+    eval(parse(text = search_function))
+  }
+
+  # combine all of the resulting data frames and return the result df
+  bind_function <- paste0("rbind(", sources, ")")
+  result <- eval(parse(text = bind_function))
   return(result)
-
 }
 
 # Check identifiers to remove characters that interfere with query strings
@@ -47,7 +42,6 @@ check_identifiers <- function(identifiers){
     identifiers <- gsub("(doi:)|(urn:uuid:)", "", identifiers)
     message("Identifier prefix (doi: or urn:uuid) has been stripped out of the search term.")
   }
-
 
   return(identifiers)
 }
