@@ -36,7 +36,7 @@ To set API keys for use in the package, see the section below on authentication.
 
 ```
 library(scythe)
-scythe_set_key(scopus_key = "SCOPUS KEY", springer_key = "SPRINGER KEY")
+scythe_set_key(source = "scopus", secret = "YOUR KEY")
 
 identifier <- "10.18739/A22274"
 results <- citation_search(identifier)
@@ -51,8 +51,8 @@ The function `scythe_set_key()` manages API keys using the [`keyring`](https://g
 To obtain a Scopus API key, make an account at the [Elseviers Developers Portal](https://dev.elsevier.com/) and create API key. Once you've obtained your key, you can use `scythe_set_key()` to securely set your key. This key is accessed in the `citation_search()` function, but you can also retrieve the value using `keyring::key_get()`.
 
 ```
-scythe_set_key(scopus_key = "YOUR_KEY")
-keyring::key_get("scopus_key", keyring = "scythe")
+scythe_set_key(source = "scopus", secret = "YOUR_KEY")
+keyring::key_get("scopus", keyring = "scythe")
 ```
 
 #### Springer
@@ -60,8 +60,8 @@ keyring::key_get("scopus_key", keyring = "scythe")
 The Springer Nature API key is available by creating an application [here](https://dev.springernature.com/admin/applications) after signing up for an account. The key can be set and retrieved using:
 
 ```
-scythe_set_key(springer_key = "YOUR_KEY")
-keyring::key_get("springer_key", keyring = "scythe")
+scythe_set_key(source = "springer", secret = "YOUR_KEY")
+keyring::key_get("springer", keyring = "scythe")
 ```
 
 ## Acknowledgments
