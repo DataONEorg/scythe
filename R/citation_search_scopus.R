@@ -14,7 +14,7 @@
 #' }
 citation_search_scopus <- function(identifiers) {
 
-    check_identifiers(identifiers)
+    identifiers <- check_identifiers(identifiers)
 
     if (length(identifiers) > 8){
         message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
@@ -25,7 +25,8 @@ citation_search_scopus <- function(identifiers) {
         warning("Skipping Scopus search due to missing API key. Set an API key using scythe_set_key() to include Scopus results.")
         return()
     }
-    identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
+    identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE)
+    identifiers_enc <- unlist(identifiers_enc)
     results <- list()
     for (i in 1:length(identifiers_enc)) {
         Sys.sleep(0.12)

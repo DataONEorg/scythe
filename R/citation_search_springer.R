@@ -29,7 +29,8 @@ citation_search_springer <- function(identifiers) {
         return()
     }
 
-    identifiers_enc <- utils::URLencode(identifiers, reserved = T)
+    identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE)
+    identifiers_enc <- unlist(identifiers_enc)
 
     results <- list()
     for (i in 1:length(identifiers_enc)) {
