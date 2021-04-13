@@ -70,6 +70,9 @@ citation_search_springer <- function(identifiers) {
 
     # remove doi: prefix for consistency
     springer_results$article_id <- gsub("doi:", "", springer_results$article_id)
+    
+    # drop NA results
+    springer_results <- tidyr::drop_na(springer_results)
 
     return(springer_results)
 
