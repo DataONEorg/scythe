@@ -17,7 +17,8 @@ Imports:
       jsonlite,
       keyring,
       rcrossref,
-      rplos
+      rplos,
+      tidyr
 Suggests: 
     covr,
     purrr,

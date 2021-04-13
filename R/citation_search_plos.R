@@ -9,6 +9,7 @@
 #' @return tibble of matching dataset and publication identifiers
 #' @export
 #' @importFrom rplos searchplos
+#' @importFrom tidyr drop_na
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
