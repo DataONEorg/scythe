@@ -13,6 +13,10 @@
 citation_search <- function(identifiers,
                             sources = c("plos", "scopus", "springer")) {
   
+  if(!("character" %in% class(identifiers))){
+    stop("Identifiers must be a character vector.")
+  }
+  
   # run the 'citation_search_*' function for each source
   for (source in sources) {
     search_function <- paste0(source, " <- citation_search_", source, "(identifiers)")
