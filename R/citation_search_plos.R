@@ -9,7 +9,6 @@
 #' @return tibble of matching dataset and publication identifiers
 #' @export
 #' @importFrom rplos searchplos
-#' @importFrom tidyr drop_na
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
@@ -53,7 +52,7 @@ citation_search_plos <- function(identifiers) {
     plos_results <- do.call(rbind, plos_results)
     names(plos_results)[which(names(plos_results) == "id")] <- "article_id"
     names(plos_results)[which(names(plos_results) == "title")] <- "article_title"
-    plos_results <- tidyr::drop_na(plos_results)
+    plos_results <- plos_results[complete.cases(plos_results), ]
 
     return(plos_results)
 }

@@ -10,7 +10,6 @@
 #' @return tibble of matching dataset and publication identifiers
 #' @importFrom jsonlite fromJSON
 #' @importFrom curl curl
-#' @importFrom tidyr drop_na
 #' @export
 #' @examples
 #' \dontrun{
@@ -73,7 +72,7 @@ citation_search_springer <- function(identifiers) {
     springer_results$article_id <- gsub("doi:", "", springer_results$article_id)
     
     # drop NA results
-    springer_results <- tidyr::drop_na(springer_results)
+    springer_results <- springer_results[complete.cases(springer_results), ]
 
     return(springer_results)
 
