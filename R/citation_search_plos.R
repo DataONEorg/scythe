@@ -52,6 +52,7 @@ citation_search_plos <- function(identifiers) {
     plos_results <- do.call(rbind, plos_results)
     names(plos_results)[which(names(plos_results) == "id")] <- "article_id"
     names(plos_results)[which(names(plos_results) == "title")] <- "article_title"
+    plos_results <- plos_results[complete.cases(plos_results), ]
 
     return(plos_results)
 }

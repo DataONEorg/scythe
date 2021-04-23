@@ -29,7 +29,8 @@ citation_search_springer <- function(identifiers) {
         return()
     }
 
-    identifiers_enc <- utils::URLencode(identifiers, reserved = T)
+    identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE)
+    identifiers_enc <- unlist(identifiers_enc)
 
     results <- list()
     for (i in 1:length(identifiers_enc)) {
@@ -69,6 +70,9 @@ citation_search_springer <- function(identifiers) {
 
     # remove doi: prefix for consistency
     springer_results$article_id <- gsub("doi:", "", springer_results$article_id)
+    
+    # drop NA results
+    springer_results <- springer_results[complete.cases(springer_results), ]
 
     return(springer_results)
 
