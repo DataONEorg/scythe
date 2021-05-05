@@ -21,6 +21,9 @@ citation_search_plos <- function(identifiers) {
     }
 
     identifiers <- check_identifiers(identifiers)
+    
+    # encode colons to not break PLOS API
+    identifiers <- gsub(":", "%3A", identifiers)
 
     # search for identifier
     results <- lapply(identifiers, function(x){
