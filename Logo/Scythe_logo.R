@@ -22,7 +22,7 @@ wikicomm_image <- "Logo/Glazed_pottery_tile_man_with_a_scythe_01.jpg"
 
 library(showtext)
 # Loading Google fonts (http://www.google.com/fonts)
-font_add_google("Architects Daughter", "AD") # ok not bad - like the y
+font_add_google("Architects Daughter", "AD") # My 1st pick - fuller and more upright
 font_add_google("Nothing You Could Do", "NYCD") # looks like how 'scythe' sounds, a bit italicized 
 
 showtext_auto() 
