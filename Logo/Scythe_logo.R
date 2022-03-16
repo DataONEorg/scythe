@@ -8,6 +8,7 @@
 #install.packages("magick")
 #install.packages("hexSticker")
 #install.packages("tidyverse")
+#install.packages("showtext")
 
 library(magick)
 library(hexSticker)
@@ -16,9 +17,13 @@ library(tidyverse)
 
 ## Construct hex sticker logo
 
-# import image 
-
+# import image from 
 wikicomm_image <- "Logo/Glazed_pottery_tile_man_with_a_scythe_01.jpg"
+
+# font library
+library(showtext)
+font_add_google('Raleway', "raleway") # Loading Google fonts (http://www.google.com/fonts)
+showtext_auto() 
 
 scythe_logo <- sticker(wikicomm_image, #subplot image
                        s_x = 1, #subplot position relative to 1(center)
@@ -26,13 +31,14 @@ scythe_logo <- sticker(wikicomm_image, #subplot image
                        s_width = 1.1,
                        s_height = 1.1,
                        package = "Scythe", #text displayed for package name
+                       p_family = "raleway",
                        p_size = 20, #font size
                        p_x = 1, # position font
                        p_y = 0.45,
                        p_color = "grey30",
                        dpi = 1000, # plot resolution
                        asp = 1, # aspect ratio of image file
-                       h_color = "grey30", # boarder color
+                       h_color = "grey85", # boarder color
                        h_size = 3, # boarder size
                        white_around_sticker = T,
                        spotlight = F,
