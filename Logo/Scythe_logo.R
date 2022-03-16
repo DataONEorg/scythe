@@ -24,8 +24,6 @@ library(showtext)
 # Loading Google fonts (http://www.google.com/fonts)
 font_add_google("Architects Daughter", "AD") # ok not bad - like the y
 font_add_google("Nothing You Could Do", "NYCD") # looks like how 'scythe' sounds, a bit italicized 
-font_add_google("Charmonman", "Char") # looks like a scythe! edge of c and e weird 
-font_add_google("Swanky and Moo Moo", "moo") # I like. y too curvy? too short?
 
 showtext_auto() 
 
@@ -35,7 +33,7 @@ scythe_logo <- sticker(wikicomm_image, #subplot image
                        s_width = 1.1,
                        s_height = 1.1,
                        package = "Scythe", #text displayed for package name
-                       p_family = "moo",
+                       p_family = "AD",
                        p_size = 75, #font size
                        p_x = 1, # position font
                        p_y = 0.45,
@@ -46,6 +44,6 @@ scythe_logo <- sticker(wikicomm_image, #subplot image
                        h_size = 3, # boarder size
                        white_around_sticker = T,
                        spotlight = F,
-                       filename = "Logo/Scythe_Hex_Sticker-moo.png")
+                       filename = "Logo/Scythe_Hex_Sticker-AD.png")
 
 scythe_logo
