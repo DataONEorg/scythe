@@ -48,5 +48,8 @@ scythe_logo <- sticker(wikicomm_image, #subplot image
 
 scythe_logo
 
+## Build favicons of logo
+# build_favicons(pkg = ".", overwrite = FALSE)
+
 ## Check tests and package structure
 devtools::check(cran=TRUE)
