@@ -44,7 +44,7 @@ scythe_logo <- sticker(wikicomm_image, #subplot image
                        h_size = 3, # boarder size
                        white_around_sticker = T,
                        spotlight = F,
-                       filename = "man/figures/Scythe_Hex_Sticker-AD.png")
+                       filename = "man/figures/logo.png")
 
 scythe_logo
 
