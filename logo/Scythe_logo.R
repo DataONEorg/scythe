@@ -18,7 +18,7 @@ library(tidyverse)
 ## Construct hex sticker logo
 
 # import image from 
-wikicomm_image <- "Logo/Glazed_pottery_tile_man_with_a_scythe_01.jpg"
+wikicomm_image <- "man/figures/Glazed_pottery_tile_man_with_a_scythe_01.jpg"
 
 library(showtext)
 # Loading Google fonts (http://www.google.com/fonts)
