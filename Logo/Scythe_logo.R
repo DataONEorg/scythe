@@ -1,4 +1,4 @@
-### Great Logo for Scythe Package
+### Logo for Scythe Package
 ### Althea Marks
 ### Created 2022_3_16
 
@@ -47,3 +47,6 @@ scythe_logo <- sticker(wikicomm_image, #subplot image
                        filename = "Logo/Scythe_Hex_Sticker-AD.png")
 
 scythe_logo
+
+## Check tests and package structure
+devtools::check(cran=TRUE)
