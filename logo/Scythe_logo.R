@@ -18,7 +18,7 @@ library(tidyverse)
 ## Construct hex sticker logo
 
 # Use image from Wikimedia commons
-wikicomm_image <- "man/figures/pottery_bg_removed.png"
+wikicomm_image <- "man/figures/logo_image_2022_03_29.png"
 
 library(showtext)
 # Loading Google fonts (http://www.google.com/fonts)
