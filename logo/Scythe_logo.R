@@ -17,17 +17,12 @@ library(tidyverse)
 
 ## Construct hex sticker logo
 
-# import image from 
-<<<<<<< HEAD
+# Use image from Wikimedia commons
 wikicomm_image <- "man/figures/pottery_bg_removed.png"
-=======
-wikicomm_image <- "man/figures/Glazed_pottery_tile_man_with_a_scythe_01.jpg"
->>>>>>> 2292abb6ad82a7c16a2f08406bb5a4797015c5c9
 
 library(showtext)
 # Loading Google fonts (http://www.google.com/fonts)
-font_add_google("Architects Daughter", "AD") # My 1st pick - fuller and more upright
-font_add_google("Nothing You Could Do", "NYCD") # looks like how 'scythe' sounds, a bit italicized 
+font_add_google("Architects Daughter", "AD") 
 
 showtext_auto() 
 
