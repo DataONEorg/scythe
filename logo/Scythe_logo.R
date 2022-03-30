@@ -18,6 +18,8 @@ library(tidyverse)
 ## Construct hex sticker logo
 
 # Use image from Wikimedia commons
+# https://commons.wikimedia.org/wiki/File:Glazed_pottery_tile,_blue_and_white_decor_of_a_man_with_a_scythe_01.jpg
+# 17th century earthenware. Cultural heritage Agency of the Netherlands Art Collection
 wikicomm_image <- "man/figures/logo_image_2022_03_29.png"
 
 library(showtext)
