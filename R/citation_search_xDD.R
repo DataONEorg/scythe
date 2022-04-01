@@ -41,10 +41,10 @@ citation_search_xDD <- function(identifiers) {
   
   # extract relevant information from raw results
   for (i in 1:length(results)) {
-    num_citations <- as.numeric(resultssuccess$data$hits)
+    num_citations <- as.numeric(results[i]$success$data$hits)
     
-    article_id <- results[[i]][["search-results"]][["entry"]][["prism:doi"]]
-    article_title <- results[[i]][["search-results"]][["entry"]][["dc:title"]]
+    article_id <- results[i]$success$data$doi
+    article_title <- results[i]$success$data$title
     dataset_id <- rep(identifiers[i], num_citations)
     scopus_results <- rbind(scopus_results, data.frame(article_id,article_title,dataset_id))
   }
