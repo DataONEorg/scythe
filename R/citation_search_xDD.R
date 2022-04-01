@@ -13,7 +13,9 @@
 #' result <- citation_search_scopus(identifiers)
 #' }
 
-identifiers <- test_citations[1,1]
+identifiers <- test_citations[[1,6]] # [row,column]
+results_test <- jsonlite::fromJSON(curl::curl(paste0("https://xdd.wisc.edu/api/snippets?term=", identifiers[1]))) #list
+
 
 citation_search_xDD <- function(identifiers) {
   
