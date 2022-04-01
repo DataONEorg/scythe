@@ -41,16 +41,16 @@ citation_search_xDD <- function(identifiers) {
   
   # extract relevant information from raw results
   for (i in 1:length(results)) {
-    num_citations <- as.numeric(results[i]$success$data$hits)
+    num_citations <- as.numeric(length(results))
     
     article_id <- results[i]$success$data$doi
     article_title <- results[i]$success$data$title
-    dataset_id <- rep(identifiers[i], num_citations)
-    scopus_results <- rbind(scopus_results, data.frame(article_id,article_title,dataset_id))
+    dataset_id <- rep(identifiers[i], times = num_citations)
+    xDD_results <- rbind(xDD_results, data.frame(article_id,article_title,dataset_id))
   }
   
   # clean up dois
-  scopus_results$dataset_id <- gsub("ALL:", "", scopus_results$dataset_id)
+  xDD_results$dataset_id <- gsub("ALL:", "", xDD_results$dataset_id)
   
-  return(scopus_results)
+  return(xDD_results)
 }
