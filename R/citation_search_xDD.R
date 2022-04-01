@@ -23,11 +23,6 @@ citation_search_xDD <- function(identifiers) {
     message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
   }
   
-  key <- scythe_get_key("scopus")
-  if (is.na(key)) {
-    warning("Skipping Scopus search due to missing API key. Set an API key using scythe_set_key() to include Scopus results.")
-    return()
-  }
   identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE)
   identifiers_enc <- unlist(identifiers_enc)
   results <- list()
