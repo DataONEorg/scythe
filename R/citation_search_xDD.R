@@ -35,9 +35,9 @@ citation_search_xDD <- function(identifiers) {
   }
   
   # initialize df for storing results in orderly fashion
-  scopus_results <- data.frame(article_id = character(),
-                               article_title = character(),
-                               dataset_id = character())
+  xDD_results <- data.frame(article_id = character(),
+                            article_title = character(),
+                            ataset_id = character())
   
   # extract relevant information from raw results
   for (i in 1:length(results)) {
