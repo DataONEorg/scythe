@@ -37,11 +37,11 @@ citation_search_xDD <- function(identifiers) {
   # initialize df for storing results in orderly fashion
   xDD_results <- data.frame(article_id = character(),
                             article_title = character(),
-                            ataset_id = character())
+                            dataset_id = character())
   
   # extract relevant information from raw results
   for (i in 1:length(results)) {
-    num_citations <- as.numeric(results[[i]][["search-results"]][["opensearch:totalResults"]])
+    num_citations <- as.numeric(resultssuccess$data$hits)
     
     article_id <- results[[i]][["search-results"]][["entry"]][["prism:doi"]]
     article_title <- results[[i]][["search-results"]][["entry"]][["dc:title"]]
