@@ -23,13 +23,13 @@ citation_search_xDD <- function(identifiers) {
  #   message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
  # }
   
-  identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE)
-  identifiers_enc <- unlist(identifiers_enc)
+  identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE) # URLencode - percent-encode in URL
+  identifiers_enc <- unlist(identifiers_enc) # given a list, produces a vector
   results <- list()
   for (i in 1:length(identifiers_enc)) {
     Sys.sleep(0.12)
     results[[i]] <-
-      fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], paste("&APIKey=",key, sep=""))))
+      fromJSON(curl(paste0("https://xdd.wisc.edu/api/snippets?term=", identifiers[i])))
   }
   
   # initialize df for storing results in orderly fashion
