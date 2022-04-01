@@ -19,9 +19,9 @@ citation_search_xDD <- function(identifiers) {
   
   identifiers <- check_identifiers(identifiers)
   
-  if (length(identifiers) > 8){
-    message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
-  }
+ # if (length(identifiers) > 8){
+ #   message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
+ # }
   
   identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE)
   identifiers_enc <- unlist(identifiers_enc)
