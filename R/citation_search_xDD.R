@@ -39,10 +39,10 @@ citation_search_xDD <- function(identifiers) {
                             article_title = character(),
                             dataset_id = character())
   
-  # extract relevant information from raw results
+  # extract relevant information from raw results 
   for (i in 1:length(results)) {
     num_citations <- as.numeric(length(results))
-    
+ # Check here for results extraction example https://github.com/trashbirdecology/bbl_xdd/blob/master/R/get_xdd_df.r   
     article_id <- results[i]$success$data$doi
     article_title <- results[i]$success$data$title
     dataset_id <- rep(identifiers[i], times = num_citations)
