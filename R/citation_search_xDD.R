@@ -13,7 +13,9 @@
 #' result <- citation_search_xDD(identifiers)
 #' results_list <- jsonlite::fromJSON(curl::curl(paste0("https://xdd.wisc.edu/api/snippets?term=", "10.18739/A2D08X")))
 #' }
-test_citations <- read_csv("inst/testdata/test-citations.csv")
+#' 
+#test_citations <- read_csv("inst/testdata/test-citations.csv")
+#test_citations <- test_citations[,6]
 
 citation_search_xDD <- function(identifiers) {
   
@@ -33,26 +35,25 @@ citation_search_xDD <- function(identifiers) {
   }
   
   # initialize df for storing results in orderly fashion
-  xDD_results <- data.frame()
+  xDD_results <- data.frame(dataset_id = character(),
+                            article_id = character(),
+                            article_title = character())
   
   # extract relevant information from raw results 
   for (i in 1:length(results)) {
     if (length(results[[i]]$success$data) == 0 | is.null(results[[i]]$success$data)){
-      xDD_results <- data.frame(dataset_id = identifiers[i],
+      df <- data.frame(dataset_id = identifiers[i],
                                 article_id = NA,
                                 article_title = NA)
     }
     else if (length(results[[i]]$success$data > 0)){    
-  #  num_citations <- as.numeric(length(results))
     dataset_id <- identifiers[i] #rep(identifiers[[i]], times = num_citations)
     article_id <- results[[i]]$success$data$doi
     article_title <- results[[i]]$success$data$title
-    xDD_results <- data.frame(dataset_id = dataset_id,
-                              article_id = article_id,
-                              article_title = article_title)
+    df <- data.frame(dataset_id, article_id, article_title)
     }
     
-  xDD_results <- do.call(rbind, xDD_results)
+  xDD_results <- rbind(xDD_results, df)
   }
   
   return(xDD_results)
