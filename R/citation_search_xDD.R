@@ -10,9 +10,9 @@
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
-#' result <- citation_search_scopus(identifiers)
+#' result <- citation_search_xDD(identifiers)
 #' }
-
+test_citations <- read_csv("inst/testdata/test-citations.csv")
 identifiers <- test_citations[[1,6]] # [row,column]
 results_test <- jsonlite::fromJSON(curl::curl(paste0("https://xdd.wisc.edu/api/snippets?term=", identifiers[1]))) #list
 
@@ -43,9 +43,9 @@ citation_search_xDD <- function(identifiers) {
   for (i in 1:length(results)) {
     num_citations <- as.numeric(length(results))
  # Check here for results extraction example https://github.com/trashbirdecology/bbl_xdd/blob/master/R/get_xdd_df.r   
-    article_id <- results[i]$success$data$doi
-    article_title <- results[i]$success$data$title
-    dataset_id <- rep(identifiers[i], times = num_citations)
+    article_id <- results[[i]]$success$data$doi
+    article_title <- results[[i]]$success$data$title
+    dataset_id <- rep(identifiers[[i]], times = num_citations)
     xDD_results <- rbind(xDD_results, data.frame(article_id,article_title,dataset_id))
   }
   
