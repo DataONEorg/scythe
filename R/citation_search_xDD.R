@@ -14,9 +14,6 @@
 #' results_list <- jsonlite::fromJSON(curl::curl(paste0("https://xdd.wisc.edu/api/snippets?term=", "10.18739/A2D08X")))
 #' }
 test_citations <- read_csv("inst/testdata/test-citations.csv")
-identifiers <- test_citations[[1,6]] # [row,column]
-results_test <- jsonlite::fromJSON(curl::curl(paste0("https://xdd.wisc.edu/api/snippets?term=", identifiers[1]))) #list
-
 
 citation_search_xDD <- function(identifiers) {
   
@@ -36,22 +33,27 @@ citation_search_xDD <- function(identifiers) {
   }
   
   # initialize df for storing results in orderly fashion
-  xDD_results <- data.frame(article_id = character(),
-                            article_title = character(),
-                            dataset_id = character())
+  xDD_results <- data.frame()
   
   # extract relevant information from raw results 
   for (i in 1:length(results)) {
-    num_citations <- as.numeric(length(results))
- # Check here for results extraction example https://github.com/trashbirdecology/bbl_xdd/blob/master/R/get_xdd_df.r   
+    if (length(results[[i]]$success$data) == 0 | is.null(results[[i]]$success$data)){
+      xDD_results <- data.frame(dataset_id = identifiers[i],
+                                article_id = NA,
+                                article_title = NA)
+    }
+    else if (length(results[[i]]$success$data > 0)){    
+  #  num_citations <- as.numeric(length(results))
+    dataset_id <- identifiers[i] #rep(identifiers[[i]], times = num_citations)
     article_id <- results[[i]]$success$data$doi
     article_title <- results[[i]]$success$data$title
-    dataset_id <- rep(identifiers[[i]], times = num_citations)
-    xDD_results <- rbind(xDD_results, article_id,article_title,dataset_id)
+    xDD_results <- data.frame(dataset_id = dataset_id,
+                              article_id = article_id,
+                              article_title = article_title)
+    }
+    
+  xDD_results <- do.call(rbind, xDD_results)
   }
-  
-  # clean up dois
-  xDD_results$dataset_id <- gsub("ALL:", "", xDD_results$dataset_id)
   
   return(xDD_results)
 }
