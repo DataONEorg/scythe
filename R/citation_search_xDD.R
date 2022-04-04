@@ -11,6 +11,7 @@
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 #' result <- citation_search_xDD(identifiers)
+#' results_list <- jsonlite::fromJSON(curl::curl(paste0("https://xdd.wisc.edu/api/snippets?term=", "10.18739/A2D08X")))
 #' }
 test_citations <- read_csv("inst/testdata/test-citations.csv")
 identifiers <- test_citations[[1,6]] # [row,column]
@@ -46,7 +47,7 @@ citation_search_xDD <- function(identifiers) {
     article_id <- results[[i]]$success$data$doi
     article_title <- results[[i]]$success$data$title
     dataset_id <- rep(identifiers[[i]], times = num_citations)
-    xDD_results <- rbind(xDD_results, data.frame(article_id,article_title,dataset_id))
+    xDD_results <- rbind(xDD_results, article_id,article_title,dataset_id)
   }
   
   # clean up dois
