@@ -41,17 +41,19 @@ citation_search_xDD <- function(identifiers) {
   
   # extract relevant information from raw results 
   for (i in 1:length(results)) {
-    if (length(results[[i]]$success$data) == 0 | is.null(results[[i]]$success$data)){
+    if (nrow(results[[i]]$success$data) == 0){
       df <- data.frame(dataset_id = identifiers[i],
                                 article_id = NA,
                                 article_title = NA)
     }
-    else if (length(results[[i]]$success$data > 0)){    
-    dataset_id <- identifiers[i] #rep(identifiers[[i]], times = num_citations)
+    else if (nrow(results[[i]]$success$data) > 0){    
+    dataset_id <- identifiers[i]
     article_id <- results[[i]]$success$data$doi
     article_title <- results[[i]]$success$data$title
     df <- data.frame(dataset_id, article_id, article_title)
     }
+    
+    else (print("input does not meet either conditions within"))
     
   xDD_results <- rbind(xDD_results, df)
   }
