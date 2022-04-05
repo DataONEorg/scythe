@@ -1,11 +1,11 @@
 #' Search for citations in xDD
 #'
-#' This function searches for citations in xDD. Not sure if Requests are throttled
-#' x requests/second so as to not overload the xDD API.
+#' This function searches for citations in xDD. Uses 'snippets/term' function in xDD API
 #'
-#' @param identifiers a vector of identifiers to be searched for
+#' @param identifiers a vector of identifiers to be searched for. Without hypertext
+#' Transfer Protocol "https://" or "http://" 
 #'
-#' @return tibble of matching dataset and publication identifiers
+#' @return tibble of publications and identifiers that site input dataset and publication identifiers
 #' @export
 #' @examples
 #' \dontrun{
