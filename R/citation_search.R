@@ -11,7 +11,7 @@
 #' result <- citation_search(identifiers, sources = c("plos"))
 #' }
 citation_search <- function(identifiers,
-                            sources = c("plos", "scopus", "springer")) {
+                            sources = c("plos", "scopus", "springer", "xDD")) {
   
   if(!("character" %in% class(identifiers))){
     stop("Identifiers must be a character vector.")
