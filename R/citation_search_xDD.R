@@ -1,12 +1,12 @@
 #' Search for citations in xDD
 #'
-#' This function searches for citations in xDD. Uses 'snippets/term' function in xDD API
+#' This function searches for citations in xDD. Uses 'snippets/term' function in xDD API and 
+#' searches through all of xDD corpus (not limited to full-text documents).
 #'
-#' @param identifiers a vector of identifiers to be searched for. Without hypertext
-#' Transfer Protocol "https://" or "http://" 
+#' @param identifiers a vector of identifiers to be searched for, without hypertext
+#' transfer protocol: "https://" or "http://" 
 #'
-#' @return tibble of publications and identifiers that site input dataset and publication identifiers
-#' @export
+#' @return tibble of publications and their identifiers that contain 
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
