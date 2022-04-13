@@ -22,7 +22,6 @@ citation_search_xDD <- function(identifiers) {
   identifiers_enc <- unlist(identifiers_enc) # given a list, produces a vector
   results <- list()
   for (i in 1:length(identifiers_enc)) {
-    Sys.sleep(0.12)
     results[[i]] <-
       fromJSON(curl(paste0("https://xdd.wisc.edu/api/snippets?term=", identifiers[i], "&corpus=all")))
   }
