@@ -10,11 +10,11 @@
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR", "10.18739/A29K97")
-#' result <- citation_search_xDD(identifiers)
+#' result <- citation_search_xdd(identifiers)
 #' }
 #'
 
-citation_search_xDD <- function(identifiers) {
+citation_search_xdd <- function(identifiers) {
   
   identifiers <- check_identifiers(identifiers)
   

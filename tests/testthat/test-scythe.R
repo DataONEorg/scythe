@@ -13,7 +13,7 @@ test_that("scythe", {
         }
         else return(NULL)
     }))
-    keyed_sources <- c(keyed_sources, "plos", "xDD")
+    keyed_sources <- c(keyed_sources, "plos", "xdd")
 
     # Load a set of example citations that should be found by the API
     citations_file <- system.file("testdata","test-citations.csv",package="scythe")
