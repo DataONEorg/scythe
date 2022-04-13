@@ -45,8 +45,6 @@ citation_search_xDD <- function(identifiers) {
     df <- data.frame(dataset_id, article_id, article_title)
     }
     
-    else (print("input does not meet either conditions within if else if statements")) # need closing else statement?
-    
   xDD_results <- rbind(xDD_results, df) # bind subsequent results to previous results data.frame
   }
   
