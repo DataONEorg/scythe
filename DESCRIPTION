@@ -21,5 +21,6 @@ Imports:
 Suggests: 
     covr,
     purrr,
-    testthat (>= 2.1.0)
-RoxygenNote: 7.1.1
+    testthat (>= 3.0.0)
+RoxygenNote: 7.1.2
+Config/testthat/edition: 3
