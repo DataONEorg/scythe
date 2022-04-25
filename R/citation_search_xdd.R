@@ -29,7 +29,8 @@ citation_search_xdd <- function(identifiers) {
   # initialize df for storing results in orderly fashion
   xDD_results <- data.frame(dataset_id = character(),
                             article_id = character(),
-                            article_title = character())
+                            article_title = character(),
+                            article_journal = character())
   
   # extract select information from results 
   for (i in 1:length(results)) {
