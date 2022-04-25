@@ -27,26 +27,28 @@ citation_search_xdd <- function(identifiers) {
   }
   
   # initialize df for storing results in orderly fashion
-  xDD_results <- data.frame(dataset_id = character(),
+  xdd_results <- data.frame(dataset_id = character(),
                             article_id = character(),
                             article_title = character(),
-                            article_journal = character())
+                            article_source = character())
   
   # extract select information from results 
   for (i in 1:length(results)) {
     if (length(results[[i]]$success$data) == 0){ # if no returned results, do this
       df <- data.frame(dataset_id = identifiers[i],
-                                article_id = NA,
-                                article_title = NA)
+                       article_id = NA,
+                       article_title = NA,
+                       article_source = "xdd")
     }
     else if (nrow(results[[i]]$success$data) > 0){ # if results returned, do this
     dataset_id <- identifiers[i]
     article_id <- results[[i]]$success$data$doi
     article_title <- results[[i]]$success$data$title
-    df <- data.frame(dataset_id, article_id, article_title)
+    article_source <- "xdd"
+    df <- data.frame(dataset_id, article_id, article_title, article_source)
     }
     
-  xDD_results <- rbind(xDD_results, df) # bind subsequent results to previous results data.frame
+  xDD_results <- rbind(xdd_results, df) # bind subsequent results to previous results data.frame
   }
   
   return(xDD_results)
