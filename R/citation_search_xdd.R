@@ -48,8 +48,8 @@ citation_search_xdd <- function(identifiers) {
     df <- data.frame(dataset_id, article_id, article_title, article_source)
     }
     
-  xDD_results <- rbind(xdd_results, df) # bind subsequent results to previous results data.frame
+  xdd_results <- rbind(xdd_results, df) # bind subsequent results to previous results data.frame
   }
   
-  return(xDD_results)
+  return(xdd_results)
 }
