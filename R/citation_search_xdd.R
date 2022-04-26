@@ -49,6 +49,7 @@ citation_search_xdd <- function(identifiers) {
     }
     
   xdd_results <- rbind(xdd_results, df) # bind subsequent results to previous results data.frame
+  xdd_results <- xdd_results[complete.cases(xdd_results), ] # remove incomplete cases (NAs)
   }
   
   return(xdd_results)
