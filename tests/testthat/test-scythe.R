@@ -28,10 +28,19 @@ test_that("scythe", {
     expect_true("10.1371/journal.pone.0213037" %in% results$article_id)
 
     # Use scythe to search for each of the citations, and verify they are found
-    pmap(citations, function(...) {
-        current <- dplyr::tibble(...)
-        results <- suppressWarnings(citation_search(current$dataone_pid,
-                                                    sources = keyed_sources))
-        expect_true(current$pub_id %in% results$article_id)
-    })
+    x <- data.frame(article_id = character(), 
+                    article_title = character(), 
+                    dataset_id = character(), 
+                    source = character())
+    for(i to length(citations)
+        z <- citation_search(citations$dataone_pid, sources = keyed_sources))
+    
+    expect_true(current$pub_id %in% results$article_id)
+    
+    # pmap(citations, function(...) {
+    #     current <- dplyr::tibble(...)
+    #     results <- suppressWarnings(citation_search(current$dataone_pid,
+    #                                                 sources = keyed_sources))
+    #     expect_true(current$pub_id %in% results$article_id)
+    # })
 })
