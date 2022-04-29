@@ -16,7 +16,7 @@ test_that("scythe", {
     keyed_sources <- c(keyed_sources, "plos", "xdd")
 
     # Load a set of example citations that should be found by the API
-    citations_file <- system.file("testdata","test-citations.csv",package="scythe")
+    citations_file <- system.file("testdata","test-citations.csv", package="scythe")
     citations <- read.csv(citations_file, stringsAsFactors = FALSE)
     # Filter for test set contained within what we have keys set for
     citations <- dplyr::filter(citations, source %in% keyed_sources)
@@ -32,10 +32,10 @@ test_that("scythe", {
                     article_title = character(), 
                     dataset_id = character(), 
                     source = character())
-    for(i to length(citations)
-        z <- citation_search(citations$dataone_pid, sources = keyed_sources))
+    for(i in length(citations)) {
+        z <- citation_search(citations$dataone_pid, sources = keyed_sources)
     
-    expect_true(current$pub_id %in% results$article_id)
+    expect_true(current$pub_id %in% results$article_id)}
     
     # pmap(citations, function(...) {
     #     current <- dplyr::tibble(...)
