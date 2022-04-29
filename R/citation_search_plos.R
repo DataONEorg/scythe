@@ -40,10 +40,10 @@ citation_search_plos <- function(identifiers) {
     # assign dataset identifier to each result
     for (i in 1:length(results)){
         if (results[[i]]$meta$numFound == 0 | is.null(results[[i]])){
-            plos_results[[i]] <- data.frame(id = NA,
+            plos_results[[i]] <- data.frame(article_id = NA,
                                             dataset_id = identifiers[i],
-                                            title = NA,
-                                            source = "plos")
+                                            article_title = NA,
+                                            article_source = "plos")
         }
         else if (results[[i]]$meta$numFound > 0){
             plos_results[[i]] <- results[[i]]$data
