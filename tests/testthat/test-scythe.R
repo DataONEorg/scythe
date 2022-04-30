@@ -22,20 +22,15 @@ test_that("scythe", {
     citations <- dplyr::filter(citations, source %in% keyed_sources)
     expect_s3_class(citations, "data.frame")
 
-    # Use scythe to search for a single citation, and verify it is found
+    # Use scythe to search for a single citation in plos, and verify it is found
     identifier <- "10.18739/A22274"
     results <- citation_search(identifier, sources = "plos")
     expect_true("10.1371/journal.pone.0213037" %in% results$article_id)
 
-    # Use scythe to search for each of the citations, and verify they are found
-    x <- data.frame(article_id = character(), 
-                    article_title = character(), 
-                    dataset_id = character(), 
-                    source = character())
-    for(i in length(citations)) {
-        z <- citation_search(citations$dataone_pid, sources = keyed_sources)
-    
-    expect_true(current$pub_id %in% results$article_id)}
+    # Use scythe to search for each of the doi citations, and verify they are found
+    doi <- citations %>% filter(!dataone_pid == "arctic-data.6185.2")
+    results_doi <- citation_search(doi$dataone_pid, sources = keyed_sources)
+    expect_true(doi$pub_id %in% results_doi$article_id)
     
     # pmap(citations, function(...) {
     #     current <- dplyr::tibble(...)
