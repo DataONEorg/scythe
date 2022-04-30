@@ -31,7 +31,9 @@ citation_search_scopus <- function(identifiers) {
     for (i in 1:length(identifiers_enc)) {
         Sys.sleep(0.12)
         results[[i]] <-
-            fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], paste("&APIKey=",key, sep=""))))
+            fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", 
+                                 identifiers[i], 
+                                 paste("&APIKey=",key, sep=""))))
     }
 
     # initialize df for storing results in orderly fashion
@@ -47,7 +49,7 @@ citation_search_scopus <- function(identifiers) {
         article_id <- results[[i]][["search-results"]][["entry"]][["prism:doi"]]
         article_title <- results[[i]][["search-results"]][["entry"]][["dc:title"]]
         dataset_id <- rep(identifiers[i], num_citations)
-        article_source <- "scopus"
+        article_source <- rep("scopus")
         scopus_results <- rbind(scopus_results, data.frame(article_id,
                                                            article_title,
                                                            dataset_id, 
