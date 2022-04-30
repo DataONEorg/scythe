@@ -28,7 +28,7 @@ test_that("scythe", {
     expect_true("10.1371/journal.pone.0213037" %in% results$article_id)
 
     # Use scythe to search for each of the doi citations, and verify they are found
-    doi <- citations %>% filter(!dataone_pid == "arctic-data.6185.2")
+    doi <- citations[citations[,"dataone_pid"] != "arctic-data.6185.2",]
     results_doi <- citation_search(doi$dataone_pid, sources = keyed_sources)
     expect_true(doi$pub_id %in% results_doi$article_id)
     
