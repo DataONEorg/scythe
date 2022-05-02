@@ -40,9 +40,9 @@ citation_search_plos <- function(identifiers) {
     # assign dataset identifier to each result
     for (i in 1:length(results)){
         if (results[[i]]$meta$numFound == 0 | is.null(results[[i]])){
-            plos_results[[i]] <- data.frame(article_id = NA,
+            plos_results[[i]] <- data.frame(id = NA,
                                             dataset_id = identifiers[i],
-                                            article_title = NA,
+                                            title = NA,
                                             source = "plos")
         }
         else if (results[[i]]$meta$numFound > 0){
@@ -57,7 +57,6 @@ citation_search_plos <- function(identifiers) {
     plos_results <- do.call(rbind, plos_results)
     names(plos_results)[which(names(plos_results) == "id")] <- "article_id"
     names(plos_results)[which(names(plos_results) == "title")] <- "article_title"
-    #names(plos_results)[which(names(plos_results) == "source")] <- "article_source"
     plos_results <- plos_results[complete.cases(plos_results), ] # remove incomplete cases (NAs)
 
     return(plos_results)
