@@ -58,7 +58,7 @@ citation_search_springer <- function(identifiers) {
             springer_results[[i]] <- data.frame(article_id = rep(NA, as.numeric(results[[i]]$result$total)),
                                                 dataset_id = rep(NA, as.numeric(results[[i]]$result$total)),
                                                 article_title = rep(NA, as.numeric(results[[i]]$result$total)),
-                                                article_source = rep("springer", as.numeric(results[[i]]$result$total))
+                                                article_source = rep("springer", as.numeric(results[[i]]$result$total)))
 
             springer_results[[i]]$article_id <- results[[i]]$records$identifier
             springer_results[[i]]$article_title <- results[[i]]$records$title
