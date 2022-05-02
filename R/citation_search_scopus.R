@@ -49,7 +49,7 @@ citation_search_scopus <- function(identifiers) {
         article_id <- results[[i]][["search-results"]][["entry"]][["prism:doi"]]
         article_title <- results[[i]][["search-results"]][["entry"]][["dc:title"]]
         dataset_id <- rep(identifiers[i], num_citations)
-        article_source <- rep("scopus", num_citaitons)
+        article_source <- rep("scopus", num_citations)
         scopus_results <- rbind(scopus_results, data.frame(article_id,
                                                            article_title,
                                                            dataset_id, 
