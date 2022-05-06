@@ -30,12 +30,5 @@ test_that("scythe", {
     # Use scythe to search for each of the doi citations, and verify they are found
     doi <- citations[citations[,"dataone_pid"] != "arctic-data.6185.2",]
     results_doi <- citation_search(doi$dataone_pid, sources = keyed_sources)
-    expect_true(doi$pub_id %in% results_doi$article_id)
-    
-    # pmap(citations, function(...) {
-    #     current <- dplyr::tibble(...)
-    #     results <- suppressWarnings(citation_search(current$dataone_pid,
-    #                                                 sources = keyed_sources))
-    #     expect_true(current$pub_id %in% results$article_id)
-    # })
+    expect_true(all(doi$pub_id %in% results_doi$article_id))
 })
