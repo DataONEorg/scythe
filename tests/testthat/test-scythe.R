@@ -4,8 +4,6 @@ test_that("scythe", {
     # skip on CRAN
     skip_on_cran()
 
-    library(purrr)
-
     # Determine which keys have been set
     keyed_sources <- unlist(lapply(c("scopus", "springer"), function(x){
         if (!is.na(scythe_get_key(x))){
@@ -22,7 +20,8 @@ test_that("scythe", {
     citations <- dplyr::filter(citations, source %in% keyed_sources)
     expect_s3_class(citations, "data.frame")
     # filter doi identifiers only from test set
-    doi <- citations[citations[,"dataone_pid"] != "arctic-data.6185.2",]
+    doi <- citations %>% 
+      filter(dataone_pid != "arctic-data.6185.2")
     
     # Use scopus function to search for single known dataset citation, verify it is found
     scopus_res <- citation_search_scopus("10.18739/A2ZS2KC8C")
