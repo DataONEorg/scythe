@@ -40,7 +40,7 @@ citation_search_scopus <- function(identifiers) {
     scopus_results <- data.frame(article_id = character(),
                                  article_title = character(),
                                  dataset_id = character(),
-                                 article_source = character())
+                                 source = character())
 
     # extract relevant information from raw results
     for (i in 1:length(results)) {
@@ -49,11 +49,11 @@ citation_search_scopus <- function(identifiers) {
         article_id <- results[[i]][["search-results"]][["entry"]][["prism:doi"]]
         article_title <- results[[i]][["search-results"]][["entry"]][["dc:title"]]
         dataset_id <- rep(identifiers[i], num_citations)
-        article_source <- rep("scopus", num_citations)
+        source <- rep("scopus", num_citations)
         scopus_results <- rbind(scopus_results, data.frame(article_id,
                                                            article_title,
                                                            dataset_id, 
-                                                           article_source))
+                                                           source))
     }
 
     # clean up dois
