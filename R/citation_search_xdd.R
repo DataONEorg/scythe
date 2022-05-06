@@ -28,23 +28,23 @@ citation_search_xdd <- function(identifiers) {
   
   # initialize df for storing results in orderly fashion
   xdd_results <- data.frame(article_id = character(),
-                            dataset_id = character(),
                             article_title = character(),
-                            article_source = character())
+                            dataset_id = character(),
+                            source = character())
   
   # extract select information from results 
   for (i in 1:length(results)) {
     if (length(results[[i]]$success$data) == 0){ # if no returned results, do this
-      df <- data.frame(article_id = NA,
+      df <- data.frame(article_title = NA,
+                       article_id = NA,
                        dataset_id = identifiers[i],
-                       article_title = NA,
-                       article_source = "xdd")
+                       source = "xdd")
     }
     else if (nrow(results[[i]]$success$data) > 0){ # if results returned, do this
-    dataset_id <- identifiers[i]
     article_id <- results[[i]]$success$data$doi
     article_title <- results[[i]]$success$data$title
-    article_source <- "xdd"
+    dataset_id <- identifiers[i]
+    source <- "xdd"
     df <- data.frame(dataset_id, article_id, article_title, article_source)
     }
     
