@@ -49,16 +49,16 @@ citation_search_springer <- function(identifiers) {
     for (i in 1:length(results)){
         if (as.numeric(results[[i]]$result$total) == 0 | is.null(results[[i]])){
             springer_results[[i]] <- data.frame(article_id = NA,
-                                                dataset_id = identifiers[i],
                                                 article_title = NA,
-                                                article_source = "springer")
+                                                dataset_id = identifiers[i],
+                                                source = "springer")
         }
         else if (as.numeric(results[[i]]$result$total) > 0){
 
             springer_results[[i]] <- data.frame(article_id = rep(NA, as.numeric(results[[i]]$result$total)),
-                                                dataset_id = rep(NA, as.numeric(results[[i]]$result$total)),
                                                 article_title = rep(NA, as.numeric(results[[i]]$result$total)),
-                                                article_source = rep("springer", as.numeric(results[[i]]$result$total)))
+                                                dataset_id = rep(NA, as.numeric(results[[i]]$result$total)),
+                                                source = rep("springer", as.numeric(results[[i]]$result$total)))
 
             springer_results[[i]]$article_id <- results[[i]]$records$identifier
             springer_results[[i]]$article_title <- results[[i]]$records$title
