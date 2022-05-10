@@ -14,13 +14,11 @@ get_test_doi <- function(library){
 
 
 citation_test_doi <- function(library){
-  
+  # pull one known citation from specified library/source
   one_citation <- get_test_doi(library)
-  
+  # pull the dataset doi from known citation
   one_doi <- one_citation$dataone_pid 
-  
-  one_article <- one_citation$pub_id
-  
+  # search for single known doi citation in specified library/source
   search <- paste0(library, "<- citation_search_", library, "(one_doi)")
   result <- eval(parse(text = search))
   
