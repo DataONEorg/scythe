@@ -1,4 +1,4 @@
-test_that("scythe", {
+test_that("scythe finds multiple dois", {
 
     # Overall tests of the scythe package go here. These require the network, so
     # skip on CRAN
@@ -19,7 +19,11 @@ test_that("scythe", {
     # Filter for test set contained within what we have keys set for
     citations <- dplyr::filter(citations, source %in% keyed_sources)
     expect_s3_class(citations, "data.frame")
-
+    
+    # remove non-doi identifiers
+    doi <- citations %>% 
+      filter(grepl("^10\\.", dataone_pid)) 
+             
     # Use scythe to search for each of the doi citations, and verify they are found
     results_doi <- citation_search(doi$dataone_pid, sources = keyed_sources)
     expect_true(all(doi$pub_id %in% results_doi$article_id))
