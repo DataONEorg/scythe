@@ -17,11 +17,9 @@ citation_test_doi <- function(library){
   
   one_citation <- get_test_doi(library)
   
-  one_doi <- one_citation %>% 
-    select(dataone_pid)
+  one_doi <- one_citation$dataone_pid 
   
-  one_article <- one_citation %>% 
-    select(pub_id)
+  one_article <- one_citation$pub_id
   
   search <- paste0(library, "<- citation_search_", library, "(one_doi)")
   result <- eval(parse(text = search))
