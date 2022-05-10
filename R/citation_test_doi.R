@@ -1,3 +1,9 @@
+#' Internal helper functions for testing 
+#' 
+#' @param library a character string of a single library source ("xdd", "plos", "scopus", "springer")
+#' @return tibble of single test doi citation known to occur in source library
+#'
+
 get_test_doi <- function(library){
   # Load a set of example citations that should be found by the API
   citations_file <- system.file("testdata","test-citations.csv", package="scythe")
@@ -6,12 +12,17 @@ get_test_doi <- function(library){
   one_citation <- citations %>% 
     filter(grepl("^10\\.", dataone_pid), # remove non-doi identifiers
            source == c(library)) # only need one doi
-  
-  one_citation <- one_citation[1,] # select only one example
+  # select only one example
+  one_citation <- one_citation[1,] 
   
   return(one_citation)
 }
 
+#' Internal helper functions for testing 
+#' 
+#' @param library a character string of a single library source ("xdd", "plos", "scopus", "springer")
+#' @return tibble of search results produced by single test doi citation
+#'
 
 citation_test_doi <- function(library){
   # pull one known citation from specified library/source
