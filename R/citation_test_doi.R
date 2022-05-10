@@ -18,6 +18,11 @@ citation_test_doi <- function(library){
   one_citation <- get_test_doi(library)
   # pull the dataset doi from known citation
   one_doi <- one_citation$dataone_pid 
+  # get api access key if needed for library
+  if (!is.na(scythe_get_key(library))){
+    message (paste0( library, " has API key set"))
+  }
+  else message(paste0(library, " does NOT have API key set"))
   # search for single known doi citation in specified library/source
   search <- paste0(library, "<- citation_search_", library, "(one_doi)")
   result <- eval(parse(text = search))

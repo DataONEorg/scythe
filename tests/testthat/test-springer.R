@@ -8,6 +8,6 @@ test_that("springer finds single known doi", {
   # Search for single test doi using citation_search_springer() function
   springer_res <- citation_test_doi("springer") # Need to key API keys in order for this to work
   
-  expect_setequal(test_cit$pub_id, springer_res$article_id)
+  expect_equal(test_cit$pub_id, springer_res$article_id)
 })
 
