@@ -2,7 +2,7 @@
 % Please edit documentation in R/citation_test_doi.R
 \name{get_test_doi}
 \alias{get_test_doi}
-\title{Internal helper functions for testing}
+\title{Internal helper function for testing}
 \usage{
 get_test_doi(library)
 }
@@ -13,5 +13,5 @@ get_test_doi(library)
 tibble of single test doi citation known to occur in source library
 }
 \description{
-Internal helper functions for testing
+Internal helper function for testing
 }
