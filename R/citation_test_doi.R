@@ -22,7 +22,7 @@ citation_test_doi <- function(library){
   if (!is.na(scythe_get_key(library))){
     message (paste0( library, " has API key set"))
   }
-  else message(paste0(library, " does NOT have API key set"))
+  else message(paste0(library, " does NOT have API key set, or is not required"))
   # search for single known doi citation in specified library/source
   search <- paste0(library, "<- citation_search_", library, "(one_doi)")
   result <- eval(parse(text = search))
