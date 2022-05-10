@@ -25,7 +25,7 @@ test_that("scythe finds multiple dois", {
       filter(grepl("^10\\.", dataone_pid)) 
     
     # stop test if NULL (needed API key not found)
-    if(is.null(keyed_sources)){message(paste0("API key is NULL for ", library))}
+    if(is.null(keyed_sources)){message("API key is NULL for either scopus or springer")}
     # search for single known doi citation in specified library/source
     else{
              
