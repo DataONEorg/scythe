@@ -31,7 +31,7 @@ get_test_key <- function(library){
   if (library %in% c("scopus","springer")){
     if(!is.na(scythe_get_key(library))){
       return(library)
-    } else{stop()}
+    } else{NULL}
   }
     else return(library)
   }
@@ -51,11 +51,14 @@ citation_test_doi <- function(library){
   # pull API keys for sources that need them
   keyed_source <- get_test_key(library)
   
-  # search for single known doi citation in specified library/source
-  search <- paste0(keyed_source, "<- citation_search_", keyed_source, "(one_doi)")
-  result <- eval(parse(text = search))
-  
-  return(result)
+  # stop test if NULL (needed API key not found)
+  if(is.null(keyed_source)){message(paste0("API key is NULL for ", library))}
+    # search for single known doi citation in specified library/source
+    else{
+      search <- paste0(keyed_source, "<- citation_search_", keyed_source, "(one_doi)")
+      result <- eval(parse(text = search))
+      result
+      }
 }
 
 
