@@ -1,4 +1,4 @@
-#' Internal helper functions for testing 
+#' Internal helper function for testing 
 #' 
 #' @param library a character string of a single library source ("xdd", "plos", "scopus", "springer")
 #' @return tibble of single test doi citation known to occur in source library
@@ -18,7 +18,26 @@ get_test_doi <- function(library){
   return(one_citation)
 }
 
-#' Internal helper functions for testing 
+#' Internal helper function for testing 
+#' 
+#' Switch designed to help testing sources that require API keys and stop R-CMD-check
+#' from failing from its inability to access API key. 
+#' 
+#' @param library a character string of a single library source ("xdd", "plos", "scopus", "springer")
+#' @return single character string of library/source. Will return NULL if require API key not set
+#'
+#'
+get_test_key <- function(library){
+  if (library %in% c("scopus","springer")){
+    if(!is.na(scythe_get_key(library))){
+      return(library)
+    } else{stop()}
+  }
+    else return(library)
+  }
+
+
+#' Internal helper function for testing 
 #' 
 #' @param library a character string of a single library source ("xdd", "plos", "scopus", "springer")
 #' @return tibble of search results produced by single test doi citation
@@ -29,13 +48,11 @@ citation_test_doi <- function(library){
   one_citation <- get_test_doi(library)
   # pull the dataset doi from known citation
   one_doi <- one_citation$dataone_pid 
-  # get api access key if needed for library
-  if (!is.na(scythe_get_key(library))){
-    message (paste0( library, " has API key set"))
-  }
-  else message(paste0(library, " does NOT have API key set, or is not required"))
+  # pull API keys for sources that need them
+  keyed_source <- get_test_key(library)
+  
   # search for single known doi citation in specified library/source
-  search <- paste0(library, "<- citation_search_", library, "(one_doi)")
+  search <- paste0(keyed_source, "<- citation_search_", keyed_source, "(one_doi)")
   result <- eval(parse(text = search))
   
   return(result)
