@@ -4,10 +4,10 @@
 \alias{get_test_key}
 \title{Internal helper function for testing}
 \usage{
-get_test_key(library)
+get_test_key(source)
 }
 \arguments{
-\item{library}{a character string of a single library source ("xdd", "plos", "scopus", "springer")}
+\item{source}{a character string of a single source source ("xdd", "plos", "scopus", "springer")}
 }
 \value{
 single character string of library/source. Will return NULL if require API key not set

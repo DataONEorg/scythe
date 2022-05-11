@@ -7,7 +7,7 @@
 get_test_doi(library)
 }
 \arguments{
-\item{library}{a character string of a single library source ("xdd", "plos", "scopus", "springer")}
+\item{source}{a character string of a single source source ("xdd", "plos", "scopus", "springer")}
 }
 \value{
 tibble of single test doi citation known to occur in source library

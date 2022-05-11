@@ -4,10 +4,10 @@
 \alias{citation_test_doi}
 \title{Internal helper function for testing}
 \usage{
-citation_test_doi(library)
+citation_test_doi(source)
 }
 \arguments{
-\item{library}{a character string of a single library source ("xdd", "plos", "scopus", "springer")}
+\item{source}{a character string of a single source source ("xdd", "plos", "scopus", "springer")}
 }
 \value{
 tibble of search results produced by single test doi citation
