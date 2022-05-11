@@ -4,14 +4,15 @@
 #' @return tibble of single test doi citation known to occur in source library
 #'
 
-get_test_doi <- function(source){
+get_test_doi <- function(library){ 
+  # use library as function parameter in place of source to not mess with filter 
   # Load a set of example citations that should be found by the API
   citations_file <- system.file("testdata","test-citations.csv", package="scythe")
   citations <- read.csv(citations_file, stringsAsFactors = FALSE)
   
   one_citation <- citations %>% 
     filter(grepl("^10\\.", dataone_pid), # remove non-doi identifiers
-           source == c(source)) # only need one doi
+           source == c(library)) # only need one doi
   # select only one example
   one_citation <- one_citation[1,] 
   
