@@ -15,16 +15,16 @@
 #' scythe_get_key("scopus_key")
 #' }
 scythe_get_key <- function(source) {
-    secret <- NA
-    if (Sys.getenv(source) != "") {
-        secret <- Sys.getenv(source)
-    } else {
-        secret <- tryCatch({
-            keyring::key_get(source, keyring = "scythe")
-        },
-        error = function(cond) {
-            return(NA)
-        })
-    }
-    return(secret)
+  secret <- NA
+  if (Sys.getenv(source) != "") {
+    secret <- Sys.getenv(source)
+  } else {
+    secret <- tryCatch({
+      keyring::key_get(source, keyring = "scythe")
+    },
+    error = function(cond) {
+      return(NA)
+    })
+  }
+  return(secret)
 }
