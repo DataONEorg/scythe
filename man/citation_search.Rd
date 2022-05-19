@@ -4,7 +4,7 @@
 \alias{citation_search}
 \title{Search for citations in text across all APIs}
 \usage{
-citation_search(identifiers, sources = c("plos", "scopus", "springer", "xDD"))
+citation_search(identifiers, sources = c("plos", "scopus", "springer", "xdd"))
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for}

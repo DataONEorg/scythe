@@ -42,11 +42,13 @@ citation_search_plos <- function(identifiers) {
         if (results[[i]]$meta$numFound == 0 | is.null(results[[i]])){
             plos_results[[i]] <- data.frame(id = NA,
                                             dataset_id = identifiers[i],
-                                            title = NA)
+                                            title = NA,
+                                            source = "plos")
         }
         else if (results[[i]]$meta$numFound > 0){
             plos_results[[i]] <- results[[i]]$data
             plos_results[[i]]$dataset_id <- identifiers[i]
+            plos_results[[i]]$source <- "plos"
         }
 
     }
@@ -55,7 +57,7 @@ citation_search_plos <- function(identifiers) {
     plos_results <- do.call(rbind, plos_results)
     names(plos_results)[which(names(plos_results) == "id")] <- "article_id"
     names(plos_results)[which(names(plos_results) == "title")] <- "article_title"
-    plos_results <- plos_results[complete.cases(plos_results), ]
+    plos_results <- plos_results[complete.cases(plos_results), ] # remove incomplete cases (NAs)
 
     return(plos_results)
 }
