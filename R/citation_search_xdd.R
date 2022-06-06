@@ -7,6 +7,7 @@
 #' transfer protocol: "https://" or "http://"
 #'
 #' @return tibble of publications and their identifiers that contain
+#' @export
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR", "10.18739/A29K97")
