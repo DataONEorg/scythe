@@ -14,7 +14,7 @@ transfer protocol: "https://" or "http://"}
 tibble of publications and their identifiers that contain
 }
 \description{
-This function searches for citations in xDD. Uses 'snippets/term' function in xDD API and 
+This function searches for citations in xDD. Uses 'snippets/term' function in xDD API and
 searches through all of xDD corpus (not limited to full-text documents).
 }
 \examples{
