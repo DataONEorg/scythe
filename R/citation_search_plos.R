@@ -67,7 +67,7 @@ citation_search_plos <- function(identifiers) {
   names(plos_results)[which(names(plos_results) == "title")] <-
     "article_title"
   plos_results <-
-    plos_results[complete.cases(plos_results),] # remove incomplete cases (NAs)
+    plos_results[stats::complete.cases(plos_results),] # remove incomplete cases (NAs)
   
   return(plos_results)
 }
