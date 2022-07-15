@@ -42,7 +42,7 @@ citation_search_scopus <- function(identifiers) {
       fromJSON(curl(
         paste0(
           "https://api.elsevier.com/content/search/scopus?query=ALL:",
-          identifiers[i],
+          identifiers_enc[i],
           paste("&APIKey=", key, sep = "")
         )
       ))
@@ -58,13 +58,15 @@ citation_search_scopus <- function(identifiers) {
   
   # extract relevant information from raw results
   for (i in 1:length(results)) {
-    num_citations <-
-      as.numeric(results[[i]][["search-results"]][["opensearch:totalResults"]])
+    
     
     article_id <-
       results[[i]][["search-results"]][["entry"]][["prism:doi"]]
     article_title <-
       results[[i]][["search-results"]][["entry"]][["dc:title"]]
+    
+    num_citations <- length(article_id)
+    
     dataset_id <- rep(identifiers[i], num_citations)
     source <- rep("scopus", num_citations)
     scopus_results <-
