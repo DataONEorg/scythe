@@ -10,6 +10,7 @@
 #' @return tibble of matching dataset and publication identifiers
 #' @importFrom jsonlite fromJSON
 #' @importFrom curl curl
+#' @importFrom stats complete.cases
 #' @export
 #' @examples
 #' \dontrun{

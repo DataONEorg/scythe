@@ -6,7 +6,7 @@ Authors@R: c(
     person("Matthew B.", "Jones", role = "aut", email = "jones@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-0077-4738")),
     person("Maya", "Samet", role = "aut", email = "samet@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-5248-9712"))
     )
-Description: Harvests data package citations from several API sources, including PLOS, Scopus, and Springer.
+Description: Harvests data package citations from several API sources, including PLOS, Scopus, and Springer. This package uses modified functions from `rplos`, which is no longer maintained.
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
@@ -17,11 +17,11 @@ Imports:
       jsonlite,
       keyring,
       rcrossref,
-      rplos,
+      solrium,
       stats
 Suggests: 
     covr,
     purrr,
     testthat (>= 3.0.0)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.1
 Config/testthat/edition: 3

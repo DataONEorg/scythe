@@ -15,7 +15,8 @@ tibble of matching dataset and publication identifiers
 \description{
 This function searches for citations in PLOS. Requests are throttled
 at one identifier every 6 seconds so as to not overload the PLOS
-API.
+API. This function uses modified source code from the `rplos` package, 
+which is no longer maintained.
 }
 \examples{
 \dontrun{
