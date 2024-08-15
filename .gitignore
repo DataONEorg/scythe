@@ -10,6 +10,6 @@
 /results
 
 key.txt
-
+data/
 # Ignore Vim's swap files
 .*.swp
