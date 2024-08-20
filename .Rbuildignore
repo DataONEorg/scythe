@@ -6,4 +6,6 @@
 ^CONTRIBUTING\.md$
 ^api-scopus-search.sh$
 ^\.github$
-^/logo$
+^logo$
+^data$
+^results$

@@ -13,6 +13,11 @@
 #' }
 
 write_citation_pairs <- function(citation_list, path) {
+    
+    if (!requireNamespace("bib2df", quietly = TRUE)) {
+        stop("The 'bib2df' package is required for this function but is not installed. Please install it.", call. = FALSE)
+    }
+    
     if (any(!(c("article_id", "dataset_id") %in% names(citation_list)))) {
         stop(
             .call = FALSE,

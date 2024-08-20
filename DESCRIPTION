@@ -18,8 +18,9 @@ Imports:
       rcrossref,
       solrium,
       stats
-Remotes: ropensci/bib2df@devel
-Suggests: 
+Remotes: ropensci/bib2df@a8e96e13f5
+Suggests:
+    bib2df,
     covr,
     purrr,
     testthat (>= 3.0.0)
