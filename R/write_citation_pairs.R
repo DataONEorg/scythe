@@ -2,6 +2,7 @@
 #'
 #' @param citation_list (data.frame) data.frame of citation pairs containing variables article_id and dataset_id
 #' @param path (char) path to write JSON citation pairs to
+#' @param extra_fields (char) list of extra fields to pass to bib2df::bib2df
 #' @import dplyr
 #' @export
 #'
@@ -12,7 +13,7 @@
 #' write_citation_pairs(citation_list = pairs, path = "citation_pairs.json")
 #' }
 
-write_citation_pairs <- function(citation_list, path) {
+write_citation_pairs <- function(citation_list, path, extra_fields = NULL) {
     
     if (!requireNamespace("bib2df", quietly = TRUE)) {
         stop("The 'bib2df' package is required for this function but is not installed. Please install it.", call. = FALSE)
@@ -43,7 +44,7 @@ write_citation_pairs <- function(citation_list, path) {
     writeLines(bib_full, t)
     
     # import as a dataframe
-    df <- bib2df::bib2df(t)
+    df <- bib2df::bib2df(t, extra_fields = extra_fields)
     
     # assign article_id to data.frame
     df$dataset_id <- citation_list$dataset_id

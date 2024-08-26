@@ -4,12 +4,14 @@
 \alias{write_citation_pairs}
 \title{Write citation pairs}
 \usage{
-write_citation_pairs(citation_list, path)
+write_citation_pairs(citation_list, path, extra_fields = NULL)
 }
 \arguments{
 \item{citation_list}{(data.frame) data.frame of citation pairs containing variables article_id and dataset_id}
 
 \item{path}{(char) path to write JSON citation pairs to}
+
+\item{extra_fields}{(char) list of extra fields to pass to bib2df::bib2df}
 }
 \description{
 Write citation pairs
