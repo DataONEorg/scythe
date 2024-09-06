@@ -1,10 +1,11 @@
 Package: scythe
 Title: Harvest and register data package citations 
-Version: 0.9.1
+Version: 1.0.0
 Authors@R: c(
     person("Jeanette", "Clark", role = c("aut", "cre"), email = "jclark@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-4703-1974")),
     person("Matthew B.", "Jones", role = "aut", email = "jones@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-0077-4738")),
-    person("Maya", "Samet", role = "aut", email = "samet@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-5248-9712"))
+    person("Maya", "Samet", role = "aut", email = "samet@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-5248-9712")),
+    person("Althea", "Marks", role = "aut", email = "marks@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-9370-9128"))
     )
 Description: Harvests data package citations from several API sources, including PLOS, Scopus, and Springer. This package uses modified functions from `rplos`, which is no longer maintained.
 License: Apache License (>= 2.0)

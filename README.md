@@ -3,21 +3,21 @@
 [![Codecov test coverage](https://codecov.io/gh/DataONEorg/scythe/branch/develop/graph/badge.svg)](https://codecov.io/gh/DataONEorg/scythe?branch=develop)
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
-- **Authors**: Jeanette Clark, Matthew B. Jones, Maya Samet
+- **Authors**: Jeanette Clark, Matthew B. Jones, Maya Samet, Althea Marks
 - [doi:10.5063/______________](http://doi.org/10.5063/_______________)
 - **License**: [Apache 2](http://opensource.org/licenses/Apache-2.0)
 - [Package source code on Github](https://github.com/DataONEorg/scythe)
 - [**Submit Bugs and feature requests**](https://github.com/DataONEorg/scythe/issues)
 
 Automates the full text harvesting of dataset citations from various full text article databases, 
-including Scopus, PLOS, and Springer.
+including Scopus, PLOS, Springer, and XDD.
 
 ## Installation
 
 ### Released version
 
 ```
-remotes::install_github("DataONEorg/scythe@v0.9.1")
+remotes::install_github("DataONEorg/scythe@v1.0.0")
 ```
 
 The *scythe* R package should be available for use at this point.
@@ -57,7 +57,7 @@ keyring::key_get("scopus", keyring = "scythe")
 
 #### Springer
 
-The Springer Nature API key is available by creating an application [here](https://dev.springernature.com/admin/applications) after signing up for an account. The key can be set and retrieved using:
+The Springer Nature API key is available by creating an application [here](https://dev.springernature.com/) after signing up for an account. The key can be set and retrieved using:
 
 ```
 scythe_set_key(source = "springer", secret = "YOUR_KEY")
