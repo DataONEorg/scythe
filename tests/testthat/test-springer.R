@@ -1,6 +1,13 @@
 test_that("springer finds single known doi", {
   skip_on_cran()
   
+  key <- scythe_get_key("springer")
+  
+  if (is.na(key)){
+      skip()
+      message("No Springer key set. Skipping.")
+  }
+    
   # Pull single test doi citation from test-citations.csv
   test_cit <- get_test_doi("springer")
   
