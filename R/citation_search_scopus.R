@@ -33,7 +33,7 @@ citation_search_scopus <- function(identifiers) {
     return()
   }
   identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
-  identifiers_enc <- unlist(identifiers_enc)
+
   results <- list()
   for (i in 1:length(identifiers_enc)) {
     Sys.sleep(0.12)

@@ -22,14 +22,14 @@ citation_search_springer <- function(identifiers) {
     message(
       paste0(
         "Your result will take ~",
-        length(identifiers) * 1 ,
+        length(identifiers) * 1,
         " seconds to return, since this function is rate limited to one call every second."
       )
     )
   }
-  
+
   identifiers <- check_identifiers(identifiers)
-  
+
   key <- scythe_get_key("springer")
   if (is.na(key)) {
     warning(
@@ -37,11 +37,10 @@ citation_search_springer <- function(identifiers) {
     )
     return()
   }
-  
-  identifiers_enc <-
-    lapply(identifiers, utils::URLencode, reserved = TRUE)
+
+  identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
   identifiers_enc <- unlist(identifiers_enc)
-  
+
   results <- list()
   for (i in 1:length(identifiers_enc)) {
     Sys.sleep(1)
@@ -56,21 +55,20 @@ citation_search_springer <- function(identifiers) {
         )
       ))
   }
-  
-  
+
+
   # assign dataset identifier to each result
   springer_results <- list()
   for (i in 1:length(results)) {
     if (as.numeric(results[[i]]$result$total) == 0 |
-        is.null(results[[i]])) {
+      is.null(results[[i]])) {
       springer_results[[i]] <- data.frame(
         article_id = NA,
         article_title = NA,
         dataset_id = identifiers[i],
         source = "springer"
       )
-    }
-    else if (as.numeric(results[[i]]$result$total) > 0) {
+    } else if (as.numeric(results[[i]]$result$total) > 0) {
       springer_results[[i]] <-
         data.frame(
           article_id = rep(NA, as.numeric(results[[i]]$result$total)),
@@ -78,28 +76,25 @@ citation_search_springer <- function(identifiers) {
           dataset_id = rep(NA, as.numeric(results[[i]]$result$total)),
           source = rep("springer", as.numeric(results[[i]]$result$total))
         )
-      
+
       springer_results[[i]]$article_id <-
         results[[i]]$records$identifier
       springer_results[[i]]$article_title <-
         results[[i]]$records$title
       springer_results[[i]]$dataset_id <- identifiers[i]
     }
-    
   }
-  
+
   # bind resulting tibbles
   springer_results <- do.call(rbind, springer_results)
-  
+
   # remove doi: prefix for consistency
   springer_results$article_id <-
     gsub("doi:", "", springer_results$article_id)
-  
+
   # drop NA results
   springer_results <-
-    springer_results[complete.cases(springer_results),]
-  
+    springer_results[complete.cases(springer_results), ]
+
   return(springer_results)
-  
-  
 }

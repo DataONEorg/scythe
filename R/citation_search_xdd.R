@@ -14,14 +14,10 @@
 #' result <- citation_search_xdd(identifiers)
 #' }
 #'
-
 citation_search_xdd <- function(identifiers) {
   identifiers <- check_identifiers(identifiers)
-  
-  identifiers_enc <-
-    lapply(identifiers, utils::URLencode, reserved = TRUE) # URLencode - percent-encode in URL
-  identifiers_enc <-
-    unlist(identifiers_enc) # given a list, produces a vector
+
+  identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
   results <- list()
   for (i in 1:length(identifiers_enc)) {
     results[[i]] <-
@@ -33,7 +29,7 @@ citation_search_xdd <- function(identifiers) {
         )
       ))
   }
-  
+
   # initialize df for storing results in orderly fashion
   xdd_results <- data.frame(
     article_id = character(),
@@ -41,7 +37,7 @@ citation_search_xdd <- function(identifiers) {
     dataset_id = character(),
     source = character()
   )
-  
+
   # extract select information from results
   for (i in 1:length(results)) {
     if (length(results[[i]]$success$data) == 0) {
@@ -52,8 +48,7 @@ citation_search_xdd <- function(identifiers) {
         dataset_id = identifiers[i],
         source = "xdd"
       )
-    }
-    else if (nrow(results[[i]]$success$data) > 0) {
+    } else if (nrow(results[[i]]$success$data) > 0) {
       # if results returned, do this
       article_id <- results[[i]]$success$data$doi
       article_title <- results[[i]]$success$data$title
@@ -62,12 +57,12 @@ citation_search_xdd <- function(identifiers) {
       df <-
         data.frame(article_id, article_title, dataset_id, source)
     }
-    
+
     xdd_results <-
       rbind(xdd_results, df) # bind subsequent results to previous results data.frame
     xdd_results <-
       xdd_results[complete.cases(xdd_results), ] # remove incomplete cases (NAs)
   }
-  
+
   return(xdd_results)
 }
