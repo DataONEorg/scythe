@@ -15,16 +15,8 @@
 #' result <- citation_search_plos(identifiers)
 #' }
 citation_search_plos <- function(identifiers) {
-  if (length(identifiers) > 1) {
-    message(
-      paste0(
-        "Your result will take ~",
-        length(identifiers) * 6,
-        " seconds to return,
-                   since this function is rate limited to one call every 6 seconds."
-      )
-    )
-  }
+  wait_seconds <- 6
+  report_est_wait(length(identifiers), wait_seconds)
 
   identifiers <- check_identifiers(identifiers)
 
