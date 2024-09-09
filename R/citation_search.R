@@ -12,21 +12,23 @@
 #' }
 citation_search <- function(identifiers,
                             sources = c("plos", "scopus", "springer", "xdd")) {
-  if (!("character" %in% class(identifiers))) {
-    stop("Identifiers must be a character vector.")
-  }
+    
+  stopifnot(is.character(identifiers))
+    
+    unid <- sources[!(sources %in% c("plos", "scopus", "springer", "xdd"))]
+    if (length(unid) > 0) {
+        stop(paste("Source", unid, "is not recognized.", collapse = ". "))
+    }
   
-  # run the 'citation_search_*' function for each source
-  for (source in sources) {
-    search_function <-
-      paste0(source, " <- citation_search_", source, "(identifiers)")
-    eval(parse(text = search_function))
-  }
-  
-  # combine all of the resulting data frames and return the result df
-  bind_function <-
-    paste0("rbind(", paste0(sources, collapse = ","), ")")
-  result <- eval(parse(text = bind_function))
+    search_funs <- sapply(sources, function(source)
+        get(paste0("citation_search_", source), mode="function"))
+    
+    # Run each search, producing a list of dataframes
+    result_df_list <- lapply(search_funs,
+                             function(search_fun) search_fun(identifiers))
+    
+    # Combine the resulting data frames and return the result df
+    result <- dplyr::bind_rows(result_df_list)
   
   return(result)
   
