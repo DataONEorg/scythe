@@ -29,7 +29,7 @@ citation_search_scopus <- function(identifiers) {
 
   results <- list()
   for (i in 1:length(identifiers_enc)) {
-    Sys.sleep(0.12)
+    Sys.sleep(wait_seconds)
     results[[i]] <-
       fromJSON(curl(
         paste0(

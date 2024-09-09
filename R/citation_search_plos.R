@@ -25,7 +25,7 @@ citation_search_plos <- function(identifiers) {
 
   # search for identifier
   results <- lapply(identifiers, function(x) {
-    Sys.sleep(6)
+    Sys.sleep(wait_seconds)
     v <- searchplos(
       q = x,
       fl = c("id", "title"),

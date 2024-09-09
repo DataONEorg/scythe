@@ -35,7 +35,7 @@ citation_search_springer <- function(identifiers) {
 
   results <- list()
   for (i in 1:length(identifiers_enc)) {
-    Sys.sleep(1)
+    Sys.sleep(wait_seconds)
     results[[i]] <-
       jsonlite::fromJSON(curl::curl(
         paste0(
