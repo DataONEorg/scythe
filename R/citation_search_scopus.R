@@ -13,44 +13,57 @@
 #' result <- citation_search_scopus(identifiers)
 #' }
 citation_search_scopus <- function(identifiers) {
+  identifiers <- check_identifiers(identifiers)
 
-    identifiers <- check_identifiers(identifiers)
+  wait_seconds <- 0.12
+  report_est_wait(length(identifiers), wait_seconds)
 
-    if (length(identifiers) > 8){
-        message(paste0("Your result will take ~", length(identifiers)/9 ," seconds to return, since this function is rate limited to 9 calls per second."))
-    }
+  key <- scythe_get_key("scopus")
+  if (is.na(key)) {
+    warning(
+      "Skipping Scopus search due to missing API key. Set an API key using scythe_set_key() to include Scopus results."
+    )
+    return()
+  }
+  identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
 
-    key <- scythe_get_key("scopus")
-    if (is.na(key)) {
-        warning("Skipping Scopus search due to missing API key. Set an API key using scythe_set_key() to include Scopus results.")
-        return()
-    }
-    identifiers_enc <- lapply(identifiers, utils::URLencode, reserved = TRUE)
-    identifiers_enc <- unlist(identifiers_enc)
-    results <- list()
-    for (i in 1:length(identifiers_enc)) {
-        Sys.sleep(0.12)
-        results[[i]] <-
-            fromJSON(curl(paste0("https://api.elsevier.com/content/search/scopus?query=ALL:", identifiers[i], paste("&APIKey=",key, sep=""))))
-    }
+  results <- list()
+  for (i in 1:length(identifiers_enc)) {
+    Sys.sleep(wait_seconds)
+    results[[i]] <-
+      fromJSON(curl(
+        paste0(
+          "https://api.elsevier.com/content/search/scopus?query=ALL:",
+          identifiers_enc[i],
+          paste("&APIKey=", key, sep = "")
+        )
+      ))
+  }
 
-    # initialize df for storing results in orderly fashion
-    scopus_results <- data.frame(article_id = character(),
-                                 article_title = character(),
-                                 dataset_id = character())
+  # initialize df for storing results in orderly fashion
+  scopus_results <- data.frame(
+    article_id = character(),
+    article_title = character(),
+    dataset_id = character(),
+    source = character()
+  )
 
-    # extract relevant information from raw results
-    for (i in 1:length(results)) {
-        num_citations <- as.numeric(results[[i]][["search-results"]][["opensearch:totalResults"]])
+  # extract relevant information from raw results
+  for (i in 1:length(results)) {
+    article_id <-
+      results[[i]][["search-results"]][["entry"]][["prism:doi"]]
+    article_title <-
+      results[[i]][["search-results"]][["entry"]][["dc:title"]]
 
-        article_id <- results[[i]][["search-results"]][["entry"]][["prism:doi"]]
-        article_title <- results[[i]][["search-results"]][["entry"]][["dc:title"]]
-        dataset_id <- rep(identifiers[i], num_citations)
-        scopus_results <- rbind(scopus_results, data.frame(article_id,article_title,dataset_id))
-    }
+    num_citations <- length(article_id)
 
-    # clean up dois
-    scopus_results$dataset_id <- gsub("ALL:", "", scopus_results$dataset_id)
+    dataset_id <- rep(identifiers[i], num_citations)
+    source <- rep("scopus", num_citations)
+    scopus_results <- rbind(
+      scopus_results,
+      data.frame(article_id, article_title, dataset_id, source)
+    )
+  }
 
-    return(scopus_results)
+  return(scopus_results)
 }

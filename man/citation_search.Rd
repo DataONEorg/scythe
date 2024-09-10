@@ -4,12 +4,13 @@
 \alias{citation_search}
 \title{Search for citations in text across all APIs}
 \usage{
-citation_search(identifiers, sources = c("plos", "scopus", "springer"))
+citation_search(identifiers, sources = c("plos", "scopus", "springer", "xdd"))
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for}
 
-\item{sources}{a vector indicating which sources to query (one or more of plos, scopus, springer)}
+\item{sources}{a vector indicating which sources to query (one or
+more of plos, scopus, springer)}
 }
 \value{
 tibble of matching dataset and publication identifiers

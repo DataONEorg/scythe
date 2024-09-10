@@ -1,25 +1,29 @@
 Package: scythe
 Title: Harvest and register data package citations 
-Version: 0.9.1
+Version: 1.0.0
 Authors@R: c(
-    person("Jeanette", "Clark", role = c("aut", "cre"), email = "jeanetteclark@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-4703-1974")),
+    person("Jeanette", "Clark", role = c("aut", "cre"), email = "jclark@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-4703-1974")),
     person("Matthew B.", "Jones", role = "aut", email = "jones@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-0077-4738")),
-    person("Maya", "Samet", role = "aut", email = "samet@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-5248-9712"))
+    person("Maya", "Samet", role = "aut", email = "samet@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-5248-9712")),
+    person("Althea", "Marks", role = "aut", email = "marks@nceas.ucsb.edu", comment=c(ORCID = "0000-0002-9370-9128"))
     )
-Description: Harvests data package citations from several API sources, including PLOS, Scopus, and Springer.
+Description: Harvests data package citations from several API sources, including PLOS, Scopus, and Springer. This package uses modified functions from `rplos`, which is no longer maintained.
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
 Imports:
-      bib2df,
       curl,
       dplyr,
       jsonlite,
       keyring,
       rcrossref,
-      rplos
-Suggests: 
+      solrium,
+      stats
+Remotes: ropensci/bib2df@a8e96e13f5
+Suggests:
+    bib2df,
     covr,
     purrr,
-    testthat (>= 2.1.0)
-RoxygenNote: 7.1.1
+    testthat (>= 3.0.0)
+RoxygenNote: 7.3.1
+Config/testthat/edition: 3
