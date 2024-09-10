@@ -1,10 +1,9 @@
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/scythe)](https://cran.r-project.org/package=scythe)
 [![R-CMD-check](https://github.com/DataONEorg/scythe/workflows/R-CMD-check/badge.svg)](https://github.com/DataONEorg/scythe/actions)
 [![Codecov test coverage](https://codecov.io/gh/DataONEorg/scythe/branch/develop/graph/badge.svg)](https://codecov.io/gh/DataONEorg/scythe?branch=develop)
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
 - **Authors**: Jeanette Clark, Matthew B. Jones, Maya Samet, Althea Marks
-- [doi:10.5063/______________](http://doi.org/10.5063/_______________)
+- [doi:10.18739/A2VT1GR7M](http://doi.org/10.18739/A2VT1GR7M)
 - **License**: [Apache 2](http://opensource.org/licenses/Apache-2.0)
 - [Package source code on Github](https://github.com/DataONEorg/scythe)
 - [**Submit Bugs and feature requests**](https://github.com/DataONEorg/scythe/issues)

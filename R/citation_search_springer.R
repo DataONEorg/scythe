@@ -42,8 +42,7 @@ citation_search_springer <- function(identifiers) {
           "http://api.springernature.com/meta/v2/json?q=",
           identifiers[i],
           "&api_key=",
-          key,
-          "&p=100"
+          key
         )
       ))
   }
