@@ -2,6 +2,8 @@ FROM rocker/r-ver:4
 
 RUN groupadd -r scythe && useradd -r -g scythe scythe
 RUN mkdir -p /var/data/scythe && chown scythe.scythe /var/data/scythe
+RUN mkdir -p /apps/scythe && chown scythe.scythe /apps/scythe
+
 
 RUN apt-get update && apt-get install -y \
     librdf-dev \
@@ -20,12 +22,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN Rscript -e "install.packages(c('devtools', 'dataone', 'tidyr', 'redland', 'jsonlite', 'lubridate'))"
-RUN Rscript -e "devtools::install_github('dataoneorg/scythe@v1.0.0', dependencies = TRUE)"
+RUN Rscript -e "devtools::install_github('dataoneorg/scythe@89d52978', dependencies = TRUE)"
 
 USER scythe:scythe
 
 WORKDIR /var/data/scythe
 
-COPY ./scripts/search.R .
-
-CMD ["Rscript", "--vanilla", "search.R", "urn:node:ARCTIC"]
+COPY ./scripts/search.R /apps/scythe/
