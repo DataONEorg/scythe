@@ -11,12 +11,14 @@ nodes <- commandArgs(trailingOnly = TRUE)
 
 get_node_dois <- function(node_id) {
     mn <- getMNode(CNode("PROD"), node_id)
-    queryParamList <- list(q="id:doi*", 
-                           fl="id",
+    queryParamList <- list(q="id:doi* OR seriesId:doi*", 
+                           fl="id, seriesId",
                            start ="0",
                            rows = "10")
     result <- query(mn, solrQuery=queryParamList, as="data.frame", parse=FALSE)
-    return(result$id)
+    pids <- c(result$id, result$seriesId)
+    dois <- grep("doi:", pids, value = TRUE)
+    return(dois)
 }
 
 get_metrics_citations <- function(from = as.POSIXct("2000-01-01"), to = as.POSIXct(Sys.Date())){
@@ -46,15 +48,18 @@ get_metrics_citations <- function(from = as.POSIXct("2000-01-01"), to = as.POSIX
 
 dois <- c()
 for (node in nodes){
+    message(paste("Gathering DOIs for: ", node)) 
     node_dois <- get_node_dois(node)
     dois <- c(dois, node_dois)
-}
+} 
+dois_unique <- unique(dois)
 
 # set up file to write to
 today <- format(Sys.Date(), "%Y%m%d")
-fp <- paste0("scythe-citations-", today, ".json")
+fp <- paste0("scythe-citations-", today, ".csv") 
 
-found_citations <- citation_search(dois, sources)
+message("Beginning citations search.")
+found_citations <- citation_search(dois_unique, sources) 
 
 if (is.null(found_citations) || nrow(found_citations) == 0){
     writeLines("No citations found.", fp)
@@ -62,8 +67,8 @@ if (is.null(found_citations) || nrow(found_citations) == 0){
     existing_citations <- get_metrics_citations()
     new_citations <- anti_join(found_citations, existing_citations, by = c("dataset_id" = "target_id", "article_id" = "source_id"))
     if (nrow(new_citations) > 0) {
-        write_citation_pairs(new_citations, fp)
+        write.csv(new_citations, fp, row_names = FALSE)
     } else {
-        writeLines("No citations found.", fp)
+        writeLines("No new citations found.", fp)
     }
 }
