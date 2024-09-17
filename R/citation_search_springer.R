@@ -22,13 +22,21 @@ citation_search_springer <- function(identifiers) {
   report_est_wait(length(identifiers), wait_seconds)
 
   identifiers <- check_identifiers(identifiers)
+  
+  # initialize df for storing results in orderly fashion
+  springer_results <- data.frame(
+      article_id = character(),
+      article_title = character(),
+      dataset_id = character(),
+      source = character()
+  )
 
   key <- scythe_get_key("springer")
   if (is.na(key)) {
     warning(
       "Skipping Springer search due to missing API key. Set an API key using scythe_set_key() to include Springer results."
     )
-    return()
+    return(springer_results)
   }
 
   identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
