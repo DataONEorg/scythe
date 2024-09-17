@@ -1,4 +1,4 @@
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ .Values.cronjob.name }}
@@ -15,17 +15,24 @@ spec:
               image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               env:
-                - name: ENV
-                  value: {{ .Values.env }}
+              - name: springer
+                valueFrom:
+                  secretKeyRef:
+                    name: api-keys
+                    key: springer
+              - name: scopus
+                valueFrom:
+                  secretKeyRef:
+                    name: api-keys
+                    key: scopus
               command:
                 - /bin/sh
                 - -c
-                - |
-                  {{ .Values.cronjob.command }}
+                - {{ .Values.cronjob.command }} {{- range .Values.cronjob.nodes }} {{ . }} {{ end }}
               volumeMounts:
               - name: {{ .Values.persistence.claimName }}
                 mountPath: {{ .Values.persistence.mountPath }}
-                readOnly: true
+                readOnly: false
           volumes:
           - name: {{ .Values.persistence.claimName }}
             persistentVolumeClaim:

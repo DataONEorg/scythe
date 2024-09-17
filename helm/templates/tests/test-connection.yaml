@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "scythe.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "scythe.fullname" . }}:8080']
   restartPolicy: Never

@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  pullPolicy: IfNotPresent
+  repository: ghcr.io/dataoneorg/scythe
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: dev
 
 imagePullSecrets: []
 nameOverride: ""
@@ -21,8 +21,11 @@ persistence:
 
 cronjob:
   name: scythe
-  schedule: "*/30 * * * *"
-  command: Rscript -e get_citations.R
+  schedule: "* * 1 * *"
+  command: Rscript --vanilla /apps/scythe/search.R
+  nodes:
+    - urn:node:ARCTIC
+    - urn:node:ESS_DIVE
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -32,6 +35,9 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+ingress:
+  enabled: false
 
 podAnnotations: {}
 
