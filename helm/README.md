@@ -14,7 +14,8 @@ already in the metrics service are removed, and the citations are written to a c
 In `values.yaml`, key fields to configure are:
 
 - **`cronjob.schedule`**: Schedule for the CronJob (in cron format).
-- **`cronjob.nodes`**: A set of node identifiers to be passed to the R script.
+- **`cronjob.nodes`**: A set of node identifiers to be passed to the R script, as a comma separated list
+- **`cronjob.rows`**: Optional number of rows to return per node when getting DOIs. Leave empty to return all identifiers
 
 ## API Keys
 

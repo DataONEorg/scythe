@@ -21,11 +21,11 @@ persistence:
 
 cronjob:
   name: scythe
-  schedule: "* * 1 * *"
+  schedule: "0 12 1 * *"
   command: Rscript --vanilla /apps/scythe/search.R
-  nodes:
-    - urn:node:ARCTIC
-    - urn:node:ESS_DIVE
+  nodes: 'urn:node:ARCTIC,urn:node:ESS_DIVE'
+  # leave blank if returning all rows
+  rows:
 
 serviceAccount:
   # Specifies whether a service account should be created
