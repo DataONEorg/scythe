@@ -45,7 +45,7 @@ main <- function(){
         existing_citations <- get_metrics_citations()
         new_citations <- anti_join(found_citations, existing_citations, by = c("dataset_id" = "target_id", "article_id" = "source_id"))
         if (nrow(new_citations) > 0) {
-            write.csv(new_citations, fp, row_names = FALSE)
+            write.csv(new_citations, fp, row.names = FALSE)
         } else {
             writeLines("No new citations found.", fp)
         }
