@@ -16,7 +16,7 @@ including Scopus, PLOS, Springer, and XDD.
 ### Released version
 
 ```
-remotes::install_github("DataONEorg/scythe@v1.0.0")
+remotes::install_github("DataONEorg/scythe@v1.1.0")
 ```
 
 The *scythe* R package should be available for use at this point.

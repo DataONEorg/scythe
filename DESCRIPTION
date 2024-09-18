@@ -1,6 +1,6 @@
 Package: scythe
 Title: Harvest and register data package citations 
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person("Jeanette", "Clark", role = c("aut", "cre"), email = "jclark@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-4703-1974")),
     person("Matthew B.", "Jones", role = "aut", email = "jones@nceas.ucsb.edu", comment=c(ORCID = "0000-0003-0077-4738")),
