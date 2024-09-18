@@ -26,7 +26,9 @@ citation_search <- function(identifiers,
 
   # Run each search, producing a list of dataframes
   result_df_list <- lapply(search_funs, function(search_fun) {
-    search_fun(identifiers)
+    df <- search_fun(identifiers)
+    df[] <- lapply(df, as.character)  # Coerce all columns to character
+    return(df)
   })
 
   # Combine the resulting data frames and return the result df
