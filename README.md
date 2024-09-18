@@ -16,7 +16,7 @@ including Scopus, PLOS, Springer, and XDD.
 ### Released version
 
 ```
-remotes::install_github("DataONEorg/scythe@v1.0.0")
+remotes::install_github("DataONEorg/scythe@v1.1.0")
 ```
 
 The *scythe* R package should be available for use at this point.
@@ -67,6 +67,7 @@ keyring::key_get("springer", keyring = "scythe")
 Work on this package was supported by:
 
 - NSF-PLR grant #1546024 to M. B. Jones, S. Baker-Yeboah, J. Dozier, M. Schildhauer, and A. Budden
+- NSF-PLR grant #2042102 to M. B. Jones, A. Budden, M. Schildhauer, and J. Dozier
 
 [![nceas_footer](https://live-ncea-ucsb-edu-v01.pantheonsite.io/sites/default/files/2020-03/NCEAS-full%20logo-4C.png)](https://www.nceas.ucsb.edu)
 

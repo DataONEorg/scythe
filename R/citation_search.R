@@ -30,7 +30,13 @@ citation_search <- function(identifiers,
   })
 
   # Combine the resulting data frames and return the result df
-  result <- dplyr::bind_rows(result_df_list)
+  if (all(sapply(result_df_list, function(x) nrow(x) == 0))) {
+      # If all data frames are empty, create an empty data frame with the same structure
+      result <- data.frame()
+  } else {
+      # Otherwise, bind the rows
+      result <- dplyr::bind_rows(result_df_list)
+  }
 
   return(result)
 }

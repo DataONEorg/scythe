@@ -19,11 +19,20 @@ citation_search_scopus <- function(identifiers) {
   report_est_wait(length(identifiers), wait_seconds)
 
   key <- scythe_get_key("scopus")
+  
+  # initialize df for storing results in orderly fashion
+  scopus_results <- data.frame(
+      article_id = character(),
+      article_title = character(),
+      dataset_id = character(),
+      source = character()
+  )
+  
   if (is.na(key)) {
     warning(
       "Skipping Scopus search due to missing API key. Set an API key using scythe_set_key() to include Scopus results."
     )
-    return()
+    return(scopus_results)
   }
   identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
 
@@ -40,13 +49,6 @@ citation_search_scopus <- function(identifiers) {
       ))
   }
 
-  # initialize df for storing results in orderly fashion
-  scopus_results <- data.frame(
-    article_id = character(),
-    article_title = character(),
-    dataset_id = character(),
-    source = character()
-  )
 
   # extract relevant information from raw results
   for (i in 1:length(results)) {

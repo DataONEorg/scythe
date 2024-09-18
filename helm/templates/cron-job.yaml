@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.cronjob.name }}
+spec:
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Chart.Name }}
+              image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              env:
+              - name: springer
+                valueFrom:
+                  secretKeyRef:
+                    name: api-keys
+                    key: springer
+              - name: scopus
+                valueFrom:
+                  secretKeyRef:
+                    name: api-keys
+                    key: scopus
+              command:
+                - /bin/sh
+                - -c
+                - {{- if .Values.cronjob.rows }}
+                    {{ .Values.cronjob.command }} -r {{ .Values.cronjob.rows }} -n {{ .Values.cronjob.nodes }}
+                  {{- else }}
+                    {{ .Values.cronjob.command }} -n {{ .Values.cronjob.nodes }}
+                  {{- end }}
+              volumeMounts:
+              - name: {{ .Values.persistence.claimName }}
+                mountPath: {{ .Values.persistence.mountPath }}
+                readOnly: false
+          volumes:
+          - name: {{ .Values.persistence.claimName }}
+            persistentVolumeClaim:
+              claimName: {{ .Values.persistence.claimName }}
+              readOnly: false
+          restartPolicy: OnFailure
