@@ -23,7 +23,7 @@ cronjob:
   command: Rscript --vanilla /apps/scythe/search.R
   nodes: 'urn:node:ARCTIC,urn:node:ESS_DIVE'
   # leave blank if returning all rows
-  rows:
+  rows: 10000
 
 serviceAccount:
   # Specifies whether a service account should be created
