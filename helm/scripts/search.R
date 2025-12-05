@@ -12,7 +12,8 @@ main <- function(){
     option_list <- list(
         make_option(c("-r", "--rows"), type="integer", default=100000,
                     help="Number of rows to return from query [default %default]"),
-        make_option(c("-n", "--nodes"), type="character", help="Comma separated list of nodes to query")
+        make_option(c("-n", "--nodes"), type="character", help="Comma separated list of nodes to query"),
+        make_option(c("-s", "--sources"), type="character", help="Comma separated list of sources to use")
     )
     
     # parse command-line arguments
@@ -21,8 +22,7 @@ main <- function(){
     
     num_rows <- opts$rows
     nodes <- strsplit(opts$nodes, ",", fixed = TRUE)[[1]]
-    
-    sources <- c("plos", "xdd", "scopus", "springer")
+    sources <- strsplit(opts$sources, ",", fixed = TRUE)[[1]]
     
     dois <- c()
     for (node in nodes){
@@ -45,7 +45,7 @@ main <- function(){
         existing_citations <- get_metrics_citations()
         new_citations <- anti_join(found_citations, existing_citations, by = c("dataset_id" = "target_id", "article_id" = "source_id"))
         if (nrow(new_citations) > 0) {
-            write.csv(new_citations, fp, row.names = FALSE)
+            write.csv(new_citations, fp, row_names = FALSE)
         } else {
             writeLines("No new citations found.", fp)
         }
@@ -54,15 +54,21 @@ main <- function(){
 
 get_node_dois <- function(node_id, num_rows) {
     mn <- getMNode(CNode("PROD"), node_id)
-    queryParamList <- list(q="id:doi* OR seriesId:doi*", 
-                           fl="id, seriesId",
-                           start ="0",
-                           rows = num_rows)
-    result <- query(mn, solrQuery=queryParamList, as="data.frame", parse=FALSE)
+    result <- data.frame()
+    for (i in seq(0, num_rows-1000, 1000)){
+        res <- dataone::query(mn, list(q="id:doi* OR seriesId:doi*", 
+                                                  fl="id, seriesId",
+                                                  start = i,
+                                                  rows = 1000),
+                                         as="data.frame",
+                                         parse=FALSE)
+        result <- rbind(cd, res)
+    }
     pids <- c(result$id, result$seriesId)
     dois <- grep("doi:", pids, value = TRUE)
     return(dois)
 }
+
 get_metrics_citations <- function(from = as.POSIXct("2000-01-01"), to = as.POSIXct(Sys.Date())){
     from <- as.Date(from); to <- as.Date(to)
     from_q <- paste(stringr::str_pad(month(from), 2, side = "left", pad = "0"),

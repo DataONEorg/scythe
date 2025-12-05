@@ -28,11 +28,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - {{- if .Values.cronjob.rows }}
-                    {{ .Values.cronjob.command }} -r {{ .Values.cronjob.rows }} -n {{ .Values.cronjob.nodes }}
-                  {{- else }}
-                    {{ .Values.cronjob.command }} -n {{ .Values.cronjob.nodes }}
-                  {{- end }}
+                - {{ .Values.cronjob.command }} -r {{ .Values.cronjob.rows }} -n {{ .Values.cronjob.nodes }} -s {{ .Values.cronjob.sources }}
               volumeMounts:
               - name: {{ .Values.persistence.claimName }}
                 mountPath: {{ .Values.persistence.mountPath }}
