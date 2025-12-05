@@ -41,7 +41,7 @@ citation_search_plos <- function(identifiers) {
   plos_results <- list()
   # assign dataset identifier to each result
   for (i in 1:length(results)) {
-    if (results[[i]]$meta$numFound == 0 | is.null(results[[i]])) {
+    if (results[[i]]$meta$numFound == 0 || is.null(results[[i]])) {
       plos_results[[i]] <- data.frame(
         id = NA,
         dataset_id = identifiers[i],

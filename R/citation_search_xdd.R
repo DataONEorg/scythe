@@ -46,7 +46,7 @@ xdd_results <- data.frame(
 
   # extract select information from results
   for (i in 1:length(results)) {
-    if (length(results[[i]]$success$data) == 0 | is.null(results[[i]])) {
+    if (length(results[[i]]$success$data) == 0 || is.null(results[[i]])) {
       # if no returned results, do this
       df <- data.frame(
         article_title = NA,
