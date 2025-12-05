@@ -9,13 +9,23 @@ listed in the `values.yaml` file as input. DOIs (either identifiers or series id
 then passed through `scythe::citation_search`, which searches for citations in PLOS, Springer, Scopus, and xDD. Citations
 already in the metrics service are removed, and the citations are written to a csv. This table can be passed to `scythe::write_citation_pairs` to create the JSON file needed for ingest into the metrics system.
 
+To build and push the container, use docker buildx:
+
+```
+docker buildx build \
+  --platform linux/amd64 \
+  -t ghcr.io/dataoneorg/scythe:{tag} \
+  --push .
+```
 ## CronJob
 
 In `values.yaml`, key fields to configure are:
 
 - **`cronjob.schedule`**: Schedule for the CronJob (in cron format).
 - **`cronjob.nodes`**: A set of node identifiers to be passed to the R script, as a comma separated list
-- **`cronjob.rows`**: Optional number of rows to return per node when getting DOIs. Leave empty to return all identifiers
+- **`cronjob.rows`**: Number of rows to return per node when getting DOIs. Set to a very large number when getting all DOIs.
+- **`cronjob.sources`**: Sources to use when searching for results. One or more of: scopus, plos, springer, xdd.
+
 
 ## API Keys
 
