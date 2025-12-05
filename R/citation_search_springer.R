@@ -54,14 +54,14 @@ citation_search_springer <- function(identifiers) {
           ))
       }, error = function(e) {
           message("Springer Nature API call failed for identifier '", identifiers[i], "': ", e$message)
+          NULL
       })
   })
   
   # assign dataset identifier to each result
   springer_results <- list()
   for (i in 1:length(results)) {
-    if (as.numeric(results[[i]]$result$total) == 0 |
-      is.null(results[[i]])) {
+    if (as.numeric(results[[i]]$result$total) == 0 | is.null(results[[i]])) {
       springer_results[[i]] <- data.frame(
         article_id = NA,
         article_title = NA,
