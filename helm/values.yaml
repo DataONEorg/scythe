@@ -20,10 +20,10 @@ persistence:
 cronjob:
   name: scythe
   schedule: "0 12 1 * *"
-  command: Rscript --vanilla /apps/scythe/search.R
+  script: /apps/scythe/search.R
   nodes: 'urn:node:ARCTIC,urn:node:ESS_DIVE'
-  # leave blank if returning all rows
-  rows:
+  sources: 'springer,scopus,xdd'
+  rows: 10
 
 serviceAccount:
   # Specifies whether a service account should be created

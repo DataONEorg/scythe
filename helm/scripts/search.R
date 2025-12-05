@@ -42,7 +42,12 @@ main <- function(){
     if (is.null(found_citations) || nrow(found_citations) == 0){
         writeLines("No citations found.", fp)
     } else {
-        existing_citations <- get_metrics_citations()
+        tryCatch({
+          existing_citations <- get_metrics_citations()
+        }, error = function(e) {
+          print(e)
+        })
+
         new_citations <- anti_join(found_citations, existing_citations, by = c("dataset_id" = "target_id", "article_id" = "source_id"))
         if (nrow(new_citations) > 0) {
             write.csv(new_citations, fp, row.names = FALSE)
@@ -54,11 +59,27 @@ main <- function(){
 
 get_node_dois <- function(node_id, num_rows) {
     mn <- getMNode(CNode("PROD"), node_id)
-    queryParamList <- list(q="id:doi* OR seriesId:doi*", 
-                           fl="id, seriesId",
-                           start ="0",
-                           rows = num_rows)
-    result <- query(mn, solrQuery=queryParamList, as="data.frame", parse=FALSE)
+    
+    if (num_rows > 1000){
+        result <- data.frame()
+        for (i in seq(0, num_rows-1000, 1000)){
+            res <- dataone::query(mn, list(q="id:doi* OR seriesId:doi*", 
+                                                      fl="id, seriesId",
+                                                      start = i,
+                                                      rows = 1000),
+                                             as="data.frame",
+                                             parse=FALSE)
+            result <- dplyr::bind_rows(result, res)
+        }
+    } else {
+        result <- dataone::query(mn, list(q="id:doi* OR seriesId:doi*", 
+                                          fl="id, seriesId",
+                                          start = 0,
+                                          rows = num_rows),
+                                 as="data.frame",
+                                 parse=FALSE)
+    }
+
     pids <- c(result$id, result$seriesId)
     dois <- grep("doi:", pids, value = TRUE)
     return(dois)

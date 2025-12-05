@@ -25,14 +25,17 @@ spec:
                   secretKeyRef:
                     name: api-keys
                     key: scopus
-              command:
-                - /bin/sh
-                - -c
-                - {{- if .Values.cronjob.rows }}
-                    {{ .Values.cronjob.command }} -r {{ .Values.cronjob.rows }} -n {{ .Values.cronjob.nodes }}
-                  {{- else }}
-                    {{ .Values.cronjob.command }} -n {{ .Values.cronjob.nodes }}
-                  {{- end }}
+              command: ["Rscript"]
+              args:
+                - "--vanilla"
+                - "{{ .Values.cronjob.script }}"
+                - "-r"
+                - "{{ .Values.cronjob.rows }}"
+                - "-n"
+                - "{{ .Values.cronjob.nodes }}"
+                - "-s"
+                - "{{ .Values.cronjob.sources }}"
+
               volumeMounts:
               - name: {{ .Values.persistence.claimName }}
                 mountPath: {{ .Values.persistence.mountPath }}
@@ -42,4 +45,4 @@ spec:
             persistentVolumeClaim:
               claimName: {{ .Values.persistence.claimName }}
               readOnly: false
-          restartPolicy: OnFailure
+          restartPolicy: Never
