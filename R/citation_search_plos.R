@@ -25,15 +25,19 @@ citation_search_plos <- function(identifiers) {
 
   # search for identifier
   results <- lapply(identifiers, function(x) {
-    Sys.sleep(wait_seconds)
-    v <- searchplos(
-      q = x,
-      fl = c("id", "title"),
-      limit = 1000
-    )
-    return(v)
+      Sys.sleep(wait_seconds)
+      tryCatch({
+          searchplos(
+              q = x,
+              fl = c("id", "title"),
+              limit = 1000
+          )
+      }, error = function(e) {
+          message("Plos search failed for identifier '", x, "': ", e$message)
+          NULL
+      })
   })
-
+  
   plos_results <- list()
   # assign dataset identifier to each result
   for (i in 1:length(results)) {

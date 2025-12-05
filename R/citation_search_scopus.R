@@ -36,19 +36,20 @@ citation_search_scopus <- function(identifiers) {
   }
   identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
 
-  results <- list()
-  for (i in 1:length(identifiers_enc)) {
-    Sys.sleep(wait_seconds)
-    results[[i]] <-
-      fromJSON(curl(
-        paste0(
-          "https://api.elsevier.com/content/search/scopus?query=ALL:",
-          identifiers_enc[i],
-          paste("&APIKey=", key, sep = "")
-        )
-      ))
-  }
-
+  results <- lapply(seq_along(identifiers_enc), function(i) {
+      Sys.sleep(wait_seconds)
+      tryCatch({
+          fromJSON(curl(
+              paste0(
+                  "https://api.elsevier.com/content/search/scopus?query=ALL:",
+                  identifiers_enc[i],
+                  "&APIKey=", key
+              )
+          ))
+      }, error = function(e) {
+          message("Scopus API call failed for identifier '", identifiers_enc[i], "': ", e$message)
+      })
+  })
 
   # extract relevant information from raw results
   for (i in 1:length(results)) {
