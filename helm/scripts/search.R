@@ -62,7 +62,7 @@ get_node_dois <- function(node_id, num_rows) {
                                                   rows = 1000),
                                          as="data.frame",
                                          parse=FALSE)
-        result <- rbind(cd, res)
+        result <- dplyr::bind_rows(result, res)
     }
     pids <- c(result$id, result$seriesId)
     dois <- grep("doi:", pids, value = TRUE)
