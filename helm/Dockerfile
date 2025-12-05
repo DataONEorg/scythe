@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN Rscript -e "install.packages(c('remotes', 'dataone', 'tidyr', 'redland', 'jsonlite', 'lubridate', 'optparse'))"
+RUN Rscript -e "install.packages(c('remotes', 'tidyr', 'redland', 'jsonlite', 'lubridate', 'optparse'))"
+RUN Rscript -e "remotes::install_github('dataoneorg/rdataone')"
 RUN Rscript -e "remotes::install_github('dataoneorg/scythe@v1.1.0')"
 
 USER scythe:scythe
