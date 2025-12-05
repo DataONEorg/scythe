@@ -18,29 +18,35 @@ citation_search_xdd <- function(identifiers) {
   identifiers <- check_identifiers(identifiers)
 
   identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
-  results <- list()
-  for (i in 1:length(identifiers_enc)) {
-    results[[i]] <-
-      fromJSON(curl(
-        paste0(
-          "https://xdd.wisc.edu/api/snippets?term=",
-          identifiers[i],
-          "&corpus=all"
-        )
-      ))
-  }
+results <- list()
 
-  # initialize df for storing results in orderly fashion
-  xdd_results <- data.frame(
-    article_id = character(),
-    article_title = character(),
-    dataset_id = character(),
-    source = character()
-  )
+for (i in seq_along(identifiers_enc)) {
+  results[[i]] <- tryCatch({
+    fromJSON(curl(
+      paste0(
+        "https://xdd.wisc.edu/api/snippets?term=",
+        identifiers[i],
+        "&corpus=all"
+      )
+    ))
+  }, error = function(e) {
+    message("Failed to fetch identifier ", identifiers[i], ": ", e$message)
+    NULL  # store NULL for failed calls
+  })
+}
+
+# initialize df for storing results in orderly fashion
+xdd_results <- data.frame(
+  article_id = character(),
+  article_title = character(),
+  dataset_id = character(),
+  source = character()
+)
+
 
   # extract select information from results
   for (i in 1:length(results)) {
-    if (length(results[[i]]$success$data) == 0) {
+    if (length(results[[i]]$success$data) == 0 | is.null(results[[i]])) {
       # if no returned results, do this
       df <- data.frame(
         article_title = NA,
