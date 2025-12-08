@@ -37,7 +37,33 @@ main <- function(){
     fp <- paste0("scythe-citations-", today, ".csv") 
     
     message("Beginning citations search.")
-    found_citations <- citation_search(dois_unique, sources) 
+    found_citations <- data.frame()
+    if ("springer" %in% sources){
+        message("Searching Springer.")
+        found_citations_springer <- citation_search(dois_unique, "springer") 
+        found_citations <- dplyr::bind_rows(found_citations, found_citations_springer)
+    }
+
+    if ("scopus" %in% sources){
+        message("Searching Scopus.")
+        found_citations_scopus <- citation_search(dois_unique, "scopus") 
+        found_citations <- dplyr::bind_rows(found_citations, found_citations_scopus)
+    }
+
+    if ("plos" %in% sources){
+        message("Searching Plos.")
+        found_citations_plos <- citation_search(dois_unique, "plos") 
+        found_citations <- dplyr::bind_rows(found_citations, found_citations_plos)
+    }
+
+    if ("xdd" %in% sources){
+        message("Searching xdd.")
+        found_citations_xdd <- citation_search(dois_unique, "xdd") 
+        found_citations <- dplyr::bind_rows(found_citations, found_citations_xdd)
+    }
+
+    found_citations <- found_citations %>%
+        dplyr::filter(!is.na(article_id))
     
     if (is.null(found_citations) || nrow(found_citations) == 0){
         writeLines("No citations found.", fp)
