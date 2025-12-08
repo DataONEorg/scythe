@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN Rscript -e "install.packages(c('remotes', 'tidyr', 'redland', 'jsonlite', 'lubridate', 'optparse'))"
 RUN Rscript -e "remotes::install_github('dataoneorg/rdataone')"
-RUN Rscript -e "remotes::install_github('dataoneorg/scythe@v1.1.0')"
+RUN Rscript -e "remotes::install_github('dataoneorg/scythe@develop')"
 
 USER scythe:scythe
 

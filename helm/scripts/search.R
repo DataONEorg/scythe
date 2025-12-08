@@ -61,25 +61,21 @@ main <- function(){
         found_citations_xdd <- citation_search(dois_unique, "xdd") 
         found_citations <- dplyr::bind_rows(found_citations, found_citations_xdd)
     }
-
-    found_citations <- found_citations %>%
-        dplyr::filter(!is.na(article_id))
     
     if (is.null(found_citations) || nrow(found_citations) == 0){
         writeLines("No citations found.", fp)
     } else {
-        tryCatch({
-          existing_citations <- get_metrics_citations()
-        }, error = function(e) {
-          print(e)
-        })
-
-        new_citations <- anti_join(found_citations, existing_citations, by = c("dataset_id" = "target_id", "article_id" = "source_id"))
-        if (nrow(new_citations) > 0) {
-            write.csv(new_citations, fp, row_names = FALSE)
-        } else {
+        #tryCatch({
+        #  existing_citations <- get_metrics_citations()
+        #}, error = function(e) {
+        #  print(e)
+        #})
+        
+       # if (nrow(new_citations) > 0) {
+            write.csv(found_citations, fp, row.names = FALSE)
+       # } else {
             writeLines("No new citations found.", fp)
-        }
+       # }
     }
 }
 
