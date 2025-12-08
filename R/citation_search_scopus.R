@@ -48,8 +48,9 @@ citation_search_scopus <- function(identifiers) {
           ))
       }, error = function(e) {
           message("Scopus API call failed for identifier '", identifiers_enc[i], "': ", e$message)
+      }, warning = function(w) {
+          message("Scopus Nature API call failed for identifier '", identifiers[i], "': ", w$message)
       })
-  })
 
   # extract relevant information from raw results
   for (i in 1:length(results)) {
