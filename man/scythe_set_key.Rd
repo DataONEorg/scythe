@@ -7,7 +7,9 @@
 scythe_set_key(source, secret)
 }
 \arguments{
-\item{source}{(char) Key source, one of "scopus" or "springer"}
+\item{source}{(char) Key source, one of "scopus", "springer", "openalex"
+(an OpenAlex API key) or "openalex_mailto" (the email address sent to
+OpenAlex with each request)}
 
 \item{secret}{(char) API key value}
 }

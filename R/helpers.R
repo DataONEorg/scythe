@@ -3,11 +3,12 @@
 #' @param n_queries number of queries
 #' @param wait_seconds wait time in seconds between queries
 #'
-#' @return
-#'
+#' @return `NULL`, invisibly. Called for its side effect of printing the
+#'   rate limit and estimated run time with [message()].
+#' @noRd
 report_est_wait <- function(n_queries, wait_seconds) {
   if (n_queries <= 1) {
-    return()
+    return(invisible())
   }
   rate_info <- if (wait_seconds == 0) {
     "None"
