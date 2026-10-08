@@ -23,8 +23,11 @@ Remotes: ropensci/bib2df@a8e96e13f5
 Suggests:
     bib2df,
     covr,
+    knitr,
     purrr,
+    rmarkdown,
     testthat (>= 3.0.0),
     withr
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.0

@@ -13,3 +13,8 @@ key.txt
 data-raw
 # Ignore Vim's swap files
 .*.swp
+
+# Built vignettes
+inst/doc
+/doc/
+/Meta/

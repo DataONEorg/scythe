@@ -1,0 +1,273 @@
+---
+title: "Searching OpenAlex for Arctic Data Center Citations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Searching OpenAlex for Arctic Data Center Citations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+# The searches below call OpenAlex and spend credits, so they only run when
+# SCYTHE_OPENALEX_LIVE=true. Otherwise the vignette shows the code without
+# running it, which keeps R CMD check and CI offline and free.
+live <- identical(tolower(Sys.getenv("SCYTHE_OPENALEX_LIVE")), "true")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = live)
+```
+
+This vignette uses `citation_search_openalex()` to find articles that cite
+datasets in the [Arctic Data Center](https://arcticdata.io) (ADC), whose DOIs
+all start with `10.18739`. It works through the search in stages, from
+cheapest to most expensive, so that each stage checks the one before it
+before you spend more of your OpenAlex budget.
+
+## How OpenAlex charges for searches
+
+OpenAlex charges credits for each request against a daily budget: 1,000
+credits a day without an API key, and more with one (typically 10,000 credits a day). 
+`citation_search_openalex()` has two search methods, and their costs are very different:
+
+- **`"graph"`** follows OpenAlex's citation graph, finding works whose
+  reference lists resolve to the dataset. It costs about 3 credits per batch
+  of 100 DOIs, so even the whole ADC costs a few hundred credits. The graph 
+  search examines the citation relationships that OpenAlex has already resolved, 
+  so it only finds citations that are already in the citation graph, but it is inexpensive.
+- **`"text"`** runs an exact full-text search for each DOI, which also finds
+  DOIs mentioned outside reference lists, for example in data availability
+  statements. Screening costs 10 credits per batch of 100 DOIs, but each DOI
+  that matches costs about `20 * log2(batch size)` more credits to work out
+  which DOI in the batch matched. The cost is driven by how many datasets are
+  cited, not how many are searched.
+
+Before sending any request, `citation_search_openalex()` estimates the cost
+and stops if it exceeds `max_credits`. Setting `max_credits = 0` therefore
+gives a free estimate: the function prints the estimate and stops without
+sending anything. Each stage below starts with one.
+
+## Setup
+
+Every search writes its review logs and checkpoints to `work_dir`. A
+checkpoint records each completed batch, so rerunning a stage, on the same
+day or later, skips the batches already done. Keep `batch_size` and `since`
+the same between runs, or the checkpoints won't match.
+
+```{r work-dir, eval = TRUE}
+library(scythe)
+
+work_dir <- if (live) path.expand("~/scythe-adc") else tempfile("scythe-adc")
+dir.create(work_dir, showWarnings = FALSE, recursive = TRUE)
+options(scythe.log_dir = work_dir)
+
+show_status <- function(res) str(attr(res, "openalex_status")[
+  c("complete", "stopped", "paused_until", "estimate", "credits_used", "requests")])
+```
+
+Set an OpenAlex API key for a larger daily budget, and a contact email to send
+with each request. This only needs doing once, since the keys are kept in your
+operating system's credential store.
+
+```{r keys, eval = FALSE}
+scythe_set_key("openalex", "<your key>")
+# Or use `scythe_set_key("openalex_mailto", "<you@example.org>")`
+```
+
+You can check whether a key is set with:
+```{r key-check, eval = FALSE}
+!is.na(scythe_get_key("openalex"))   # TRUE means a key is set
+```
+
+## Stage 1: Known citations
+
+The first stage searches for a few ADC citations already recorded in the
+package's test data, to check that the search works end to end before
+spending more. The test data lists citations found by several services, so
+the `sources` column records which ones previously found each citation. Where a dataset
+is cited in a form that isn't a DOI, such as a catalog URL, its `dataone_pid`
+is used instead.
+
+```{r known, eval = TRUE}
+known <- read.csv(system.file("testdata", "test-citations.csv", package = "scythe"))
+known$dataset_doi <- scythe:::normalize_doi(known$dataset_id_as_cited)
+known$dataset_doi <- ifelse(is.na(known$dataset_doi),
+                            scythe:::normalize_doi(known$dataone_pid), known$dataset_doi)
+known <- known[grepl("^10\\.18739/", known$dataset_doi), ]
+known <- aggregate(source ~ pub_id + dataset_doi, known,
+                   function(x) paste(sort(unique(x)), collapse = ", "))
+names(known)[names(known) == "source"] <- "sources"
+known
+```
+
+Estimate the cost, then run both methods on these datasets:
+
+```{r known-search}
+try(citation_search_openalex(unique(known$dataset_doi), max_credits = 0))
+
+positives <- citation_search_openalex(unique(known$dataset_doi),
+                                      checkpoint_dir = work_dir, max_credits = 200)
+show_status(positives)
+```
+
+Then check which known citations were found:
+
+```{r known-check}
+pair <- function(article, dataset) {
+  paste(scythe:::normalize_doi(article), scythe:::normalize_doi(dataset))
+}
+known$found <- pair(known$pub_id, known$dataset_doi) %in%
+  pair(positives$article_id, positives$dataset_id)
+known
+```
+
+A citation that OpenAlex found before (`sources` includes `openalex`) should
+be found again, so `FALSE` on one of those rows is a bug. `FALSE` on a row
+found only by other services is a gap in OpenAlex's coverage instead. For
+example, Radville et al. (2016) cites `10.18739/A23H1N` in its text, and
+Springer's API finds it there. But that text is missing from OpenAlex's
+full-text index, and the paper's reference list doesn't include the dataset,
+so neither method can find it. These rows show what OpenAlex misses compared
+with the other services.
+
+Any matches that aren't in the test data are new, and worth checking by hand:
+
+```{r known-new}
+positives[!pair(positives$article_id, positives$dataset_id) %in%
+            pair(known$pub_id, known$dataset_doi), ]
+```
+
+## Stage 2: All current ADC DOIs
+
+The second stage collects the DOIs to search: every current ADC metadata
+record in the [DataONE](https://www.dataone.org) search index, leaving out
+versions that have been replaced by newer ones. There were about 6,000 in
+October 2026. Saving the list keeps later runs searching the same DOIs, in
+the same order, so that their checkpoints match.
+
+```{r adc-dois}
+solr <- paste0("https://cn.dataone.org/cn/v2/query/solr/",
+               "?q=id:doi%5C:10.18739*+AND+formatType:METADATA+AND+-obsoletedBy:*",
+               "&fl=id&rows=20000&wt=csv")
+adc_file <- file.path(work_dir, "adc-dois.rds")
+if (file.exists(adc_file)) {
+  adc <- readRDS(adc_file)
+} else {
+  adc <- sub("^doi:", "", read.csv(solr)$id)
+  saveRDS(adc, adc_file)
+}
+length(adc)
+```
+
+Delete `adc-dois.rds` to fetch a fresh list.
+
+## Stage 3: The citation graph for all of ADC
+
+Because graph searches are cheap, the third stage runs one over every ADC
+DOI. It finds the citations that OpenAlex has linked from articles' reference
+lists, and gives a baseline to compare full-text search with in stage 4.
+
+```{r graph}
+try(citation_search_openalex(adc, methods = "graph", max_credits = 0))
+
+graph <- citation_search_openalex(adc, methods = "graph",
+                                  checkpoint_dir = work_dir, max_credits = 500)
+show_status(graph)
+nrow(graph)                        # citing article and dataset pairs
+length(unique(graph$dataset_id))   # ADC datasets with at least one citing article
+```
+
+## Stage 4: Full text on a random sample
+
+Full-text search can be expensive, so the fourth stage runs it on a random
+sample of 200 DOIs first. The sample shows what a full run would cost, and
+whether full-text search finds enough citations that the graph misses to be
+worth that cost.
+
+```{r text}
+set.seed(1)
+sample_dois <- sample(adc, 200)
+
+try(citation_search_openalex(sample_dois, methods = "text", max_credits = 0))
+
+text <- citation_search_openalex(sample_dois, methods = "text",
+                                 checkpoint_dir = work_dir, max_credits = 1500)
+show_status(text)
+```
+
+The estimate assumes that 5% of the DOIs are cited. If more ADC datasets are
+cited than that, full-text search costs more than estimated. Compare the
+estimate with what was spent, and with the hit rate in the sample:
+
+```{r text-calibrate}
+s <- attr(text, "openalex_status")
+c(estimate = s$estimate, spent = s$credits_used,
+  hit_rate = length(unique(text$dataset_id)) / length(sample_dois))
+```
+
+Then compare the full-text matches with the graph matches for the same
+sample:
+
+```{r text-vs-graph}
+graph_sample <- graph[scythe:::normalize_doi(graph$dataset_id) %in%
+                        scythe:::normalize_doi(sample_dois), ]
+text_pairs <- pair(text$article_id, text$dataset_id)
+graph_pairs <- pair(graph_sample$article_id, graph_sample$dataset_id)
+c(text_only = sum(!text_pairs %in% graph_pairs),
+  graph_only = sum(!graph_pairs %in% text_pairs),
+  both = sum(text_pairs %in% graph_pairs))
+```
+
+`text_only` counts the citations that only full-text search found. Check a
+few of them by hand, since full-text matches can include false positives:
+
+```{r text-only}
+text[!text_pairs %in% graph_pairs, ]
+```
+
+## Stage 5: The full search, in daily installments
+
+The last stage runs both methods over every ADC DOI. Its estimated cost is far
+more than a single day's budget, so it runs in installments: it spends credits
+until the day's budget is down to its reserve (5% by default; see the
+`scythe.openalex.reserve` option) or OpenAlex returns a rate limit error, and
+then returns the results found so far.
+
+Run this chunk again each day, with the same `work_dir`, until `complete` is
+`TRUE`. The checkpoints skip the batches already done. The file
+`openalex-state.json` in `work_dir` records when the rate limit ends, so that
+no R session using the same directory sends requests before then.
+
+```{r full, eval = FALSE}
+full <- citation_search_openalex(adc, checkpoint_dir = work_dir,
+                                 max_credits = Inf, preflight = FALSE)
+show_status(full)
+saveRDS(full, file.path(work_dir, paste0("full-", Sys.Date(), ".rds")))
+```
+
+## Reviewing the results
+
+Besides the citations it returns, each search writes JSON Lines files to
+`work_dir` for review. `openalex-matches.jsonl` lists every article match and
+which method found it. `openalex-data-relations.jsonl` lists datasets that
+cite or mention other datasets. Spot-check both for false positives:
+
+```{r review}
+list.files(work_dir, pattern = "\\.jsonl$")
+matches <- jsonlite::stream_in(file(file.path(work_dir, "openalex-matches.jsonl")),
+                               verbose = FALSE)
+head(matches)
+```
+
+## Running this vignette
+
+Building the package doesn't run the searches in this vignette, which only
+shows their code. To run stages 1 to 4 and see their output, set the
+`SCYTHE_OPENALEX_LIVE` environment variable and build the vignette from the
+package source directory:
+
+```{r render, eval = FALSE}
+Sys.setenv(SCYTHE_OPENALEX_LIVE = "true")
+rmarkdown::render("vignettes/openalex-arctic-data-center.Rmd")
+```
+
+When it runs live, the vignette keeps its logs and checkpoints in
+`~/scythe-adc`. Stage 5 never runs when the vignette is built. Run it from the
+console.

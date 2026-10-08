@@ -13,3 +13,6 @@
 ^helm$
 ^TODO\.md$
 ^openalex-duckdb$
+^dev$
+^doc$
+^Meta$
