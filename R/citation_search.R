@@ -2,7 +2,7 @@
 #'
 #' @param identifiers a vector of identifiers to be searched for
 #' @param sources a vector indicating which sources to query (one or
-#' more of plos, scopus, springer)
+#' more of plos, scopus, springer, xdd, openalex)
 #' @return tibble of matching dataset and publication identifiers
 #'
 #' @export
@@ -12,10 +12,10 @@
 #' result <- citation_search(identifiers, sources = c("plos"))
 #' }
 citation_search <- function(identifiers,
-                            sources = c("plos", "scopus", "springer", "xdd")) {
+                            sources = c("plos", "scopus", "springer", "xdd", "openalex")) {
   stopifnot(is.character(identifiers))
 
-  unid <- sources[!(sources %in% c("plos", "scopus", "springer", "xdd"))]
+  unid <- sources[!(sources %in% scythe_sources)]
   if (length(unid) > 0) {
     stop(paste("Source", unid, "is not recognized.", collapse = ". "))
   }
@@ -43,10 +43,15 @@ citation_search <- function(identifiers,
   return(result)
 }
 
+# The sources that citation_search() can query; each one has a matching
+# citation_search_<source>() adapter.
+scythe_sources <- c("plos", "scopus", "springer", "xdd", "openalex")
+
 # Check identifiers to remove characters that interfere with query strings
 
 check_identifiers <- function(identifiers) {
-  if (any(!grepl("10\\.|urn:uuid", identifiers))) {
+  is_uuid <- grepl("^urn:uuid:", identifiers, ignore.case = TRUE)
+  if (any(is.na(normalize_doi(identifiers)) & !is_uuid)) {
     warning(
       call. = FALSE,
       "One or more identifiers does not appear to be a DOI or uuid",
@@ -54,9 +59,7 @@ check_identifiers <- function(identifiers) {
     )
   }
 
-  if (any(grepl("doi:|urn:uuid", identifiers))) {
-    identifiers <- gsub("(doi:)|(urn:uuid:)", "", identifiers)
-  }
+  identifiers <- gsub("(doi:\\s*)|(urn:uuid:)", "", identifiers, ignore.case = TRUE)
 
 
   return(identifiers)

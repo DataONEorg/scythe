@@ -9,3 +9,7 @@
 ^logo$
 ^data$
 ^results$
+^tools$
+^helm$
+^TODO\.md$
+^openalex-duckdb$

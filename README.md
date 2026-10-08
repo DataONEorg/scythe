@@ -9,7 +9,7 @@
 - [**Submit Bugs and feature requests**](https://github.com/DataONEorg/scythe/issues)
 
 Automates the full text harvesting of dataset citations from various full text article databases, 
-including Scopus, PLOS, Springer, and XDD.
+including Scopus, PLOS, Springer, XDD, and OpenAlex.
 
 ## Installation
 
@@ -62,6 +62,33 @@ The Springer Nature API key is available by creating an application [here](https
 scythe_set_key(source = "springer", secret = "YOUR_KEY")
 keyring::key_get("springer", keyring = "scythe")
 ```
+
+#### OpenAlex
+
+[OpenAlex](https://openalex.org) works without a key, but its daily budget without one is only 1,000 credits. A free API key, from an [OpenAlex account](https://openalex.org/settings/api), raises it to $1 of usage a day (10,000 credits). A full-text search costs 10 credits and any other query costs 1. Optionally, also set a contact email:
+
+```
+scythe_set_key(source = "openalex", secret = "YOUR_KEY")
+scythe_set_key(source = "openalex_mailto", secret = "you@example.org")
+```
+
+`citation_search_openalex()` finds works that mention a dataset DOI anywhere in their full text, and works whose reference lists cite the dataset in OpenAlex's citation graph. It returns only citing works that have a DOI and are not datasets. Everything else is written as JSON Lines files to a review log directory, set with `log_dir` or `options(scythe.log_dir = ...)`:
+
+- datasets that cite or mention other datasets, classified using DataCite as version, derivation, composition or citation links;
+- citing works without a DOI;
+- identifiers that OpenAlex doesn't index;
+- batches that failed.
+
+Before sending any request, the function estimates the credits a search will use. It stops if the estimate exceeds `max_credits`, which defaults to 500. Pass `max_credits = Inf` to approve a larger search:
+
+```
+results <- citation_search_openalex(identifiers, max_credits = Inf,
+                                    checkpoint_dir = "openalex-checkpoints")
+```
+
+If OpenAlex rate-limits a search, or the daily budget runs out, the search stops sending requests and returns what it has found so far. It records when the limit resets, so later runs that use the same `checkpoint_dir` wait until then. A rerun with the same `checkpoint_dir` skips the batches that already finished.
+
+For the scheduled helm job, approve OpenAlex spending with the `cronjob.openalex.approve` value: a number of credits, or `unlimited`. See `tools/README.md` for measuring OpenAlex's precision and recall.
 
 ## Acknowledgments
 Work on this package was supported by:

@@ -22,8 +22,16 @@ cronjob:
   schedule: "0 12 1 * *"
   script: /apps/scythe/search.R
   nodes: 'urn:node:ARCTIC,urn:node:ESS_DIVE'
-  sources: 'springer,scopus,xdd'
+  sources: 'springer,scopus,xdd,openalex'
   rows: 10
+  openalex:
+    # Approval for OpenAlex searches: a number of credits the job may spend,
+    # or "unlimited" to run without a limit (until the search completes or the
+    # daily budget runs out, resuming on the next run). Leave empty to only run
+    # searches whose estimated cost is under 500 credits.
+    approve: ""
+    # Days before the last complete run that each search looks back over.
+    lookback: 365
 
 serviceAccount:
   # Specifies whether a service account should be created

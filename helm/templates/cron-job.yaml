@@ -4,6 +4,9 @@ metadata:
   name: {{ .Values.cronjob.name }}
 spec:
   schedule: {{ .Values.cronjob.schedule | quote }}
+  # Never start a run while the previous one is still going, so that runs do
+  # not compete for the same OpenAlex budget.
+  concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 5
   failedJobsHistoryLimit: 5
   jobTemplate:
@@ -26,6 +29,20 @@ spec:
                   secretKeyRef:
                     name: api-keys
                     key: scopus
+              - name: openalex
+                valueFrom:
+                  secretKeyRef:
+                    name: api-keys
+                    key: openalex
+                    optional: true
+              - name: openalex_mailto
+                valueFrom:
+                  secretKeyRef:
+                    name: api-keys
+                    key: openalex_mailto
+                    optional: true
+              - name: SCYTHE_OPENALEX_APPROVE
+                value: {{ .Values.cronjob.openalex.approve | quote }}
               command: ["Rscript"]
               args:
                 - "--vanilla"
@@ -36,6 +53,12 @@ spec:
                 - "{{ .Values.cronjob.nodes }}"
                 - "-s"
                 - "{{ .Values.cronjob.sources }}"
+                - "--lookback"
+                - "{{ .Values.cronjob.openalex.lookback }}"
+                - "--log-dir"
+                - "{{ .Values.persistence.mountPath }}/openalex-logs"
+                - "--checkpoint-dir"
+                - "{{ .Values.persistence.mountPath }}/openalex-checkpoints"
 
               volumeMounts:
               - name: {{ .Values.persistence.claimName }}

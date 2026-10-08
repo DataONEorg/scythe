@@ -13,7 +13,19 @@ main <- function(){
         make_option(c("-r", "--rows"), type="integer", default=100000,
                     help="Number of rows to return from query [default %default]"),
         make_option(c("-n", "--nodes"), type="character", help="Comma separated list of nodes to query"),
-        make_option(c("-s", "--sources"), type="character", help="Comma separated list of sources to use")
+        make_option(c("-s", "--sources"), type="character", help="Comma separated list of sources to use"),
+        make_option("--since", type="character", default=NULL,
+                    help="OpenAlex: only find works published on or after this date (YYYY-MM-DD) [default: the last complete run minus --lookback days, or all works if there is none]"),
+        make_option("--lookback", type="integer", default=365,
+                    help="OpenAlex: days before the last complete run to search from [default %default]"),
+        make_option("--shard", type="character", default=NULL,
+                    help="OpenAlex: search only shard i of n of the DOIs, given as i/n"),
+        make_option("--log-dir", type="character", default="openalex-logs",
+                    help="OpenAlex: directory for the review logs [default %default]"),
+        make_option("--checkpoint-dir", type="character", default="openalex-checkpoints",
+                    help="OpenAlex: directory for checkpoints and the shared rate-limit state [default %default]"),
+        make_option("--approve", type="character", default=Sys.getenv("SCYTHE_OPENALEX_APPROVE"),
+                    help="OpenAlex: approve spending up to this many credits, or 'unlimited'; also read from SCYTHE_OPENALEX_APPROVE")
     )
     
     # parse command-line arguments
@@ -61,6 +73,12 @@ main <- function(){
         found_citations_xdd <- citation_search(dois_unique, "xdd") 
         found_citations <- dplyr::bind_rows(found_citations, found_citations_xdd)
     }
+
+    if ("openalex" %in% sources){
+        message("Searching OpenAlex.")
+        found_citations_openalex <- search_openalex(dois_unique, opts)
+        found_citations <- dplyr::bind_rows(found_citations, found_citations_openalex)
+    }
     
     if (is.null(found_citations) || nrow(found_citations) == 0){
         writeLines("No citations found.", fp)
@@ -74,10 +92,85 @@ main <- function(){
        # if (nrow(new_citations) > 0) {
             write.csv(found_citations, fp, row.names = FALSE)
        # } else {
-            writeLines("No new citations found.", fp)
+       #     writeLines("No new citations found.", fp)
        # }
     }
 }
+
+# Search OpenAlex, resuming an interrupted run from its checkpoints and
+# recording when the last complete run happened so that the next one only
+# searches recent works.
+search_openalex <- function(dois, opts) {
+    if (!is.null(opts$shard)) {
+        shard <- as.integer(strsplit(opts$shard, "/", fixed = TRUE)[[1]])
+        # Assign DOIs to shards by a hash of the DOI, so a DOI stays in the
+        # same shard as the set of DOIs changes between runs.
+        hash <- vapply(dois, function(d) sum(utf8ToInt(d) * seq_len(nchar(d))), 1)
+        dois <- dois[hash %% shard[2] == shard[1] - 1]
+        message("OpenAlex shard ", opts$shard, ": ", length(dois), " DOIs")
+    }
+    shard_label <- if (is.null(opts$shard)) "all" else sub("/", "-of-", opts$shard, fixed = TRUE)
+    checkpoint_dir <- file.path(opts$`checkpoint-dir`, shard_label)
+    # Rate-limit pauses are shared by every shard using the same API key.
+    state_file <- file.path(opts$`checkpoint-dir`, "openalex-state.json")
+    run_file <- file.path(checkpoint_dir, "openalex-run.json")
+    run <- if (file.exists(run_file)) jsonlite::read_json(run_file, simplifyVector = TRUE) else list()
+
+    # Resume an interrupted run with the date filter it started with.
+    since <- opts$since
+    if (is.null(since) && !is.null(run$pending_since)) {
+        since <- if (run$pending_since == "all") NULL else run$pending_since
+    } else if (is.null(since) && !is.null(run$last_run)) {
+        since <- format(as.Date(run$last_run) - opts$lookback)
+    }
+    if (is.null(since)) message("OpenAlex: no previous complete run, so searching all works (a backfill).")
+
+    approve <- opts$approve
+    max_credits <- if (identical(approve, "unlimited")) {
+        Inf
+    } else if (nzchar(approve)) {
+        as.numeric(approve)
+    } else {
+        getOption("scythe.openalex.max_credits", 500)
+    }
+    preflight <- !nzchar(approve)
+    if (preflight && interactive()) {
+        estimate <- scythe:::estimate_openalex_cost(length(dois))
+        if (estimate > max_credits &&
+            tolower(readline(paste0("Spend about ", estimate, " OpenAlex credits? [y/N] "))) == "y") {
+            max_credits <- Inf
+        }
+    }
+
+    dir.create(checkpoint_dir, showWarnings = FALSE, recursive = TRUE)
+    started <- format(Sys.Date())
+    found <- tryCatch(
+        citation_search_openalex(dois, since = since, log_dir = opts$`log-dir`,
+                                 checkpoint_dir = checkpoint_dir, state_file = state_file,
+                                 max_credits = max_credits, preflight = preflight),
+        error = function(e) {
+            message("OpenAlex search not run: ", conditionMessage(e),
+                    " Pass --approve (or set SCYTHE_OPENALEX_APPROVE) to approve it.")
+            NULL
+        }
+    )
+    if (is.null(found)) return(data.frame())
+
+    status <- attr(found, "openalex_status")
+    if (isTRUE(status$complete)) {
+        run <- list(last_run = run$pending_started %||% started)
+        unlink(file.path(checkpoint_dir, "openalex-checkpoint.jsonl"))
+    } else {
+        run$pending_since <- since %||% "all"
+        run$pending_started <- run$pending_started %||% started
+        message("OpenAlex search is incomplete (", status$stopped %||% "some batches failed",
+                "); the next run will continue from the checkpoints in ", checkpoint_dir)
+    }
+    jsonlite::write_json(run, run_file, auto_unbox = TRUE, pretty = TRUE)
+    found
+}
+
+`%||%` <- function(x, y) if (is.null(x)) y else x
 
 get_node_dois <- function(node_id, num_rows) {
     mn <- getMNode(CNode("PROD"), node_id)

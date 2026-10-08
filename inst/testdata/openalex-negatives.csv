@@ -1,0 +1,5 @@
+article_id,dataset_id,reason
+10.1371/journal.pone.0213037,10.18739/A2227,DOI that is a prefix of the cited 10.18739/A22274
+10.1371/journal.pone.0213037,10.18739/A222745,DOI that extends the cited 10.18739/A22274
+10.18739/a22274,10.18739/A22274,the dataset itself
+10.15485/1378108,10.17190/AMF/1245971,newer version of the dataset (belongs in the data relations log)
