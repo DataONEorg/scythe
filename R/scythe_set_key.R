@@ -6,14 +6,18 @@
 #' prompt you to set a password for your keyring, should you need to lock
 #' or unlock it. See `keyring::keyring_unlock` for more details.
 #'
-#' @param source (char) Key source, one of "scopus" or "springer"
+#' @param source (char) Key source, one of "scopus", "springer", "openalex"
+#'   (an OpenAlex API key) or "openalex_mailto" (the email address sent to
+#'   OpenAlex with each request)
 #' @param secret (char) API key value
 #'
 #' @export
 
 scythe_set_key <- function(source, secret) {
-  if (!(source %in% c("springer", "scopus"))) {
-    stop("Please set the key source to be one of 'springer' or 'scopus.'",
+  sources <- c("springer", "scopus", "openalex", "openalex_mailto")
+  if (!(source %in% sources)) {
+    stop("Please set the key source to be one of ",
+         paste0("'", sources, "'", collapse = ", "), ".",
          call. = FALSE)
   }
   
