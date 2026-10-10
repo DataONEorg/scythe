@@ -3,15 +3,9 @@ test_that("scythe finds multiple dois", {
   # skip on CRAN
   skip_on_cran()
   
-  # Determine which keys have been set
-  keyed_sources <-
-    unlist(lapply(c("scopus", "springer"), function(x) {
-      if (!is.na(scythe_get_key(x))) {
-        return(x)
-      }
-      else
-        return(NULL)
-    }))
+  # Springer and Scopus are only included locally, when their keys are set;
+  # on CI they are rate limited, so this test uses only the keyless sources.
+  keyed_sources <- live_keyed_sources()
   # OpenAlex is left out because it spends credits; test-openalex.R has its
   # own opt-in live tests.
   keyed_sources <- c(keyed_sources, "plos", "xdd")

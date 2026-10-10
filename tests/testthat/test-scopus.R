@@ -1,14 +1,6 @@
 test_that("scopus finds single known doi", {
-    skip_on_cran()
-    
-    key <- scythe_get_key("scopus")
-    
-    if (is.na(key)){
-        skip()
-        message("No Scopus key set. Skipping.")
-    }
-    
-    
+    # Runs only locally with a Scopus API key; never on CRAN or CI.
+    skip_unless_keyed_live("scopus")
     # Pull single test doi citation from test-citations.csv
     test_cit <- get_test_doi("scopus")
     

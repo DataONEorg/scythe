@@ -71,3 +71,22 @@ citation_test_doi <- function(source) {
     result
   }
 }
+
+
+# Sources that need an API key (Springer, Scopus) are rate limited and
+# metered, so their live tests never run on CRAN or CI, even where a key is
+# available there. They run locally when the key is set.
+on_ci <- function() isTRUE(as.logical(Sys.getenv("CI", "false")))
+
+skip_unless_keyed_live <- function(source) {
+  testthat::skip_on_cran()
+  testthat::skip_on_ci()
+  testthat::skip_if(is.na(scythe_get_key(source)),
+                    paste("no", source, "API key set"))
+}
+
+# The keyed sources whose live tests may run here.
+live_keyed_sources <- function() {
+  if (on_ci()) return(character())
+  Filter(function(source) !is.na(scythe_get_key(source)), c("scopus", "springer"))
+}

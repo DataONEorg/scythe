@@ -1,13 +1,6 @@
 test_that("springer finds single known doi", {
-  skip_on_cran()
-  
-  key <- scythe_get_key("springer")
-  
-  if (is.na(key)){
-      skip()
-      message("No Springer key set. Skipping.")
-  }
-    
+  # Runs only locally with a Springer API key; never on CRAN or CI.
+  skip_unless_keyed_live("springer")
   # Pull single test doi citation from test-citations.csv
   test_cit <- get_test_doi("springer")
   
