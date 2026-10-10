@@ -3,10 +3,20 @@
 #' This function searches for citations in xDD. Uses 'snippets/term' function in xDD API and
 #' searches through all of xDD corpus (not limited to full-text documents).
 #'
+#' Requests are spaced at least 0.2 seconds apart, and the spacing adapts if
+#' xDD rate-limits the search. When xDD reports a rate limit, the search
+#' pauses, or stops and returns what it has found with a warning of class
+#' `scythe_rate_limited`. Identifiers that fail for other reasons are skipped
+#' with a warning of class `scythe_request_failed`. With a `checkpoint_dir`, a
+#' rerun with the same directory continues where an interrupted search
+#' stopped.
+#'
 #' @param identifiers a vector of identifiers to be searched for, without hypertext
 #' transfer protocol: "https://" or "http://"
+#' @inheritParams citation_search_scopus
 #'
-#' @return tibble of publications and their identifiers that contain
+#' @return data.frame of matching dataset and publication identifiers, with a
+#'   `search_status` attribute
 #' @export
 #' @examples
 #' \dontrun{
@@ -14,61 +24,31 @@
 #' result <- citation_search_xdd(identifiers)
 #' }
 #'
-citation_search_xdd <- function(identifiers) {
+citation_search_xdd <- function(identifiers, checkpoint_dir = NULL, state_file = NULL) {
   identifiers <- check_identifiers(identifiers)
+  limiter <- source_limiter("xdd", "xDD", state_file, checkpoint_dir, min_interval = 0.2)
+  report_est_wait(length(identifiers), limiter$min_interval)
 
-  identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
-results <- list()
-
-for (i in seq_along(identifiers_enc)) {
-  results[[i]] <- tryCatch({
-    fromJSON(curl(
-      paste0(
-        "https://xdd.wisc.edu/api/snippets?term=",
-        identifiers[i],
-        "&corpus=all"
-      )
-    ))
-  }, error = function(e) {
-    message("Failed to fetch identifier ", identifiers[i], ": ", e$message)
-    NULL  # store NULL for failed calls
-  })
+  search_by_identifier(
+    "xdd", identifiers, limiter = limiter, checkpoint_dir = checkpoint_dir,
+    request = function(id) list(
+      url = paste0("https://xdd.wisc.edu/api/snippets?term=",
+                   utils::URLencode(id, reserved = TRUE), "&corpus=all")
+    ),
+    parse = parse_xdd
+  )
 }
 
-# initialize df for storing results in orderly fashion
-xdd_results <- data.frame(
-  article_id = character(),
-  article_title = character(),
-  dataset_id = character(),
-  source = character()
-)
-
-
-  # extract select information from results
-  for (i in 1:length(results)) {
-    if (length(results[[i]]$success$data) == 0 || is.null(results[[i]])) {
-      # if no returned results, do this
-      df <- data.frame(
-        article_title = NA,
-        article_id = NA,
-        dataset_id = identifiers[i],
-        source = "xdd"
-      )
-    } else if (nrow(results[[i]]$success$data) > 0) {
-      # if results returned, do this
-      article_id <- results[[i]]$success$data$doi
-      article_title <- results[[i]]$success$data$title
-      dataset_id <- identifiers[i]
-      source <- "xdd"
-      df <-
-        data.frame(article_id, article_title, dataset_id, source)
-    }
-
-    xdd_results <-
-      rbind(xdd_results, df) # bind subsequent results to previous results data.frame
-    xdd_results <-
-      xdd_results[complete.cases(xdd_results), ] # remove incomplete cases (NAs)
+# xDD returns matching works as `success$data`; works without a DOI are
+# dropped. An `error` in the body is a failed request.
+parse_xdd <- function(body) {
+  if (!is.null(body$error)) {
+    stop(body$error$message %||% paste(unlist(body$error), collapse = " "), call. = FALSE)
   }
-
-  return(xdd_results)
+  data <- Filter(function(d) is.character(d$doi) && nzchar(d$doi), body$success$data %||% list())
+  data.frame(
+    article_id = vapply(data, function(d) d$doi, ""),
+    article_title = vapply(data, function(d) d$title %||% NA_character_, ""),
+    stringsAsFactors = FALSE
+  )
 }

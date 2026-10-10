@@ -89,7 +89,7 @@ test_that("DataCite lookups retry rate limits and report failures", {
     }
   }
   sleeps <- numeric()
-  local_mocked_bindings(openalex_sleep = function(s) sleeps <<- c(sleeps, s))
+  local_mocked_bindings(http_sleep = function(s) sleeps <<- c(sleeps, s))
 
   local_mocked_bindings(datacite_fetch = respond(c(429, 503, 200)))
   related <- datacite_related("10.18739/ds1.v2")

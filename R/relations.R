@@ -90,7 +90,7 @@ datacite_related <- function(doi, attempts = 4) {
     if (attempt < attempts) {
       headers <- if (length(res$headers)) curl::parse_headers_list(res$headers) else list()
       wait <- suppressWarnings(as.numeric(headers[["retry-after"]] %||% NA))
-      openalex_sleep(if (is.na(wait)) min(60, 2^attempt) else wait)
+      http_sleep(if (is.na(wait)) min(60, 2^attempt) else wait)
     }
   }
   NA

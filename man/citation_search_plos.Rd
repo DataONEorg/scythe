@@ -4,19 +4,36 @@
 \alias{citation_search_plos}
 \title{Search for citations in PLOS}
 \usage{
-citation_search_plos(identifiers)
+citation_search_plos(identifiers, checkpoint_dir = NULL, state_file = NULL)
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for}
+
+\item{checkpoint_dir}{directory recording the identifiers already searched,
+or NULL to disable checkpointing}
+
+\item{state_file}{file recording rate-limit pauses and recent request
+times between runs; defaults to `scopus-state.json` in `checkpoint_dir`}
 }
 \value{
-tibble of matching dataset and publication identifiers
+data.frame of matching dataset and publication identifiers, with a
+  `search_status` attribute
 }
 \description{
-This function searches for citations in PLOS. Requests are throttled
-at one identifier every 6 seconds so as to not overload the PLOS
-API. This function uses modified source code from the `rplos` package,
-which is no longer maintained.
+This function searches the full text of PLOS articles for each identifier,
+with one request to the PLOS search API per identifier.
+}
+\details{
+PLOS limits its API to 10 requests a minute, 300 an hour and 7,200 a day.
+The search keeps to these limits, waiting when a minute's or an hour's limit
+is reached; once a longer wait is needed (the day's limit), it stops and
+returns what it has found, with a warning of class `scythe_rate_limited`
+saying when it can continue. The limits can be changed with
+`options(scythe.plos.windows = list(c(60, 10), c(3600, 300), c(86400, 7200)))`,
+each element giving a window in seconds and the requests allowed in it.
+With a `checkpoint_dir`, a rerun with the same directory continues where an
+interrupted search stopped, and the requests already sent still count
+against the limits.
 }
 \examples{
 \dontrun{

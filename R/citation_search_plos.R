@@ -1,191 +1,59 @@
 #' Search for citations in PLOS
 #'
-#' This function searches for citations in PLOS. Requests are throttled
-#' at one identifier every 6 seconds so as to not overload the PLOS
-#' API. This function uses modified source code from the `rplos` package,
-#' which is no longer maintained.
+#' This function searches the full text of PLOS articles for each identifier,
+#' with one request to the PLOS search API per identifier.
 #'
-#' @param identifiers a vector of identifiers to be searched for
+#' PLOS limits its API to 10 requests a minute, 300 an hour and 7,200 a day.
+#' The search keeps to these limits, waiting when a minute's or an hour's limit
+#' is reached; once a longer wait is needed (the day's limit), it stops and
+#' returns what it has found, with a warning of class `scythe_rate_limited`
+#' saying when it can continue. The limits can be changed with
+#' `options(scythe.plos.windows = list(c(60, 10), c(3600, 300), c(86400, 7200)))`,
+#' each element giving a window in seconds and the requests allowed in it.
+#' With a `checkpoint_dir`, a rerun with the same directory continues where an
+#' interrupted search stopped, and the requests already sent still count
+#' against the limits.
 #'
-#' @return tibble of matching dataset and publication identifiers
+#' @inheritParams citation_search_scopus
+#'
+#' @return data.frame of matching dataset and publication identifiers, with a
+#'   `search_status` attribute
 #' @export
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 #' result <- citation_search_plos(identifiers)
 #' }
-citation_search_plos <- function(identifiers) {
-  wait_seconds <- 6
-  report_est_wait(length(identifiers), wait_seconds)
-
+citation_search_plos <- function(identifiers, checkpoint_dir = NULL, state_file = NULL) {
   identifiers <- check_identifiers(identifiers)
+  limiter <- source_limiter("plos", "PLOS", state_file, checkpoint_dir, min_interval = 6,
+                            windows = plos_windows)
+  report_est_wait(length(identifiers), limiter$min_interval, limiter$windows)
 
-  # encode colons to not break PLOS API
-  identifiers <- gsub(":", "%3A", identifiers)
-
-  # search for identifier
-  results <- lapply(identifiers, function(x) {
-      Sys.sleep(wait_seconds)
-      tryCatch({
-          searchplos(
-              q = x,
-              fl = c("id", "title"),
-              limit = 1000
-          )
-      }, error = function(e) {
-          message("Plos search failed for identifier '", x, "': ", e$message)
-          NULL
-      })
-  })
-  
-  plos_results <- list()
-  # assign dataset identifier to each result
-  for (i in 1:length(results)) {
-    if (results[[i]]$meta$numFound == 0 || is.null(results[[i]])) {
-      plos_results[[i]] <- data.frame(
-        id = NA,
-        dataset_id = identifiers[i],
-        title = NA,
-        source = "plos"
-      )
-    } else if (results[[i]]$meta$numFound > 0) {
-      plos_results[[i]] <- results[[i]]$data
-      plos_results[[i]]$dataset_id <- identifiers[i]
-      plos_results[[i]]$source <- "plos"
-    }
-  }
-
-  # bind resulting tibbles
-  plos_results <- do.call(rbind, plos_results)
-  names(plos_results)[which(names(plos_results) == "id")] <-
-    "article_id"
-  names(plos_results)[which(names(plos_results) == "title")] <-
-    "article_title"
-  plos_results <-
-    plos_results[stats::complete.cases(plos_results), ] # remove incomplete cases (NAs)
-
-  return(plos_results)
-}
-
-#' A Modified Version of rplos::searchplos
-#'
-#' This function is adapted from the searchplos in the `rplos` package, which is no longer maintained.
-#'
-#' @param q Search terms, eg: field:query
-#' @param fl Fields to return
-#' @param fq Fields to filter query on
-#' @param sort Sort results according to field
-#' @param start Record to start at for pagination
-#' @param limit Number of results to return for pagination
-#' @param sleep Seconds to wait between requests
-#' @param errors One of simple or complete
-#' @param proxy List of args for proxy connection
-#' @param callopts Optional curl options
-#' @param progress Optional logic for progress bar
-#' @param ... Addtl Solr arguments
-searchplos <- function(q = NULL, fl = "id", fq = NULL, sort = NULL, start = 0,
-                       limit = 10, sleep = 6, errors = "simple", proxy = NULL, callopts = list(),
-                       progress = NULL, ...) {
-  # Make sure limit is a numeric or integer
-  limit <- tryCatch(as.numeric(as.character(limit)), warning = function(e) e)
-  if ("warning" %in% class(limit)) {
-    stop("limit should be a numeric or integer class value", call. = FALSE)
-  }
-  if (!inherits(limit, "numeric") | is.na(limit)) {
-    stop("limit should be a numeric or integer class value", call. = FALSE)
-  }
-
-  if (is.null(limit)) limit <- 999
-  if (limit == 0) fl <- NULL
-  fl <- paste(fl, collapse = ",")
-
-  args <- list()
-  if (!is.null(fq[[1]])) {
-    if (length(fq) == 1) {
-      args$fq <- fq
-    } else {
-      args <- fq
-      names(args) <- rep("fq", length(args))
-    }
-  }
-  args <- c(args, ploscompact(list(
-    q = q, fl = fl, start = as.integer(start),
-    rows = as.integer(limit), sort = sort, wt = "json"
-  )))
-
-  conn_plos <- solrium::SolrClient$new(host = "api.plos.org", path = "search", port = NULL)
-
-  getnum_tmp <- suppressMessages(
-    conn_plos$search(params = list(q = q, fl = fl, rows = 0, wt = "json"))
+  search_by_identifier(
+    "plos", identifiers, limiter = limiter, checkpoint_dir = checkpoint_dir,
+    request = function(id) list(url = plos_search_url(id)),
+    parse = parse_plos
   )
-  getnumrecords <- attr(getnum_tmp, "numFound")
-
-  if (getnumrecords > limit) {
-    getnumrecords <- limit
-  } else {
-    getnumrecords <- getnumrecords
-  }
-
-  if (min(getnumrecords, limit) < 1000) {
-    if (!is.null(limit)) args$rows <- limit
-    if (length(args) == 0) args <- NULL
-    jsonout <- suppressMessages(
-      conn_plos$search(
-        params = args, callopts = callopts,
-        minOptimizedRows = FALSE, progress = progress, ...
-      )
-    )
-    meta <- dplyr::tibble(
-      numFound = attr(jsonout, "numFound"),
-      start = attr(jsonout, "start")
-    )
-    return(list(meta = meta, data = jsonout))
-  } else {
-    byby <- 500
-    getvecs <- seq(from = 0, to = getnumrecords - 1, by = byby)
-    lastnum <- as.numeric(strextract(getnumrecords, "[0-9]{3}$"))
-    if (lastnum == 0) {
-      lastnum <- byby
-    }
-    if (lastnum > byby) {
-      lastnum <- getnumrecords - getvecs[length(getvecs)]
-    } else {
-      lastnum <- lastnum
-    }
-    getrows <- c(rep(byby, length(getvecs) - 1), lastnum)
-    out <- list()
-    for (i in seq_along(getvecs)) {
-      args$start <- as.integer(getvecs[i])
-      args$rows <- as.integer(getrows[i])
-      if (length(args) == 0) args <- NULL
-      jsonout <- suppressMessages(conn_plos$search(
-        params = ploscompact(list(
-          q = args$q, fl = args$fl,
-          fq = args[names(args) == "fq"],
-          sort = args$sort,
-          rows = as.integer(args$rows), start = as.integer(args$start),
-          wt = "json"
-        )), minOptimizedRows = FALSE, callopts = callopts,
-        progress = progress, ...
-      ))
-      out[[i]] <- jsonout
-    }
-    resdf <- dplyr::bind_rows(out)
-    meta <- dplyr::tibble(
-      numFound = attr(jsonout, "numFound"),
-      start = attr(jsonout, "start")
-    )
-    return(list(meta = meta, data = resdf))
-  }
 }
-#' This function is from the `rplos` package, which is no longer maintained.
-#' @param l a list
-ploscompact <- function(l) Filter(Negate(is.null), l)
 
-#' This function is from the `rplos` package, which is no longer maintained.
-#'
-#' @param str A string
-#' @param pattern A regex pattern
-strextract <- function(str, pattern) {
-  regmatches(str, regexpr(pattern, str))
+# PLOS's published API limits: requests allowed per minute, hour and day.
+plos_windows <- list(c(60, 10), c(3600, 300), c(86400, 7200))
+
+# Search for the identifier as a phrase, so that Solr doesn't treat the "/"
+# in a DOI as the start of a regular expression, returning only full articles.
+plos_search_url <- function(identifier) {
+  query <- list(q = paste0("\"", identifier, "\""), fl = "id,title", fq = "doc_type:full",
+                rows = "1000", wt = "json")
+  values <- vapply(query, utils::URLencode, "", reserved = TRUE)
+  paste0("https://api.plos.org/search?", paste(names(query), values, sep = "=", collapse = "&"))
+}
+
+parse_plos <- function(body) {
+  docs <- Filter(function(d) is.character(d$id), body$response$docs %||% list())
+  data.frame(
+    article_id = vapply(docs, function(d) d$id, ""),
+    article_title = vapply(docs, function(d) as.character(unlist(d$title))[1] %||% NA_character_, ""),
+    stringsAsFactors = FALSE
+  )
 }

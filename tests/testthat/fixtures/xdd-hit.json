@@ -1,0 +1,27 @@
+{
+ "success": {
+  "v": 2,
+  "data": [
+   {
+    "pubname": "Journal of Geophysical Research: Biogeosciences",
+    "publisher": "Wiley",
+    "_gddid": "5d83fb410b45c76cafa8beaf",
+    "title": "Ice Wedge Degradation and Stabilization Impact Water Budgets and Nutrient Cycling in Arctic Trough Ponds",
+    "doi": "10.1029/2018JG004528",
+    "coverDate": "2018 08",
+    "URL": "http://doi.wiley.com/10.1029/2018JG004528",
+    "authors": "Koch, J. C.; Jorgenson, M. T.; Wickland, K. P.; Kanevskiy, M.; Striegl, R.",
+    "hits": 5,
+    "highlight": [
+     "Methane emissions were detected from these ponds (https://arcticdata.io/catalog/#view/ doi:<em class=\"hl\">10.18739</em>/<em class=\"hl\">A29K97</em>",
+     "values were generally circum- neutral throughout the summer (https://arcticdata.io/catalog/#view/ doi:<em class=\"hl\">10.18739</em>",
+     "/<em class=\"hl\">A29K97</em>), so conversion to NH3 is also not a likely explanation for the NH4+ loss.  4.4.",
+     "https://arcticdata.io/ catalog/#view/doi:10.18739/A25W5K and https://arcticdata.io/catalog/#view/ doi:<em class=\"hl\">10.18739</em>",
+     "/<em class=\"hl\">A29K97</em>.  5."
+    ]
+   }
+  ],
+  "hits": 1,
+  "license": "https://creativecommons.org/licenses/by-nc/2.0/"
+ }
+}

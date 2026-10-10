@@ -80,7 +80,7 @@ citation_search_openalex <- function(identifiers,
     state_file <- file.path(checkpoint_dir, "openalex-state.json")
   }
   log_dir <- openalex_log_dir(log_dir)
-  retrieved_at <- format_utc(openalex_now())
+  retrieved_at <- format_utc(http_now())
 
   openalex_results <- data.frame(
     article_id = character(),

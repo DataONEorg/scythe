@@ -1,0 +1,13 @@
+{
+ "response": {
+  "numFound": 1,
+  "start": 0,
+  "docs": [
+   {
+    "doc_type": "full",
+    "id": "10.1371/journal.pone.0213037",
+    "title": "Migratory goose arrival time plays a larger role in influencing forage quality than advancing springs in an Arctic coastal wetland"
+   }
+  ]
+ }
+}

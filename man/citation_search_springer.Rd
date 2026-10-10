@@ -4,19 +4,40 @@
 \alias{citation_search_springer}
 \title{Search for citations from Springer}
 \usage{
-citation_search_springer(identifiers)
+citation_search_springer(identifiers, checkpoint_dir = NULL, state_file = NULL)
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for}
+
+\item{checkpoint_dir}{directory recording the identifiers already searched,
+or NULL to disable checkpointing}
+
+\item{state_file}{file recording rate-limit pauses and recent request
+times between runs; defaults to `scopus-state.json` in `checkpoint_dir`}
 }
 \value{
-tibble of matching dataset and publication identifiers
+data.frame of matching dataset and publication identifiers, with a
+  `search_status` attribute
 }
 \description{
-This function searches for citations from Springer. It requires that an API key
-be obtained from [Springer](https://dev.springernature.com/) and set using
-`scythe_set_key()`. Requests are throttled at one identifier every second
-so as to not overload the PLOS API.
+This function searches the Springer Nature Metadata API for works that
+mention each identifier. It requires an API key from
+[Springer Nature](https://dev.springernature.com/), set with
+`scythe_set_key("springer", ...)`.
+}
+\details{
+Requests are spaced at least a second apart, and the spacing adapts if
+Springer rate-limits the search. When Springer reports a rate limit, the
+search pauses, or stops and returns what it has found with a warning of
+class `scythe_rate_limited`. A run of consecutive failures is treated the
+same way, in case Springer reports a rate limit as some other error. (A
+search with no results is answered with HTTP 404 "No data was found", which
+is just an empty result.) A rejected API key stops the search with a
+warning of class `scythe_auth_error`, and identifiers that fail for other
+reasons are skipped with a warning of class `scythe_request_failed`.
+
+With a `checkpoint_dir`, a rerun with the same directory continues where an
+interrupted search stopped.
 }
 \examples{
 \dontrun{

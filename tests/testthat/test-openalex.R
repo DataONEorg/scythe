@@ -181,7 +181,7 @@ test_that("a long rate limit stops all requests and is shared through the state 
     status <- attr(res, "openalex_status")
     expect_false(status$complete)
     expect_equal(status$stopped, "rate_limited")
-    state <- jsonlite::read_json(file.path(dir, "openalex-state.json"))
+    state <- read_service_state(file.path(dir, "openalex-state.json"), "openalex")
     expect_equal(state$paused_until, "2026-10-01T13:32:25Z")
 
     # A later run (or another process) sharing the state file sends nothing.
@@ -198,11 +198,11 @@ test_that("a long rate limit stops all requests and is shared through the state 
 
 test_that("updating the state file never shortens a recorded pause", {
   path <- file.path(withr::local_tempdir(), "openalex-state.json")
-  update_openalex_state(path, paused_until = "2026-10-01T15:00:00Z")
-  update_openalex_state(path, paused_until = "2026-10-01T13:00:00Z")
-  expect_equal(read_openalex_state(path)$paused_until, "2026-10-01T15:00:00Z")
-  update_openalex_state(path, paused_until = "2026-10-01T16:00:00Z")
-  expect_equal(read_openalex_state(path)$paused_until, "2026-10-01T16:00:00Z")
+  update_service_state(path, "openalex", paused_until = "2026-10-01T15:00:00Z")
+  update_service_state(path, "openalex", paused_until = "2026-10-01T13:00:00Z")
+  expect_equal(read_service_state(path, "openalex")$paused_until, "2026-10-01T15:00:00Z")
+  update_service_state(path, "openalex", paused_until = "2026-10-01T16:00:00Z")
+  expect_equal(read_service_state(path, "openalex")$paused_until, "2026-10-01T16:00:00Z")
 })
 
 test_that("a pause recorded by another process stops a running search", {
@@ -212,7 +212,7 @@ test_that("a pause recorded by another process stops a running search", {
   http <- server$http
   # Another shard is rate limited while this search's first request is out.
   server$http <- function(urls) {
-    update_openalex_state(state_file, paused_until = format_utc(server$clock$now + 3600))
+    update_service_state(state_file, "openalex", paused_until = format_utc(server$clock$now + 3600))
     http(urls)
   }
   with_fake_openalex(server, {

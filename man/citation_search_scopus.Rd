@@ -4,21 +4,45 @@
 \alias{citation_search_scopus}
 \title{Search for citations in Scopus}
 \usage{
-citation_search_scopus(identifiers)
+citation_search_scopus(identifiers, checkpoint_dir = NULL, state_file = NULL)
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for}
+
+\item{checkpoint_dir}{directory recording the identifiers already searched,
+or NULL to disable checkpointing}
+
+\item{state_file}{file recording rate-limit pauses and recent request
+times between runs; defaults to `scopus-state.json` in `checkpoint_dir`}
 }
 \value{
-tibble of matching dataset and publication identifiers
+data.frame of matching dataset and publication identifiers, with a
+  `search_status` attribute recording whether the search completed, why it
+  stopped if not, and which identifiers failed
 }
 \description{
-This function searches for citations in Scopus. Requests are throttled
-9 requests/second so as to not overload the Scopus API.
+This function searches Scopus for works that mention each identifier. It
+requires an API key from the [Elsevier Developer Portal](https://dev.elsevier.com/),
+set with `scythe_set_key("scopus", ...)`.
+}
+\details{
+Requests are spaced at least 0.12 seconds apart, and the spacing adapts if
+Scopus rate-limits the search. Scopus reports its remaining quota (often
+weekly) in each response; once it is used up, the search stops and returns
+what it has found, with a warning of class `scythe_rate_limited` saying
+when the quota resets. A rejected API key stops the search with a warning
+of class `scythe_auth_error`. Identifiers that fail for other reasons are
+skipped, with a warning of class `scythe_request_failed`.
+
+With a `checkpoint_dir`, each identifier searched is recorded there, and a
+rerun with the same directory continues where an interrupted search
+stopped; quota pauses are recorded in `state_file`, so a rerun before the
+quota resets sends no requests.
 }
 \examples{
 \dontrun{
 identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 result <- citation_search_scopus(identifiers)
+attr(result, "search_status")
 }
 }

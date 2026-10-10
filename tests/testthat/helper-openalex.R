@@ -114,9 +114,9 @@ with_fake_openalex <- function(server, code, env = parent.frame()) {
   clock$now <- as.POSIXct("2026-10-01 12:00:00", tz = "UTC")
   clock$sleeps <- numeric()
   testthat::local_mocked_bindings(
-    openalex_http = server$http,
-    openalex_now = function() clock$now,
-    openalex_sleep = function(s) {
+    http_get = function(urls, headers = list()) server$http(urls),
+    http_now = function() clock$now,
+    http_sleep = function(s) {
       clock$sleeps <- c(clock$sleeps, s)
       clock$now <- clock$now + s
     },

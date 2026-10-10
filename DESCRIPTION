@@ -17,7 +17,6 @@ Imports:
       jsonlite,
       keyring,
       rcrossref,
-      solrium,
       stats
 Remotes: ropensci/bib2df@a8e96e13f5
 Suggests:

@@ -4,18 +4,34 @@
 \alias{citation_search_xdd}
 \title{Search for citations in xDD}
 \usage{
-citation_search_xdd(identifiers)
+citation_search_xdd(identifiers, checkpoint_dir = NULL, state_file = NULL)
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for, without hypertext
 transfer protocol: "https://" or "http://"}
+
+\item{checkpoint_dir}{directory recording the identifiers already searched,
+or NULL to disable checkpointing}
+
+\item{state_file}{file recording rate-limit pauses and recent request
+times between runs; defaults to `scopus-state.json` in `checkpoint_dir`}
 }
 \value{
-tibble of publications and their identifiers that contain
+data.frame of matching dataset and publication identifiers, with a
+  `search_status` attribute
 }
 \description{
 This function searches for citations in xDD. Uses 'snippets/term' function in xDD API and
 searches through all of xDD corpus (not limited to full-text documents).
+}
+\details{
+Requests are spaced at least 0.2 seconds apart, and the spacing adapts if
+xDD rate-limits the search. When xDD reports a rate limit, the search
+pauses, or stops and returns what it has found with a warning of class
+`scythe_rate_limited`. Identifiers that fail for other reasons are skipped
+with a warning of class `scythe_request_failed`. With a `checkpoint_dir`, a
+rerun with the same directory continues where an interrupted search
+stopped.
 }
 \examples{
 \dontrun{

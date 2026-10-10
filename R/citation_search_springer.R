@@ -1,103 +1,71 @@
 #' Search for citations from Springer
 #'
-#' This function searches for citations from Springer. It requires that an API key
-#' be obtained from [Springer](https://dev.springernature.com/) and set using
-#' `scythe_set_key()`. Requests are throttled at one identifier every second
-#' so as to not overload the PLOS API.
+#' This function searches the Springer Nature Metadata API for works that
+#' mention each identifier. It requires an API key from
+#' [Springer Nature](https://dev.springernature.com/), set with
+#' `scythe_set_key("springer", ...)`.
 #'
-#' @param identifiers a vector of identifiers to be searched for
+#' Requests are spaced at least a second apart, and the spacing adapts if
+#' Springer rate-limits the search. When Springer reports a rate limit, the
+#' search pauses, or stops and returns what it has found with a warning of
+#' class `scythe_rate_limited`. A run of consecutive failures is treated the
+#' same way, in case Springer reports a rate limit as some other error. (A
+#' search with no results is answered with HTTP 404 "No data was found", which
+#' is just an empty result.) A rejected API key stops the search with a
+#' warning of class `scythe_auth_error`, and identifiers that fail for other
+#' reasons are skipped with a warning of class `scythe_request_failed`.
 #'
-#' @return tibble of matching dataset and publication identifiers
-#' @importFrom jsonlite fromJSON
-#' @importFrom curl curl
-#' @importFrom stats complete.cases
+#' With a `checkpoint_dir`, a rerun with the same directory continues where an
+#' interrupted search stopped.
+#'
+#' @inheritParams citation_search_scopus
+#'
+#' @return data.frame of matching dataset and publication identifiers, with a
+#'   `search_status` attribute
 #' @export
 #' @examples
 #' \dontrun{
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 #' result <- citation_search_springer(identifiers)
 #' }
-citation_search_springer <- function(identifiers) {
-  wait_seconds <- 1
-  report_est_wait(length(identifiers), wait_seconds)
-
+citation_search_springer <- function(identifiers, checkpoint_dir = NULL, state_file = NULL) {
   identifiers <- check_identifiers(identifiers)
-  
-  # initialize df for storing results in orderly fashion
-  springer_results <- data.frame(
-      article_id = character(),
-      article_title = character(),
-      dataset_id = character(),
-      source = character()
-  )
-
   key <- scythe_get_key("springer")
   if (is.na(key)) {
     warning(
       "Skipping Springer search due to missing API key. Set an API key using scythe_set_key() to include Springer results."
     )
-    return(springer_results)
+    return(empty_citations())
   }
+  limiter <- source_limiter("springer", "Springer", state_file, checkpoint_dir, min_interval = 1)
+  report_est_wait(length(identifiers), limiter$min_interval)
 
-  identifiers_enc <- utils::URLencode(identifiers, reserved = TRUE)
+  search_by_identifier(
+    "springer", identifiers, limiter = limiter, checkpoint_dir = checkpoint_dir,
+    request = function(id) list(
+      url = paste0("https://api.springernature.com/meta/v2/json?q=",
+                   utils::URLencode(id, reserved = TRUE), "&api_key=", key)
+    ),
+    parse = parse_springer,
+    no_results = springer_no_results
+  )
+}
 
-  results <- lapply(seq_along(identifiers_enc), function(i) {
-      Sys.sleep(wait_seconds)
-      tryCatch({
-          jsonlite::fromJSON(curl::curl(
-              paste0(
-                  "http://api.springernature.com/meta/v2/json?q=",
-                  identifiers[i],
-                  "&api_key=",
-                  key
-              )
-          ))
-      }, error = function(e) {
-          message("Springer Nature API call failed for identifier '", identifiers[i], "': ", e$message)
-          NULL
-      }, warning = function(w) {
-          message("Springer Nature API call failed for identifier '", identifiers[i], "': ", w$message)
-          NULL
-      })
-  })
-  
-  # assign dataset identifier to each result
-  springer_results <- list()
-  for (i in 1:length(results)) {
-    if (as.numeric(results[[i]]$result$total) == 0 || is.null(results[[i]])) {
-      springer_results[[i]] <- data.frame(
-        article_id = NA,
-        article_title = NA,
-        dataset_id = identifiers[i],
-        source = "springer"
-      )
-    } else if (as.numeric(results[[i]]$result$total) > 0) {
-      springer_results[[i]] <-
-        data.frame(
-          article_id = rep(NA, as.numeric(results[[i]]$result$total)),
-          article_title = rep(NA, as.numeric(results[[i]]$result$total)),
-          dataset_id = rep(NA, as.numeric(results[[i]]$result$total)),
-          source = rep("springer", as.numeric(results[[i]]$result$total))
-        )
+# Springer answers a search with no results with a 404 and the message "No
+# data was found for the given query."
+springer_no_results <- function(res) {
+  isTRUE(res$status == 404) &&
+    grepl("no (matching )?data", response_message(res) %||% "", ignore.case = TRUE)
+}
 
-      springer_results[[i]]$article_id <-
-        results[[i]]$records$identifier
-      springer_results[[i]]$article_title <-
-        results[[i]]$records$title
-      springer_results[[i]]$dataset_id <- identifiers[i]
-    }
-  }
-
-  # bind resulting tibbles
-  springer_results <- do.call(rbind, springer_results)
-
-  # remove doi: prefix for consistency
-  springer_results$article_id <-
-    gsub("doi:", "", springer_results$article_id)
-
-  # drop NA results
-  springer_results <-
-    springer_results[complete.cases(springer_results), ]
-
-  return(springer_results)
+# Springer returns matching works as `records`, each with an identifier of
+# the form "doi:10...."; records without a DOI are dropped.
+parse_springer <- function(body) {
+  records <- Filter(function(r) is.character(r$identifier) && nzchar(r$identifier),
+                    body$records %||% list())
+  data.frame(
+    article_id = sub("^doi:", "", vapply(records, function(r) r$identifier, "")),
+    article_title = vapply(records, function(r) r$title %||% NA_character_, ""),
+    stringsAsFactors = FALSE
+  )
 }

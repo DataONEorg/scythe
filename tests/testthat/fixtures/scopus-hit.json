@@ -1,0 +1,20 @@
+{
+ "search-results": {
+  "opensearch:totalResults": "2",
+  "opensearch:startIndex": "0",
+  "opensearch:itemsPerPage": "2",
+  "entry": [
+   {
+    "@_fa": "true",
+    "dc:identifier": "SCOPUS_ID:85071234567",
+    "dc:title": "Arctic soil carbon",
+    "prism:doi": "10.5194/essd-11-1957-2019"
+   },
+   {
+    "@_fa": "true",
+    "dc:identifier": "SCOPUS_ID:85079876543",
+    "dc:title": "A conference abstract without a DOI"
+   }
+  ]
+ }
+}

@@ -2,11 +2,13 @@
 #'
 #' @param n_queries number of queries
 #' @param wait_seconds wait time in seconds between queries
+#' @param windows request limits, as a list of `c(seconds, max)`; a search
+#'   that exceeds one waits for the window to pass
 #'
 #' @return `NULL`, invisibly. Called for its side effect of printing the
 #'   rate limit and estimated run time with [message()].
 #' @noRd
-report_est_wait <- function(n_queries, wait_seconds) {
+report_est_wait <- function(n_queries, wait_seconds, windows = NULL) {
   if (n_queries <= 1) {
     return(invisible())
   }
@@ -17,13 +19,20 @@ report_est_wait <- function(n_queries, wait_seconds) {
   } else {
     sprintf("One call every %.1f seconds", round(wait_seconds, 1))
   }
-  completion_time_sec <- n_queries * wait_seconds
+  if (length(windows)) rate_info <- paste0(rate_info, ", at most ", window_limits_text(windows))
+  completion_time_sec <- max(n_queries * wait_seconds, vapply(windows, function(w) {
+    (ceiling(n_queries / w[2]) - 1) * w[1]
+  }, 1))
   wait_info <- if (completion_time_sec < 1) {
     "<1 second"
   } else if (completion_time_sec <= 60) {
     sprintf("%d second(s)", round(completion_time_sec))
-  } else {
+  } else if (completion_time_sec <= 3 * 3600) {
     sprintf("%.1f minute(s)", round(completion_time_sec / 60, 1))
+  } else if (completion_time_sec <= 3 * 86400) {
+    sprintf("%.1f hour(s)", round(completion_time_sec / 3600, 1))
+  } else {
+    sprintf("%.1f day(s)", round(completion_time_sec / 86400, 1))
   }
   message("Rate limit: ", rate_info)
   message("Estimated time to run ", n_queries, " searches: ", wait_info)

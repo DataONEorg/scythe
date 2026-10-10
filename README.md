@@ -41,6 +41,21 @@ identifier <- "10.18739/A22274"
 results <- citation_search(identifier)
 ```
 
+### Rate limits and resuming a search
+
+Each source limits how fast it can be searched. Scythe spaces out its requests, slows down when a source rate-limits it, and keeps to published limits such as PLOS's 10 requests a minute, 300 an hour and 7,200 a day. A short wait for a limit to reset happens automatically. If the wait would be longer (more than 5 minutes by default, set with `options(scythe.max_wait = ...)`), the search stops and returns the citations it has found so far, with a warning saying when it can continue. The search functions report problems as warnings of these classes:
+
+- `scythe_rate_limited`: the source rate-limited the search, its quota ran out, or its requests kept failing.
+- `scythe_auth_error`: the source rejected the API key.
+- `scythe_request_failed`: some identifiers couldn't be searched and were skipped.
+
+Each search function's result has a `search_status` attribute (`openalex_status` for OpenAlex) recording whether the search completed and, if not, why it stopped. To search a long list of identifiers over several runs, pass a `checkpoint_dir`. Each run then continues where the last one stopped, and doesn't send requests before a recorded rate limit has reset:
+
+```
+results <- citation_search_plos(identifiers, checkpoint_dir = "checkpoints")
+attr(results, "search_status")
+```
+
 ### Authorization Credentials & API Key Management
 
 The function `scythe_set_key()` manages API keys using the [`keyring`](https://github.com/r-lib/keyring) package. `keyring` uses your operating system's credential store to securely keep track of key-value pairs. Running `scythe_set_key()` for the first time will prompt you to set a password for your keyring, should you need to lock or unlock it.
