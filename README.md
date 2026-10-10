@@ -90,6 +90,13 @@ If OpenAlex rate-limits a search, or the daily budget runs out, the search stops
 
 For the scheduled helm job, approve OpenAlex spending with the `cronjob.openalex.approve` value: a number of credits, or `unlimited`. See `tools/README.md` for measuring OpenAlex's precision and recall.
 
+The package tests never spend OpenAlex credits by default. The live OpenAlex tests are skipped on CRAN and on CI, and run locally only when you opt in. Each one is capped at 100 credits:
+
+```
+Sys.setenv(SCYTHE_TEST_OPENALEX = "true")
+devtools::test(filter = "openalex")
+```
+
 ## Acknowledgments
 Work on this package was supported by:
 

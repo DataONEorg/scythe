@@ -1,3 +1,31 @@
+# Live OpenAlex tests spend credits, so they never run on CRAN or CI, and run
+# locally only when a developer opts in with SCYTHE_TEST_OPENALEX=true. An API
+# key alone isn't enough: without one, OpenAlex charges the per-IP budget.
+skip_unless_openalex_live <- function() {
+  testthat::skip_on_cran()
+  testthat::skip_on_ci()
+  testthat::skip_if_not(
+    isTRUE(as.logical(Sys.getenv("SCYTHE_TEST_OPENALEX", "false"))),
+    "live OpenAlex tests spend credits; set SCYTHE_TEST_OPENALEX=true to run them"
+  )
+  testthat::skip_if_offline("api.openalex.org")
+}
+
+# Skip a live test whose search stopped early because the OpenAlex budget is
+# rate limited, rather than failing on its partial results.
+skip_if_openalex_rate_limited <- function(res) {
+  status <- attr(res, "openalex_status")
+  testthat::skip_if(identical(status$stopped, "rate_limited"),
+                    paste("OpenAlex is rate limited until", status$paused_until %||% "later"))
+}
+
+# Read a JSON Lines review log, or an empty data.frame if nothing was logged.
+read_log <- function(res, name) {
+  path <- file.path(attr(res, "openalex_status")$log_dir, name)
+  if (!file.exists(path)) return(data.frame())
+  jsonlite::stream_in(file(path), verbose = FALSE)
+}
+
 # A fake OpenAlex API for testing the OpenAlex adapter offline.
 #
 # `works` is a list of work records; each may have a `text` field (the DOIs

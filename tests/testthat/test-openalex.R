@@ -270,30 +270,33 @@ test_that("openalex results combine with other sources in citation_search", {
   })
 })
 
-# Live tests against the OpenAlex API, using a few dozen credits.
+# Live tests against the OpenAlex API. They spend credits, so they run only
+# when a developer sets SCYTHE_TEST_OPENALEX=true, never on CRAN or CI, and
+# each is capped at 100 credits.
 
 test_that("openalex finds known citations by text and by citation graph", {
-  skip_on_cran()
-  skip_if_offline("api.openalex.org")
+  skip_unless_openalex_live()
   citations <- read.csv(system.file("testdata", "test-citations.csv", package = "scythe"),
                         stringsAsFactors = FALSE)
   citations <- citations[citations$source == "openalex", ]
-  res <- citation_search_openalex(unique(citations$dataone_pid), log_dir = withr::local_tempdir())
+  res <- citation_search_openalex(unique(citations$dataone_pid), log_dir = withr::local_tempdir(),
+                                  max_credits = 100)
+  skip_if_openalex_rate_limited(res)
   expect_true(all(tolower(citations$pub_id) %in% res$article_id))
 
-  matches <- jsonlite::stream_in(file(file.path(attr(res, "openalex_status")$log_dir,
-                                                "openalex-matches.jsonl")), verbose = FALSE)
+  matches <- read_log(res, "openalex-matches.jsonl")
   method <- matches$match_method[match(tolower(citations$pub_id), matches$work_doi)]
   expect_true("text" %in% method)
   expect_true("graph" %in% method)
 })
 
 test_that("openalex does not return known non-citations", {
-  skip_on_cran()
-  skip_if_offline("api.openalex.org")
+  skip_unless_openalex_live()
   negatives <- read.csv(system.file("testdata", "openalex-negatives.csv", package = "scythe"),
                         stringsAsFactors = FALSE)
-  res <- citation_search_openalex(unique(negatives$dataset_id), log_dir = withr::local_tempdir())
+  res <- citation_search_openalex(unique(negatives$dataset_id), log_dir = withr::local_tempdir(),
+                                  max_credits = 100)
+  skip_if_openalex_rate_limited(res)
   found <- paste(res$article_id, normalize_doi(res$dataset_id))
   expect_false(any(paste(negatives$article_id, normalize_doi(negatives$dataset_id)) %in% found))
 })

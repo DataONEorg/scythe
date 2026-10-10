@@ -12,7 +12,9 @@ test_that("scythe finds multiple dois", {
       else
         return(NULL)
     }))
-  keyed_sources <- c(keyed_sources, "plos", "xdd", "openalex")
+  # OpenAlex is left out because it spends credits; test-openalex.R has its
+  # own opt-in live tests.
+  keyed_sources <- c(keyed_sources, "plos", "xdd")
   
   # Load a set of example citations that should be found by the API
   citations_file <-

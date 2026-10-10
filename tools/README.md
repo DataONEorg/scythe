@@ -18,7 +18,7 @@ The scripts here aren't part of the package and aren't run by the tests or by CI
 
 A benchmark spends real OpenAlex credits. Full-text searches cost 10 credits each, and a gold set of a few thousand datasets can need tens of thousands of credits. So:
 
-1. Run it only after the package tests pass (`devtools::test()`, including the live OpenAlex tests).
+1. Run it only after the package tests pass (`devtools::test()`, including the live OpenAlex tests, which run only with `SCYTHE_TEST_OPENALEX=true`).
 2. Set an OpenAlex API key with `scythe_set_key("openalex", ...)`. The script won't run without one.
 3. Run it from a machine with a good, stable connection, such as a cluster node, in a session that can run for hours (`screen` or `tmux`).
 4. Approve the cost explicitly. The script prints its estimate and requires either `--approve <credits>`, `--approve unlimited`, or a "y" at the prompt in an interactive R session. It never starts on its own.
