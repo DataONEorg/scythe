@@ -101,6 +101,8 @@ devtools::test(filter = "openalex")
 
 The same switch runs the searches in the OpenAlex vignette when it's built, which spends more credits; without it, the vignette only shows their code.
 
+See the Testing section of [CONTRIBUTING.md](CONTRIBUTING.md) for running all the live tests, including Springer and Scopus, before a release.
+
 ## Acknowledgments
 Work on this package was supported by:
 

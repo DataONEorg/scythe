@@ -71,7 +71,8 @@ particular release.
 
 The release process starts with integration testing in the `develop` branch. Once all
 changes that are desired in a release are merged into the `develop` branch, we run
-the full set of tests on a clean checkout, and conduct any code reviews needed. A pull request
+the full set of tests on a clean checkout, including the live network tests that CI
+skips (see [Testing](#testing)), and conduct any code reviews needed. A pull request
 can be used for that review, or it can be done directly for simpler sets of changes.
 Once review is completed, make sure all version numbers are set correctly and 
 documentation is complete on `develop`, and then merge to `main`, and tag that merge 
@@ -90,7 +91,54 @@ as well as various classes of corrupt or bad data.  All tests should pass before
 the `develop` branch is merged to main, and all tests should pass before the `main`
 branch is tagged as a release.
 
-**Continuous integration**. We can use Travis for some of our repositories.
+**Continuous integration**. GitHub Actions runs `R CMD check`, including the
+tests, on every push and pull request to `main` and `develop`. CI deliberately
+skips the live tests of the sources that are metered or rate limited (Springer,
+Scopus, OpenAlex and DataCite). Those limits apply to a shared key or IP
+address, so these tests would fail for reasons that have nothing to do with the
+code, such as a Springer request rejected for quota, or an exhausted OpenAlex
+daily budget. They are also skipped on CRAN. So **a passing CI run does not
+mean the live searches work**; run the live tests below before each release.
+
+**Live network tests**. These run against the real services. They are
+skipped on CRAN and on CI (any system that sets `CI=true`), and otherwise run
+only when their keys or switches are set:
+
+| Tests | Runs locally when |
+|---|---|
+| PLOS, xDD | always (they need no key; they also run on CI) |
+| Springer, Scopus | the `springer` or `scopus` key is set |
+| OpenAlex, and the searches in the OpenAlex vignette | `SCYTHE_TEST_OPENALEX=true` is set; uses up to 100 OpenAlex credits per test, plus more when building the vignette |
+| DataCite relation classification | always (a few free requests) |
+
+To run the full live suite before a release, from a clean checkout of
+`develop`, with a good network connection and no `CI` variable set:
+
+1. Set the API keys. `scythe_set_key()` stores them in the `scythe` keyring;
+   environment variables with the same names (`springer`, `scopus`,
+   `openalex`, `openalex_mailto`) also work and take precedence:
+
+   ```r
+   scythe_set_key(source = "springer", secret = "...")
+   scythe_set_key(source = "scopus", secret = "...")
+   scythe_set_key(source = "openalex", secret = "...")
+   scythe_set_key(source = "openalex_mailto", secret = "you@example.org")
+   ```
+
+2. Opt in to the tests that spend OpenAlex credits, and run every test:
+
+   ```r
+   Sys.setenv(SCYTHE_TEST_OPENALEX = "true")
+   devtools::test()
+   ```
+
+3. Check the test summary for skips. Any live test reported as skipped did not
+   run, usually because a key is missing or OpenAlex is rate limited; fix
+   that and rerun it before releasing. (An OpenAlex test that skips because
+   of a rate limit can be rerun after the time it reports.)
+
+4. Optionally, build the OpenAlex vignette with its searches, as described in
+   its "Running this vignette" section; this spends more OpenAlex credits.
 
 ## Code style
 
