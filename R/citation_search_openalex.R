@@ -15,10 +15,14 @@
 #' themselves. Everything else is written as JSON Lines files to `log_dir` for
 #' review: `openalex-matches.jsonl` (every article match and which method found
 #' it), `openalex-data-relations.jsonl` (datasets citing or mentioning other
-#' datasets, classified as version, derivation, composition or citation links
-#' using DataCite where possible), `openalex-no-doi-citers.jsonl` (citing works
+#' datasets, which [classify_data_relations()] can label as version,
+#' derivation, composition or citation links afterwards; that isn't needed for
+#' the results), `openalex-no-doi-citers.jsonl` (citing works
 #' without a DOI), `openalex-unresolved.jsonl` (identifiers that are not DOIs,
 #' or that OpenAlex does not index) and `openalex-failed-batches.jsonl`.
+#' The logs are appended to, and a run that resumes from `checkpoint_dir` only
+#' logs what it found itself, so that a search run in installments logs each
+#' match once.
 #'
 #' OpenAlex charges credits for each request against a daily budget: 1 for a
 #' list query and 10 for a full-text search. Set an API key with
@@ -110,12 +114,16 @@ citation_search_openalex <- function(identifiers,
 
   client <- openalex_client(max_credits = max_credits, state_file = state_file)
   if (is.na(client$key)) {
-    message("No OpenAlex API key is set, so the daily budget is 1,000 credits. ",
+    message(
+            "No OpenAlex API key is set, so the daily budget is 1,000 credits. ",
             "Set one with scythe_set_key(\"openalex\", ...).")
   }
 
   checkpoint <- read_checkpoint(checkpoint_dir)
+  # Pairs from batches completed by an earlier run are returned again, but
+  # were already logged and classified by that run.
   found <- list()
+  found_now <- list()
   incomplete <- FALSE
   for (method in methods) {
     if (method == "text") {
@@ -141,6 +149,7 @@ citation_search_openalex <- function(identifiers,
       openalex_graph_search(client, batches[!cached], since)
     }
     found <- c(found, list(run$pairs))
+    found_now <- c(found_now, list(run$pairs))
 
     for (b in which(run$completed)) {
       batch_pairs <- run$pairs[run$pairs$dataset_doi %in% batches[!cached][[b]], , drop = FALSE]
@@ -174,11 +183,17 @@ citation_search_openalex <- function(identifiers,
   pairs$retrieved_at <- rep(retrieved_at, nrow(pairs))
   bin <- citer_bin(pairs)
 
+  # Log only the pairs this run found. A pair found by one method in an
+  # earlier run and by the other now is logged again, as "both".
+  pairs_now <- do.call(rbind, c(list(empty_pairs()), found_now))
+  new <- paste(pairs$dataset_doi, pairs$work_id) %in%
+    paste(pairs_now$dataset_doi, pairs_now$work_id)
   articles <- pairs[bin == "article", , drop = FALSE]
-  write_jsonl(articles, file.path(log_dir, "openalex-matches.jsonl"))
-  write_jsonl(classify_relations(pairs[bin == "data_relation", , drop = FALSE]),
+  write_jsonl(pairs[new & bin == "article", , drop = FALSE],
+              file.path(log_dir, "openalex-matches.jsonl"))
+  write_jsonl(pairs[new & bin == "data_relation", , drop = FALSE],
               file.path(log_dir, "openalex-data-relations.jsonl"))
-  write_jsonl(pairs[bin == "no_doi", , drop = FALSE],
+  write_jsonl(pairs[new & bin == "no_doi", , drop = FALSE],
               file.path(log_dir, "openalex-no-doi-citers.jsonl"))
 
   # Report each match under every form of the dataset identifier the caller

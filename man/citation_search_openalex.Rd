@@ -66,10 +66,14 @@ The result only includes citing works that have a DOI and are not datasets
 themselves. Everything else is written as JSON Lines files to `log_dir` for
 review: `openalex-matches.jsonl` (every article match and which method found
 it), `openalex-data-relations.jsonl` (datasets citing or mentioning other
-datasets, classified as version, derivation, composition or citation links
-using DataCite where possible), `openalex-no-doi-citers.jsonl` (citing works
+datasets, which [classify_data_relations()] can label as version,
+derivation, composition or citation links afterwards; that isn't needed for
+the results), `openalex-no-doi-citers.jsonl` (citing works
 without a DOI), `openalex-unresolved.jsonl` (identifiers that are not DOIs,
 or that OpenAlex does not index) and `openalex-failed-batches.jsonl`.
+The logs are appended to, and a run that resumes from `checkpoint_dir` only
+logs what it found itself, so that a search run in installments logs each
+match once.
 
 OpenAlex charges credits for each request against a daily budget: 1 for a
 list query and 10 for a full-text search. Set an API key with

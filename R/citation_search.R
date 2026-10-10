@@ -2,7 +2,10 @@
 #'
 #' @param identifiers a vector of identifiers to be searched for
 #' @param sources a vector indicating which sources to query (one or
-#' more of plos, scopus, springer, xdd, openalex)
+#' more of plos, scopus, springer, xdd, openalex). OpenAlex spends credits
+#' from a daily budget, so it is only searched when named here; call
+#' [citation_search_openalex()] directly to control its cost and to resume
+#' an interrupted search.
 #' @return tibble of matching dataset and publication identifiers
 #'
 #' @export
@@ -12,7 +15,7 @@
 #' result <- citation_search(identifiers, sources = c("plos"))
 #' }
 citation_search <- function(identifiers,
-                            sources = c("plos", "scopus", "springer", "xdd", "openalex")) {
+                            sources = c("plos", "scopus", "springer", "xdd")) {
   stopifnot(is.character(identifiers))
 
   unid <- sources[!(sources %in% scythe_sources)]

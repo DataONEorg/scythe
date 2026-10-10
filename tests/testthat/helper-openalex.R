@@ -32,7 +32,8 @@ read_log <- function(res, name) {
 # its full text mentions) and `referenced_works`. The fake answers the
 # fulltext.search.exact, doi and cites filters the adapter uses, records every
 # URL it is sent, and returns the responses queued in `responses` (one list of
-# status/headers per request) before falling back to answering normally.
+# status/headers, and optionally a body, per request) before falling back to
+# answering normally.
 fake_openalex <- function(works = list(), responses = list(), headers = list()) {
   server <- new.env()
   server$works <- works
@@ -47,6 +48,9 @@ fake_openalex <- function(works = list(), responses = list(), headers = list()) 
         server$responses <- server$responses[-1]
         if (!is.null(res$status) && res$status != 200) {
           return(list(status = res$status, headers = res$headers %||% list(), body = "{}"))
+        }
+        if (!is.null(res$body)) {
+          return(list(status = 200, headers = c(res$headers, server$headers), body = res$body))
         }
         extra <- res$headers %||% list()
       } else {
@@ -117,7 +121,8 @@ with_fake_openalex <- function(server, code, env = parent.frame()) {
       clock$now <- clock$now + s
     },
     scythe_get_key = function(source) NA,
-    datacite_related = function(doi) NULL,
+    # The search itself never classifies relations, so never calls DataCite.
+    datacite_fetch = function(url) stop("the OpenAlex search must not call DataCite"),
     .package = "scythe",
     .env = env
   )

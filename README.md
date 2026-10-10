@@ -74,10 +74,12 @@ scythe_set_key(source = "openalex_mailto", secret = "you@example.org")
 
 `citation_search_openalex()` finds works that mention a dataset DOI anywhere in their full text, and works whose reference lists cite the dataset in OpenAlex's citation graph. It returns only citing works that have a DOI and are not datasets. Everything else is written as JSON Lines files to a review log directory, set with `log_dir` or `options(scythe.log_dir = ...)`:
 
-- datasets that cite or mention other datasets, classified using DataCite as version, derivation, composition or citation links;
+- datasets that cite or mention other datasets;
 - citing works without a DOI;
 - identifiers that OpenAlex doesn't index;
 - batches that failed.
+
+Many dataset-to-dataset links are versions of a dataset or members of a data package, rather than reuse of data. After a search, `classify_data_relations(log_dir)` looks up each link in DataCite and labels it as a version, derivation, composition or citation link. It isn't needed to get citation counts, and it doesn't change the search results; it's there for reviewing these links, and for future versions that count data-to-data citations. It sends up to two DataCite requests for each dataset, but uses no OpenAlex credits.
 
 Before sending any request, the function estimates the credits a search will use. It stops if the estimate exceeds `max_credits`, which defaults to 500. Pass `max_credits = Inf` to approve a larger search:
 

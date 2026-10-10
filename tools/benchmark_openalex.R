@@ -55,26 +55,40 @@ max_credits <- if (identical(opts$approve, "unlimited")) {
 }
 
 dir.create(opts$out, showWarnings = FALSE, recursive = TRUE)
+checkpoint_dir <- file.path(opts$out, "checkpoints")
+state_file <- file.path(checkpoint_dir, "openalex-state.json")
 found <- citation_search_openalex(
   dataset_dois, methods = methods,
   log_dir = file.path(opts$out, "logs"),
-  checkpoint_dir = file.path(opts$out, "checkpoints"),
+  checkpoint_dir = checkpoint_dir, state_file = state_file,
   max_credits = max_credits, preflight = FALSE
 )
 status <- attr(found, "openalex_status")
+# The diagnostics below need more OpenAlex requests, so don't send them while
+# the budget is rate limited.
+if (identical(status$stopped, "rate_limited")) {
+  stop("OpenAlex is rate limited until ", status$paused_until %||% "its reset time",
+       ". Rerun the same command after then to continue from the checkpoints.", call. = FALSE)
+}
 if (!isTRUE(status$complete)) {
   warning("The OpenAlex search did not complete (", status$stopped %||% "failed batches",
           "); rerun the same command to continue from the checkpoints. ",
           "Recall below only covers the batches finished so far.")
 }
-matches <- jsonlite::stream_in(file(file.path(opts$out, "logs", "openalex-matches.jsonl")),
-                               verbose = FALSE)
+# A search that found no articles writes no matches log.
+matches_file <- file.path(opts$out, "logs", "openalex-matches.jsonl")
+matches <- if (file.exists(matches_file)) {
+  jsonlite::stream_in(file(matches_file), verbose = FALSE)
+} else {
+  data.frame(dataset_doi = character(), work_doi = character(), match_method = character())
+}
 matches <- matches[!duplicated(paste(matches$dataset_doi, matches$work_doi)), ]
 found_key <- paste(matches$work_doi, matches$dataset_doi)
 gold_key <- paste(gold$article_doi, gold$dataset_doi)
 
 # Recall: which gold citations were found, and why the others were missed.
-client <- scythe:::openalex_client(max_credits = max_credits - status$credits_used)
+client <- scythe:::openalex_client(max_credits = max_credits - status$credits_used,
+                                   state_file = state_file)
 lookup <- function(dois, select) {
   dois <- unique(stats::na.omit(dois))
   batches <- scythe:::chunk(dois, 100)

@@ -94,34 +94,21 @@ test_that("datasets and works without DOIs go to review logs, not results", {
     fake_work("S1", "10.18739/ds1", type = "dataset", text = "10.18739/ds1")
   ))
   with_fake_openalex(server, {
-    local_mocked_bindings(datacite_related = function(doi) {
-      if (doi == "10.18739/ds1.v2") {
-        data.frame(doi = "10.18739/ds1", relation_type = c("References", "IsNewVersionOf"))
-      }
-    })
     res <- citation_search_openalex("10.18739/ds1", methods = "text")
     expect_equal(res$article_id, "10.1/a1")
 
-    log_dir <- attr(res, "openalex_status")$log_dir
-    read_log <- function(name) {
-      jsonlite::stream_in(file(file.path(log_dir, name)), verbose = FALSE)
-    }
-    relations <- read_log("openalex-data-relations.jsonl")
+    # Data relations are logged as OpenAlex found them, without classifying
+    # them (with_fake_openalex fails any call to DataCite).
+    relations <- read_log(res, "openalex-data-relations.jsonl")
     relations <- relations[order(relations$work_doi), ]
     expect_equal(relations$work_doi, c("10.18739/ds1.v2", "10.6073/pasta/abc"))
-    expect_equal(relations$relation_class, c("version", "unknown"))
-    expect_equal(relations$relation_type, c("References;IsNewVersionOf", "openalex:mentions"))
-    expect_equal(relations$evidence[1], "datacite:10.18739/ds1.v2")
+    expect_equal(relations$match_method, c("text", "text"))
+    expect_false("relation_class" %in% names(relations))
 
-    no_doi <- read_log("openalex-no-doi-citers.jsonl")
+    no_doi <- read_log(res, "openalex-no-doi-citers.jsonl")
     expect_equal(no_doi$work_id, "N1")
     expect_equal(no_doi$dataset_doi, "10.18739/ds1")
   })
-})
-
-test_that("relation types map to relation classes", {
-  expect_equal(unname(relation_classes[c("IsVersionOf", "IsDerivedFrom", "HasPart", "Cites")]),
-               c("version", "derivation", "composition", "citation"))
 })
 
 test_that("the cost check stops before any request is sent", {
@@ -148,6 +135,18 @@ test_that("without the preflight check, a search stops once max_credits is spent
     status <- attr(res, "openalex_status")
     expect_false(status$complete)
     expect_equal(status$stopped, "max_credits")
+  })
+})
+
+test_that("a response that can't be parsed still counts against max_credits", {
+  server <- fake_openalex(responses = rep(list(list(body = "{\"meta\": {")), 3))
+  with_fake_openalex(server, {
+    res <- citation_search_openalex(sprintf("10.9999/d%04d", 1:300), methods = "text",
+                                    max_credits = 30, preflight = FALSE)
+    status <- attr(res, "openalex_status")
+    expect_length(server$urls, 3)
+    expect_equal(status$credits_used, 30)
+    expect_false(status$complete)
   })
 })
 
@@ -197,6 +196,37 @@ test_that("a long rate limit stops all requests and is shared through the state 
   })
 })
 
+test_that("updating the state file never shortens a recorded pause", {
+  path <- file.path(withr::local_tempdir(), "openalex-state.json")
+  update_openalex_state(path, paused_until = "2026-10-01T15:00:00Z")
+  update_openalex_state(path, paused_until = "2026-10-01T13:00:00Z")
+  expect_equal(read_openalex_state(path)$paused_until, "2026-10-01T15:00:00Z")
+  update_openalex_state(path, paused_until = "2026-10-01T16:00:00Z")
+  expect_equal(read_openalex_state(path)$paused_until, "2026-10-01T16:00:00Z")
+})
+
+test_that("a pause recorded by another process stops a running search", {
+  dir <- withr::local_tempdir()
+  state_file <- file.path(dir, "openalex-state.json")
+  server <- fake_openalex()
+  http <- server$http
+  # Another shard is rate limited while this search's first request is out.
+  server$http <- function(urls) {
+    update_openalex_state(state_file, paused_until = format_utc(server$clock$now + 3600))
+    http(urls)
+  }
+  with_fake_openalex(server, {
+    withr::local_options(scythe.openalex.concurrency = 1)
+    expect_warning(
+      res <- citation_search_openalex(sprintf("10.9999/d%04d", 1:300), methods = "text",
+                                      checkpoint_dir = dir, max_credits = Inf),
+      "rate limited until"
+    )
+    expect_length(server$urls, 1)
+    expect_equal(attr(res, "openalex_status")$stopped, "rate_limited")
+  })
+})
+
 test_that("running out of daily budget stops requests before a 429", {
   server <- fake_openalex(headers = list(`x-ratelimit-limit` = "1000",
                                          `x-ratelimit-remaining` = "40",
@@ -239,7 +269,9 @@ test_that("server errors are retried, then the batch is logged as failed", {
 
 test_that("a rerun with the same checkpoint directory skips completed batches", {
   dir <- withr::local_tempdir()
-  server <- fake_openalex(list(fake_work("A1", "10.1/a1", text = "10.9999/d0001")))
+  server <- fake_openalex(list(fake_work("A1", "10.1/a1", text = "10.9999/d0001"),
+                               fake_work("D1", "10.9999/d0099", type = "dataset",
+                                         text = "10.9999/d0002")))
   with_fake_openalex(server, {
     dois <- sprintf("10.9999/d%04d", 1:150)
     first <- citation_search_openalex(dois, checkpoint_dir = dir, max_credits = Inf)
@@ -247,6 +279,30 @@ test_that("a rerun with the same checkpoint directory skips completed batches", 
     second <- citation_search_openalex(dois, checkpoint_dir = dir, max_credits = Inf)
     expect_length(server$urls, sent)
     expect_equal(second, first, ignore_attr = TRUE)
+    # The rerun doesn't log the matches from the batches it skipped again.
+    expect_equal(nrow(read_log(second, "openalex-matches.jsonl")), 1)
+    expect_equal(nrow(read_log(second, "openalex-data-relations.jsonl")), 1)
+  })
+})
+
+test_that("a resumed search logs only what it found itself", {
+  dir <- withr::local_tempdir()
+  dois <- sprintf("10.9999/d%04d", 1:150)
+  server <- fake_openalex(list(fake_work("A1", "10.1/a1", text = dois[1]),
+                               fake_work("A2", "10.1/a2", text = dois[150])))
+  with_fake_openalex(server, {
+    # Both batches are bisected level by level; the 50-DOI batch finishes a
+    # level before the 100-DOI one, at 240 credits.
+    first <- suppressWarnings(citation_search_openalex(
+      dois, methods = "text", checkpoint_dir = dir, max_credits = 240, preflight = FALSE
+    ))
+    expect_false(attr(first, "openalex_status")$complete)
+    expect_equal(first$article_id, "10.1/a2")
+    second <- citation_search_openalex(dois, methods = "text", checkpoint_dir = dir,
+                                       max_credits = Inf)
+    expect_true(attr(second, "openalex_status")$complete)
+    expect_setequal(second$article_id, c("10.1/a1", "10.1/a2"))
+    expect_equal(read_log(second, "openalex-matches.jsonl")$work_doi, c("10.1/a2", "10.1/a1"))
   })
 })
 

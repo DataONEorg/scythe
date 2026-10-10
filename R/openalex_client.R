@@ -64,7 +64,8 @@ openalex_url <- function(client, path, query) {
 
 # Read and write the JSON state file shared by every process that uses the
 # same OpenAlex key. Writes go through a temporary file and a rename so that a
-# reader never sees a partly written file.
+# reader never sees a partly written file. Updates aren't locked, so a writer
+# never shortens a pause another process has recorded.
 read_openalex_state <- function(path) {
   if (is.null(path) || !file.exists(path)) return(list())
   tryCatch(jsonlite::read_json(path, simplifyVector = TRUE), error = function(e) list())
@@ -74,6 +75,10 @@ update_openalex_state <- function(path, ...) {
   if (is.null(path)) return(invisible())
   state <- read_openalex_state(path)
   fields <- list(...)
+  if (!is.null(fields$paused_until) && !is.null(state$paused_until) &&
+      isTRUE(parse_utc(state$paused_until) > parse_utc(fields$paused_until))) {
+    fields$paused_until <- state$paused_until
+  }
   state[names(fields)] <- fields
   state <- Filter(Negate(is.null), state)
   dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
@@ -84,6 +89,17 @@ update_openalex_state <- function(path, ...) {
 }
 
 format_utc <- function(time) format(time, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+parse_utc <- function(text) as.POSIXct(text, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+
+# The end of a pause recorded in the shared state file, or NULL if none is
+# still in force.
+shared_pause <- function(path) {
+  paused_until <- read_openalex_state(path)$paused_until
+  if (is.null(paused_until)) return(NULL)
+  paused_until <- parse_utc(paused_until)
+  if (is.na(paused_until) || paused_until <= openalex_now()) return(NULL)
+  paused_until
+}
 
 #' Create an OpenAlex client
 #'
@@ -118,16 +134,13 @@ openalex_client <- function(max_credits = Inf,
   # Why the client stopped sending requests, or NULL while it is still active.
   client$stopped <- NULL
 
-  # Honour a pause recorded by an earlier run or by another process.
-  paused_until <- read_openalex_state(state_file)$paused_until
+  # Honor a pause recorded by an earlier run or by another process.
+  paused_until <- shared_pause(state_file)
   if (!is.null(paused_until)) {
-    paused_until <- as.POSIXct(paused_until, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
-    if (!is.na(paused_until) && paused_until > openalex_now()) {
-      client$paused_until <- paused_until
-      client$stopped <- "rate_limited"
-      message("OpenAlex is rate limited until ", format_utc(paused_until),
-              " (recorded in ", state_file, "); not sending any requests.")
-    }
+    client$paused_until <- paused_until
+    client$stopped <- "rate_limited"
+    message("OpenAlex is rate limited until ", format_utc(paused_until),
+            " (recorded in ", state_file, "); not sending any requests.")
   }
   client
 }
@@ -164,9 +177,14 @@ openalex_pause <- function(client, seconds, reason) {
 
 # Return TRUE when the client may send requests. A short pause is waited out
 # here, after which requests resume one at a time; a long pause stops the
-# client for the rest of this run.
+# client for the rest of this run. Pauses that other processes record in the
+# shared state file while this client runs are honoured too.
 openalex_ready <- function(client) {
   if (!is.null(client$stopped)) return(FALSE)
+  shared <- shared_pause(client$state_file)
+  if (!is.null(shared) && (is.null(client$paused_until) || shared > client$paused_until)) {
+    client$paused_until <- shared
+  }
   if (is.null(client$paused_until)) return(TRUE)
   wait <- as.numeric(difftime(client$paused_until, openalex_now(), units = "secs"))
   if (wait > client$max_wait) {
@@ -243,6 +261,9 @@ openalex_run <- function(client, queries, paginate = TRUE, path = "/works") {
       openalex_note_headers(client, res$headers)
       code <- res$status
       if (!is.na(code) && code == 200) {
+        # OpenAlex charges for the request whether or not its body parses.
+        used <- suppressWarnings(as.numeric(res$headers[["x-ratelimit-credits-used"]] %||% NA))
+        client$credits_used <- client$credits_used + if (is.na(used)) cost[k] else used
         body <- tryCatch(jsonlite::fromJSON(res$body, simplifyVector = FALSE),
                          error = function(e) NULL)
         if (is.null(body)) {
@@ -250,8 +271,6 @@ openalex_run <- function(client, queries, paginate = TRUE, path = "/works") {
           errors[i] <- "unparseable response"
           next
         }
-        used <- suppressWarnings(as.numeric(res$headers[["x-ratelimit-credits-used"]] %||% NA))
-        client$credits_used <- client$credits_used + if (is.na(used)) cost[k] else used
         client$consecutive_429 <- 0
         client$successes <- client$successes + 1
         results[[i]] <- c(results[[i]], body$results)

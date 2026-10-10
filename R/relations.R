@@ -51,29 +51,113 @@ relation_classes <- c(
 # When a pair has several relations, the first of these classes wins.
 relation_class_order <- c("version", "derivation", "composition", "citation")
 
-# Fetch a DOI's related identifiers from DataCite, as a data.frame with the
-# related DOI (normalized) and the relationType. Returns NULL for DOIs that
-# DataCite does not register (such as Crossref DOIs) or on any error.
-datacite_related <- function(doi) {
-  url <- paste0("https://api.datacite.org/dois/", utils::URLencode(doi, reserved = TRUE))
-  record <- tryCatch(jsonlite::fromJSON(url, simplifyVector = FALSE), error = function(e) NULL)
-  related <- record$data$attributes$relatedIdentifiers
-  if (is.null(related) || length(related) == 0) return(NULL)
-  data.frame(
-    doi = normalize_doi(vapply(related, function(r) r$relatedIdentifier %||% NA_character_, "")),
-    relation_type = vapply(related, function(r) r$relationType %||% NA_character_, ""),
-    stringsAsFactors = FALSE
-  )
+# Fetch a URL from DataCite, returning curl's response (status_code NA on a
+# network error). A wrapper so that tests can replace the network.
+datacite_fetch <- function(url) {
+  handle <- curl::new_handle(useragent = "scythe (https://github.com/DataONEorg/scythe)",
+                             timeout = 60)
+  tryCatch(curl::curl_fetch_memory(url, handle = handle),
+           error = function(e) list(status_code = NA_integer_, headers = raw(0),
+                                    content = raw(0)))
 }
 
-#' Classify data-to-data links using DataCite
+# Fetch a DOI's related identifiers from DataCite, as a data.frame with the
+# related DOI (normalized) and the relationType. Returns NULL for DOIs that
+# DataCite does not register (such as Crossref DOIs) or that have no related
+# identifiers, and NA when the lookup failed. Lookups are sent one at a time,
+# well under DataCite's rate limit; a 429, a server error or a network error
+# is retried with backoff before giving up.
+datacite_related <- function(doi, attempts = 4) {
+  url <- paste0("https://api.datacite.org/dois/", utils::URLencode(doi, reserved = TRUE))
+  for (attempt in seq_len(attempts)) {
+    res <- datacite_fetch(url)
+    code <- res$status_code
+    if (!is.na(code) && code == 404) return(NULL)
+    if (!is.na(code) && code == 200) {
+      record <- tryCatch(jsonlite::fromJSON(rawToChar(res$content), simplifyVector = FALSE),
+                         error = function(e) NULL)
+      if (is.null(record)) return(NA)
+      related <- record$data$attributes$relatedIdentifiers
+      if (is.null(related) || length(related) == 0) return(NULL)
+      return(data.frame(
+        doi = normalize_doi(vapply(related, function(r) r$relatedIdentifier %||% NA_character_, "")),
+        relation_type = vapply(related, function(r) r$relationType %||% NA_character_, ""),
+        stringsAsFactors = FALSE
+      ))
+    }
+    # Other client errors won't succeed on a retry.
+    if (!is.na(code) && code != 429 && code < 500) return(NA)
+    if (attempt < attempts) {
+      headers <- if (length(res$headers)) curl::parse_headers_list(res$headers) else list()
+      wait <- suppressWarnings(as.numeric(headers[["retry-after"]] %||% NA))
+      openalex_sleep(if (is.na(wait)) min(60, 2^attempt) else wait)
+    }
+  }
+  NA
+}
+
+#' Classify the data-to-data links found by an OpenAlex search
 #'
-#' OpenAlex only records that one work cites or mentions another. For each
-#' link, look for a DataCite relatedIdentifier between the two DOIs, from
-#' either side, and map its relationTypes to a `relation_class` of version,
-#' derivation, composition or citation. Links with no DataCite relation keep
-#' `relation_class = "unknown"` and the OpenAlex evidence.
-#' @noRd
+#' [citation_search_openalex()] returns only articles that cite datasets. Works
+#' that are datasets themselves, or that come from a data repository, are
+#' logged separately to `openalex-data-relations.jsonl`, since OpenAlex only
+#' records that one cites or mentions the other. Many of these links are
+#' housekeeping rather than reuse: a new version of a dataset that mentions
+#' its predecessor, or a data package that lists its members.
+#'
+#' This function looks up each link in DataCite, which often records how two
+#' datasets are related, and labels it with a `relation_class` of "version",
+#' "derivation", "composition" or "citation", so that links that reflect
+#' reuse of data ("derivation" and "citation") can be told apart from the
+#' rest. It is a separate step, run after a search is complete, because it
+#' sends up to two DataCite requests for each dataset in the log.
+#'
+#' **It is not needed to get citation counts.** It changes neither the results
+#' of [citation_search_openalex()] nor its other logs, and nothing in scythe
+#' uses its labels yet. It is here for future versions that count or report
+#' data-to-data citations, and for reviewing what the data relations log holds.
+#'
+#' Links with no DataCite relation between the two DOIs, in either direction,
+#' are labelled "unknown". If that is because a DataCite lookup failed (after
+#' retrying rate limits and server errors), `evidence` also records
+#' `datacite:lookup_failed:<doi>`, so that the link can be checked again later.
+#'
+#' @param log_dir the directory holding the review logs of
+#'   [citation_search_openalex()]; defaults to the `scythe.log_dir` option, or
+#'   the temporary directory a search in this session used
+#' @return data.frame of the data-to-data links, one per pair of DOIs, with
+#'   `relation_type` (the DataCite relationTypes found, or "openalex:cites" or
+#'   "openalex:mentions" if none), `relation_class` and `evidence`. It is also
+#'   written to `openalex-data-relations-classified.jsonl` in `log_dir`,
+#'   replacing any earlier copy.
+#' @export
+#' @examples
+#' \dontrun{
+#' citation_search_openalex(identifiers, log_dir = "logs")
+#' relations <- classify_data_relations("logs")
+#' table(relations$relation_class)
+#' }
+classify_data_relations <- function(log_dir = NULL) {
+  log_dir <- openalex_log_dir(log_dir)
+  path <- file.path(log_dir, "openalex-data-relations.jsonl")
+  relations <- if (file.exists(path)) {
+    jsonlite::stream_in(file(path), verbose = FALSE)
+  } else {
+    data.frame(dataset_doi = character(), work_doi = character(), match_method = character())
+  }
+  # The log is appended to by every run; a pair logged again later (found by
+  # a second method, say) replaces the earlier record.
+  relations <- relations[!duplicated(paste(relations$dataset_doi, relations$work_doi),
+                                     fromLast = TRUE), , drop = FALSE]
+  relations <- classify_relations(relations)
+  out <- file.path(log_dir, "openalex-data-relations-classified.jsonl")
+  unlink(out)
+  write_jsonl(relations, out)
+  relations
+}
+
+# Label each data-to-data link in `relations` (with dataset_doi, work_doi and
+# match_method columns) from DataCite's relatedIdentifiers.
 classify_relations <- function(relations) {
   if (nrow(relations) == 0) {
     return(cbind(relations, relation_type = character(), relation_class = character(),
@@ -83,9 +167,6 @@ classify_relations <- function(relations) {
                                     "openalex:mentions", "openalex:cites")
   relations$relation_class <- rep("unknown", nrow(relations))
   relations$evidence <- paste0("openalex:", relations$match_method)
-  if (!isTRUE(getOption("scythe.classify_relations", TRUE))) {
-    return(relations)
-  }
 
   cache <- new.env(parent = emptyenv())
   lookup <- function(doi) {
@@ -99,8 +180,13 @@ classify_relations <- function(relations) {
     to <- relations$work_doi[i]
     types <- character()
     evidence <- character()
+    failed <- character()
     for (side in list(c(from, to), c(to, from))) {
       related <- lookup(side[1])
+      if (identical(related, NA)) {
+        failed <- c(failed, side[1])
+        next
+      }
       hit <- unique(related$relation_type[!is.na(related$doi) & related$doi == side[2]])
       if (length(hit)) {
         types <- c(types, hit)
@@ -119,7 +205,15 @@ classify_relations <- function(relations) {
         "unknown"
       }
       relations$evidence[i] <- paste(evidence, collapse = ";")
+    } else if (length(failed)) {
+      relations$evidence[i] <- paste(c(relations$evidence[i],
+                                       paste0("datacite:lookup_failed:", failed)), collapse = ";")
     }
+  }
+  n_failed <- sum(vapply(ls(cache), function(d) identical(get(d, envir = cache), NA), TRUE))
+  if (n_failed) {
+    message("DataCite lookups failed for ", n_failed, " DOIs; their relations are ",
+            "logged as unknown with datacite:lookup_failed evidence.")
   }
   relations
 }

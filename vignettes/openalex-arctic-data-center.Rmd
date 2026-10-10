@@ -247,7 +247,10 @@ saveRDS(full, file.path(work_dir, paste0("full-", Sys.Date(), ".rds")))
 Besides the citations it returns, each search writes JSON Lines files to
 `work_dir` for review. `openalex-matches.jsonl` lists every article match and
 which method found it. `openalex-data-relations.jsonl` lists datasets that
-cite or mention other datasets. Spot-check both for false positives:
+cite or mention other datasets. Spot-check both for false positives.
+`classify_data_relations(work_dir)` can also label each data relation, using
+DataCite, as a version, derivation, composition or citation link; that isn't
+needed for the citation counts above.
 
 ```{r review}
 list.files(work_dir, pattern = "\\.jsonl$")

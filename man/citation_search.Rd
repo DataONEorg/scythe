@@ -4,16 +4,16 @@
 \alias{citation_search}
 \title{Search for citations in text across all APIs}
 \usage{
-citation_search(
-  identifiers,
-  sources = c("plos", "scopus", "springer", "xdd", "openalex")
-)
+citation_search(identifiers, sources = c("plos", "scopus", "springer", "xdd"))
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for}
 
 \item{sources}{a vector indicating which sources to query (one or
-more of plos, scopus, springer, xdd, openalex)}
+more of plos, scopus, springer, xdd, openalex). OpenAlex spends credits
+from a daily budget, so it is only searched when named here; call
+[citation_search_openalex()] directly to control its cost and to resume
+an interrupted search.}
 }
 \value{
 tibble of matching dataset and publication identifiers
