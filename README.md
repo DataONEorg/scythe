@@ -99,6 +99,8 @@ Sys.setenv(SCYTHE_TEST_OPENALEX = "true")
 devtools::test(filter = "openalex")
 ```
 
+The same switch runs the searches in the OpenAlex vignette when it's built, which spends more credits; without it, the vignette only shows their code.
+
 ## Acknowledgments
 Work on this package was supported by:
 

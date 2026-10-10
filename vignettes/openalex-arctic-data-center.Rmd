@@ -8,10 +8,12 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-# The searches below call OpenAlex and spend credits, so they only run when
-# SCYTHE_OPENALEX_LIVE=true. Otherwise the vignette shows the code without
-# running it, which keeps R CMD check and CI offline and free.
-live <- identical(tolower(Sys.getenv("SCYTHE_OPENALEX_LIVE")), "true")
+# The searches below call OpenAlex and spend credits, so like the live tests
+# they only run when SCYTHE_TEST_OPENALEX=true, and never on CI. Otherwise the
+# vignette shows the code without running it, which keeps R CMD check offline
+# and free.
+live <- isTRUE(as.logical(Sys.getenv("SCYTHE_TEST_OPENALEX", "false"))) &&
+  !isTRUE(as.logical(Sys.getenv("CI", "false")))
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = live)
 ```
 
@@ -263,11 +265,11 @@ head(matches)
 
 Building the package doesn't run the searches in this vignette, which only
 shows their code. To run stages 1 to 4 and see their output, set the
-`SCYTHE_OPENALEX_LIVE` environment variable and build the vignette from the
+`SCYTHE_TEST_OPENALEX` environment variable and build the vignette from the
 package source directory:
 
 ```{r render, eval = FALSE}
-Sys.setenv(SCYTHE_OPENALEX_LIVE = "true")
+Sys.setenv(SCYTHE_TEST_OPENALEX = "true")
 rmarkdown::render("vignettes/openalex-arctic-data-center.Rmd")
 ```
 
