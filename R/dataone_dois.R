@@ -235,6 +235,8 @@ unique_dois <- function(dois) {
 #' @param exclude_prefixes DOI prefixes to skip, as a named list mapping a
 #'   node to its prefixes, for example
 #'   `list("urn:node:KNB" = c("10.6073/AA/", "10.6085/AA/"))`
+#' @param skip_test_dois whether to skip DOIs under DataCite's test prefix,
+#'   `10.5072/`, which never resolve
 #' @param cn_url the coordinating node's base URL
 #' @return data.frame with one row per DOI: `doi` (normalized), `identifier`
 #'   (as registered in DataONE), `field` ("id" or "seriesId"), `node`,
@@ -253,7 +255,7 @@ unique_dois <- function(dois) {
 #' }
 collect_dataone_dois <- function(priority_nodes = character(), other_nodes = NULL,
                                  exclude_nodes = character(), exclude_prefixes = list(),
-                                 cn_url = dataone_cn) {
+                                 skip_test_dois = TRUE, cn_url = dataone_cn) {
   nodes <- dataone_nodes(cn_url)
   records <- lapply(priority_nodes, function(node) {
     r <- priority_node_records(node, nodes, cn_url)
@@ -278,6 +280,15 @@ collect_dataone_dois <- function(priority_nodes = character(), other_nodes = NUL
   records <- do.call(rbind, c(list(cbind(docs_to_df(list()), index = character(),
                                          cn_count = numeric(), group = character())), records))
   dois <- records_to_dois(records)
+
+  # DataCite's test prefix: these DOIs never resolve.
+  test <- if (skip_test_dois) startsWith(dois$doi, test_doi_prefix) else rep(FALSE, nrow(dois))
+  test_by_node <- table(dois$node[test])
+  if (any(test)) {
+    message("Skipped ", sum(test), " DOIs with DataCite's test prefix ", test_doi_prefix, " (",
+            paste(names(test_by_node), test_by_node, sep = ": ", collapse = ", "), ")")
+  }
+  dois <- dois[!test, , drop = FALSE]
 
   # Skip the excluded prefixes, node by node, before removing duplicates, so
   # that a DOI a priority node's index mislabels as its own (such as KNB's
@@ -309,10 +320,15 @@ collect_dataone_dois <- function(priority_nodes = character(), other_nodes = NUL
   summary$records <- as.vector(table(factor(records$authoritativeMN, levels = summary$node)))
   summary$dois <- as.vector(table(factor(dois$node, levels = summary$node)))
   summary$excluded <- unname(ifelse(summary$node %in% names(excluded), excluded[summary$node], 0))
+  summary$test_dois <- as.vector(ifelse(summary$node %in% names(test_by_node),
+                                        test_by_node[summary$node], 0))
   rownames(dois) <- NULL
   attr(dois, "doi_sources") <- summary
   dois
 }
+
+# DataCite's prefix for test DOIs, which never resolve.
+test_doi_prefix <- "10.5072/"
 
 # DOI prefixes in the normalized (lowercase, bare) form of normalize_doi().
 normalize_doi_prefix <- function(prefixes) {

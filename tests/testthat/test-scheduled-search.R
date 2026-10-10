@@ -1,0 +1,263 @@
+# Tests of the scheduled search's cycles and phases, with a fake clock, a fake
+# OpenAlex, and fixed DOI lists in place of the DataONE indexes.
+
+doi_rows <- function(dois, node, group) {
+  data.frame(doi = dois, identifier = paste0("doi:", dois), field = "id", node = node,
+             dataset = paste0("doi:", dois), format_type = "METADATA",
+             date_uploaded = "2020-01-01T00:00:00Z", index = "member", group = group,
+             stringsAsFactors = FALSE)
+}
+priority_dois <- rbind(doi_rows("10.18739/p1", "urn:node:ARCTIC", "priority"),
+                       doi_rows("10.5063/p2", "urn:node:KNB", "priority"))
+other_dois <- rbind(doi_rows("10.1594/pangaea.1", "urn:node:PANGAEA", "other"),
+                    doi_rows("10.6085/o1", "urn:node:PISCO", "other"))
+
+# A1 cites p1 (graph only), A2 mentions p2 (text only), A3 cites and
+# mentions p1 (both), B1 and B2 cite the other nodes' datasets.
+works <- list(
+  fake_work("D1", "10.18739/p1", type = "dataset"),
+  fake_work("D2", "10.5063/p2", type = "dataset"),
+  fake_work("O1", "10.6085/o1", type = "dataset"),
+  fake_work("P1", "10.1594/pangaea.1", type = "dataset"),
+  fake_work("A1", "10.1/a1", cites = "D1"),
+  fake_work("A2", "10.1/a2", text = "10.5063/p2"),
+  fake_work("A3", "10.1/a3", cites = "D1", text = "10.18739/p1"),
+  fake_work("B1", "10.1/b1", cites = "O1"),
+  fake_work("B2", "10.1/b2", cites = "P1")
+)
+
+# Run `code` with collect_dataone_dois() returning the fixed DOI lists, and
+# count its calls in `collected`.
+with_fake_dataone <- function(code, env = parent.frame()) {
+  collected <- new.env()
+  collected$priority <- 0
+  collected$others <- 0
+  assign("collected", collected, envir = env)
+  testthat::local_mocked_bindings(
+    collect_dataone_dois = function(priority_nodes = character(), other_nodes = NULL,
+                                    exclude_nodes = character(), ...) {
+      if (length(priority_nodes)) {
+        collected$priority <- collected$priority + 1
+        return(priority_dois)
+      }
+      collected$others <- collected$others + 1
+      other_dois[!other_dois$node %in% exclude_nodes, , drop = FALSE]
+    },
+    .package = "scythe", .env = env
+  )
+  force(code)
+}
+
+run <- function(dir, ...) {
+  scheduled_search(c("urn:node:ARCTIC", "urn:node:KNB"), dir, ...)
+}
+
+total <- function(dir) read.csv(file.path(dir, "results", "citations.csv"), colClasses = "character")
+
+pairs <- function(path) {
+  x <- read.csv(path, colClasses = "character")
+  sort(paste(x$article_id, x$dataset_id))
+}
+
+# Make the fake answer the first request whose URL matches `pattern` with a
+# 429 that resets after `seconds`.
+rate_limit_once <- function(server, pattern, seconds = 7200) {
+  http <- server$http
+  limited <- FALSE
+  server$http <- function(urls) {
+    lapply(urls, function(url) {
+      if (!limited && grepl(pattern, url, fixed = TRUE)) {
+        limited <<- TRUE
+        server$urls <- c(server$urls, url)
+        return(list(status = 429, headers = list(`retry-after` = as.character(seconds)), body = "{}"))
+      }
+      http(url)[[1]]
+    })
+  }
+}
+
+test_that("a first run does the priority phases in order, then the other nodes", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  with_fake_openalex(server, with_fake_dataone({
+    status <- run(dir)
+    expect_equal(status$ran, c("priority_graph", "priority_text", "others_graph"))
+    expect_equal(read_state(file.path(dir, "state", "cycle.json"))$phase, "done")
+    expect_equal(read_state(file.path(dir, "state", "others.json"))$status, "done")
+
+    results <- file.path(dir, "results", "2026-10-01")
+    expect_equal(pairs(file.path(results, "priority-graph.csv")),
+                 c("10.1/a1 10.18739/p1", "10.1/a3 10.18739/p1"))
+    expect_equal(pairs(file.path(results, "priority-text.csv")),
+                 c("10.1/a2 10.5063/p2", "10.1/a3 10.18739/p1"))
+    # Only the full-text citation the graph search missed.
+    expect_equal(pairs(file.path(results, "priority-text-new.csv")), "10.1/a2 10.5063/p2")
+    expect_equal(pairs(file.path(dir, "results", "others-2026-10-01", "others-graph.csv")),
+                 c("10.1/b1 10.6085/o1", "10.1/b2 10.1594/pangaea.1"))
+
+    t <- total(dir)
+    expect_equal(nrow(t), 5)
+    a3 <- t[t$article_id == "10.1/a3", ]
+    expect_equal(a3$sources, "openalex-graph;openalex-text")
+    expect_equal(a3$first_phase, "priority_graph")
+    expect_equal(t$node[t$article_id == "10.1/a2"], "urn:node:KNB")
+    expect_equal(t$first_cycle[t$article_id == "10.1/b1"], "others-2026-10-01")
+  }))
+})
+
+test_that("the other nodes' DOIs put the last nodes at the end", {
+  dir <- withr::local_tempdir()
+  with_fake_openalex(fake_openalex(works), with_fake_dataone({
+    run(dir)
+    saved <- read_doi_list(file.path(dir, "state", "dois", "others-2026-10-01.csv"))
+    expect_equal(saved$node, c("urn:node:PISCO", "urn:node:PANGAEA"))
+  }))
+})
+
+test_that("a run with nothing due sends no requests", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  with_fake_openalex(server, with_fake_dataone({
+    run(dir)
+    sent <- length(server$urls)
+    server$clock$now <- server$clock$now + 3600
+    status <- run(dir)
+    expect_length(server$urls, sent)
+    expect_length(status$ran, 0)
+    expect_equal(collected$priority, 1)
+  }))
+})
+
+test_that("the next cycle starts on the next cycle day, searching recent works in full text", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  with_fake_openalex(server, with_fake_dataone({
+    run(dir)
+    server$clock$now <- as.POSIXct("2026-10-14 23:00:00", tz = "UTC")
+    expect_length(run(dir)$ran, 0)
+    sent <- length(server$urls)
+    server$clock$now <- as.POSIXct("2026-10-15 00:05:00", tz = "UTC")
+    status <- run(dir)
+    expect_equal(status$cycle, "2026-10-15")
+    # The other nodes' pass isn't due again until 30 days after the last.
+    expect_equal(status$ran, c("priority_graph", "priority_text"))
+    text <- grep("fulltext.search", server$urls[-seq_len(sent)], value = TRUE, fixed = TRUE)
+    expect_true(length(text) > 0)
+    # 90 days before the start of the last cycle that completed (2026-10-01).
+    expect_true(all(grepl("from_publication_date%3A2026-07-03", text, fixed = TRUE)))
+    expect_true(file.exists(file.path(dir, "results", "2026-10-15", "priority-text-new.csv")))
+  }))
+})
+
+test_that("a cycle stopped by OpenAlex's rate limit resumes after the reset", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  rate_limit_once(server, "filter=doi")
+  with_fake_openalex(server, with_fake_dataone({
+    expect_warning(status <- run(dir), "rate limited until")
+    expect_equal(status$phase, "priority_graph")
+    expect_equal(status$ran, "priority_graph")
+    expect_false(file.exists(file.path(dir, "results", "2026-10-01", "priority-graph.csv")))
+
+    # Within the pause, a run sends nothing.
+    server$clock$now <- server$clock$now + 3600
+    sent <- length(server$urls)
+    run(dir)
+    expect_length(server$urls, sent)
+
+    # After it, the cycle continues with the same DOIs.
+    server$clock$now <- server$clock$now + 3700
+    status <- run(dir)
+    expect_equal(status$phase, "done")
+    expect_equal(collected$priority, 1)
+    expect_equal(nrow(total(dir)), 5)
+  }))
+})
+
+test_that("a new cycle pauses the other nodes' pass until its OpenAlex phases are done", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  # The pass over the other nodes is rate-limited on its first request.
+  rate_limit_once(server, "10.6085%2Fo1", seconds = 20 * 86400)
+  with_fake_openalex(server, with_fake_dataone({
+    expect_warning(status <- run(dir), "rate limited until")
+    expect_equal(status$others_status, "running")
+
+    # On the 15th the recorded pause is still in force: the new cycle starts
+    # but sends no requests, and the pass stays where it was.
+    server$clock$now <- as.POSIXct("2026-10-15 01:00:00", tz = "UTC")
+    sent <- length(server$urls)
+    status <- run(dir)
+    expect_length(server$urls, sent)
+    expect_equal(status$cycle, "2026-10-15")
+    expect_equal(status$phase, "priority_graph")
+    expect_false("others_graph" %in% status$ran)
+
+    # After the pause, the cycle's phases run first, then the pass resumes
+    # (it isn't restarted: its DOIs aren't collected again).
+    server$clock$now <- as.POSIXct("2026-10-21 13:00:00", tz = "UTC")
+    status <- run(dir)
+    expect_equal(status$ran, c("priority_graph", "priority_text", "others_graph"))
+    expect_equal(status$others, "2026-10-01")
+    expect_equal(status$others_status, "done")
+    expect_equal(collected$others, 1)
+  }))
+})
+
+test_that("a cycle that finishes after the next cycle day is followed straight away", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  rate_limit_once(server, "filter=doi", seconds = 17 * 86400)
+  with_fake_openalex(server, with_fake_dataone({
+    expect_warning(run(dir), "rate limited until")
+    server$clock$now <- as.POSIXct("2026-10-18 13:00:00", tz = "UTC")
+    expect_equal(run(dir)$phase, "done")
+    expect_equal(read_state(file.path(dir, "state", "cycle.json"))$id, "2026-10-01")
+    # The next run starts the cycle that was due on the 15th.
+    expect_equal(run(dir)$cycle, "2026-10-18")
+  }))
+})
+
+test_that("a new pass over the other nodes starts once the last is 30 days old", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  with_fake_openalex(server, with_fake_dataone({
+    run(dir)
+    # 29 days later: the cycle due on the 15th runs, but no new pass.
+    server$clock$now <- as.POSIXct("2026-10-30 12:00:00", tz = "UTC")
+    status <- run(dir)
+    expect_equal(status$ran, c("priority_graph", "priority_text"))
+    server$clock$now <- as.POSIXct("2026-10-31 12:00:00", tz = "UTC")
+    status <- run(dir)
+    expect_equal(status$ran, "others_graph")
+    expect_equal(status$others, "2026-10-31")
+    expect_equal(collected$others, 2)
+  }))
+})
+
+test_that("a failure to collect DOIs is retried on the next run", {
+  dir <- withr::local_tempdir()
+  fail <- TRUE
+  with_fake_openalex(fake_openalex(works), {
+    local_mocked_bindings(collect_dataone_dois = function(priority_nodes = character(), ...) {
+      if (fail) stop("CN unavailable")
+      priority_dois
+    })
+    expect_message(status <- run(dir, other_nodes = NULL), "Couldn't collect the priority nodes' DOIs",
+                   class = "message")
+    expect_null(read_state(file.path(dir, "state", "cycle.json")))
+    fail <- FALSE
+    expect_equal(run(dir, other_nodes = NULL)$phase, "done")
+  })
+})
+
+test_that("cycle days are found in this month or the last", {
+  d <- as.Date
+  expect_equal(latest_cycle_day(d("2026-10-01"), c(1, 15)), d("2026-10-01"))
+  expect_equal(latest_cycle_day(d("2026-10-14"), c(1, 15)), d("2026-10-01"))
+  expect_equal(latest_cycle_day(d("2026-10-31"), c(1, 15)), d("2026-10-15"))
+  expect_equal(latest_cycle_day(d("2026-11-10"), 15), d("2026-10-15"))
+  # A day that a month doesn't have is skipped.
+  expect_equal(latest_cycle_day(d("2026-03-05"), c(1, 30)), d("2026-03-01"))
+  expect_equal(latest_cycle_day(d("2026-03-05"), 30), d("2026-01-30"))
+})

@@ -25,7 +25,9 @@ knb_records <- rbind(
   record("doi:10.6085/AA/PISCO1", "urn:node:KNB"),
   # A replica of an ARCTIC record, and a record whose authority moved to CA_OPC.
   record("doi:10.18739/A2REPLICA", "urn:node:ARCTIC"),
-  record("doi:10.5063/OPC1", "urn:node:CA_OPC")
+  record("doi:10.5063/OPC1", "urn:node:CA_OPC"),
+  # A DOI under DataCite's test prefix.
+  record("doi:10.5072/FK2TEST", "urn:node:KNB")
 )
 cn_records <- rbind(
   knb_records[c(1:4, 8), ],
@@ -121,6 +123,15 @@ test_that("excluded prefixes are skipped for their node", {
   sources <- attr(dois, "doi_sources")
   expect_equal(sources$excluded[sources$node == "urn:node:KNB"], 2)
   expect_equal(sources$dois[sources$node == "urn:node:KNB"], 5)
+})
+
+test_that("DOIs under DataCite's test prefix are skipped unless asked for", {
+  server <- fake_solr(indexes)
+  dois <- collect(server, "urn:node:KNB")
+  expect_false("10.5072/fk2test" %in% dois$doi)
+  expect_equal(attr(dois, "doi_sources")$test_dois, 1)
+  dois <- collect(server, "urn:node:KNB", skip_test_dois = FALSE)
+  expect_true("10.5072/fk2test" %in% dois$doi)
 })
 
 test_that("every DOI of a dataset is grouped under it", {

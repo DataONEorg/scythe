@@ -19,19 +19,36 @@ persistence:
 
 cronjob:
   name: scythe
-  schedule: "0 12 1 * *"
+  # Hourly: each run does whatever work of the scheduled search is due and
+  # possible, then exits (see ?scythe::scheduled_search).
+  schedule: "5 * * * *"
   script: /apps/scythe/search.R
-  nodes: 'urn:node:ARCTIC,urn:node:ESS_DIVE'
-  sources: 'springer,scopus,xdd,openalex'
-  rows: 10
+  priority:
+    # Member nodes searched every cycle, in priority order, from their own
+    # search indexes.
+    nodes: "urn:node:ARCTIC,urn:node:ESS_DIVE,urn:node:KNB,urn:node:GOA,urn:node:SI,urn:node:CA_OPC,urn:node:SFWMD,urn:node:CERP_SFWMD,urn:node:SCTLD,urn:node:DRP,urn:node:CIB,urn:node:GERI,urn:node:FWC,urn:node:SDR"
+    # DOI prefixes not searched from a node's own index: KNB's index lists
+    # retired LTER and PISCO records as its own (DataONEorg/dataone#29).
+    excludePrefixes: "urn:node:KNB=10.6073/AA/,10.6085/AA/"
+    # Days of the month a priority cycle may start.
+    cycleDays: "1,15"
+  others:
+    # Nodes for the citation-graph pass over the rest of DataONE: "all"
+    # (every node not in priority.nodes), "none", or a comma-separated list.
+    nodes: all
+    exclude: ""
+    # Searched after every other node.
+    last: "urn:node:PANGAEA"
+    everyDays: 30
   openalex:
-    # Approval for OpenAlex searches: a number of credits the job may spend,
-    # or "unlimited" to run without a limit (until the search completes or the
-    # daily budget runs out, resuming on the next run). Leave empty to only run
-    # searches whose estimated cost is under 500 credits.
+    # Approval for OpenAlex searches: the credits one run may spend, or
+    # "unlimited" to run until the searches complete or the daily budget runs
+    # out (resuming on a later run). Leave empty for 500 credits a run.
     approve: ""
-    # Days before the last complete run that each search looks back over.
-    lookback: 365
+    # Days of lookback for the full-text search in later cycles: each looks
+    # for works published since the start of the last complete cycle, less
+    # this many days.
+    lookback: 90
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -9,6 +9,7 @@ collect_dataone_dois(
   other_nodes = NULL,
   exclude_nodes = character(),
   exclude_prefixes = list(),
+  skip_test_dois = TRUE,
   cn_url = dataone_cn
 )
 }
@@ -24,6 +25,9 @@ whose DOIs are read from their own indexes}
 \item{exclude_prefixes}{DOI prefixes to skip, as a named list mapping a
 node to its prefixes, for example
 `list("urn:node:KNB" = c("10.6073/AA/", "10.6085/AA/"))`}
+
+\item{skip_test_dois}{whether to skip DOIs under DataCite's test prefix,
+`10.5072/`, which never resolve}
 
 \item{cn_url}{the coordinating node's base URL}
 }

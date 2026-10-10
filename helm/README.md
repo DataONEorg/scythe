@@ -21,10 +21,15 @@ docker buildx build \
 
 In `values.yaml`, key fields to configure are:
 
-- **`cronjob.schedule`**: Schedule for the CronJob (in cron format).
-- **`cronjob.nodes`**: A set of node identifiers to be passed to the R script, as a comma separated list
-- **`cronjob.rows`**: Number of rows to return per node when getting DOIs. Set to a very large number when getting all DOIs.
-- **`cronjob.sources`**: Sources to use when searching for results. One or more of: scopus, plos, springer, xdd.
+- **`cronjob.schedule`**: Schedule for the CronJob (in cron format). Keep it hourly: each run does whatever work of the scheduled search is due, then exits (see `?scythe::scheduled_search`).
+- **`cronjob.priority.nodes`**: Member nodes searched every cycle, as a comma-separated list, in priority order. Their DOIs come from their own search indexes.
+- **`cronjob.priority.excludePrefixes`**: DOI prefixes not searched from a node's own index, as `node=prefix,prefix;node=...`.
+- **`cronjob.priority.cycleDays`**: Days of the month a priority cycle may start.
+- **`cronjob.others.nodes`**: Nodes for the monthly citation-graph pass over the rest of DataONE: `all`, `none`, or a comma-separated list.
+- **`cronjob.others.exclude`**, **`cronjob.others.last`**, **`cronjob.others.everyDays`**: Nodes left out of that pass, nodes searched last in it, and days between passes.
+- **`cronjob.openalex.approve`** and **`cronjob.openalex.lookback`**: OpenAlex credits a run may spend, and the full-text search's lookback in days.
+
+Results are written to `results/` under `persistence.mountPath`: `citations.csv` holds every citation found so far, and each cycle's directory holds its phases' citations.
 
 
 ## API Keys
