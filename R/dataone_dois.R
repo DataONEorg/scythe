@@ -9,15 +9,22 @@
 # GOA's quoted authoritativeMN values), falls back to the CN. All other nodes'
 # DOIs come from the CN.
 #
-# A dataset can have several DOIs: each version's identifier and the series
-# identifier can all be DOIs. Every one is collected and grouped under the
-# dataset (its series identifier, or else the first version in its chain).
+# A dataset's versions and its series each have an identifier (PID or SID),
+# and any of them may be a DOI. Every DOI identifier is collected, and kept
+# as the string literal recorded in DataONE's system metadata: repositories
+# serialize DOIs in many ways (doi:10..., https://doi.org/10..., a bare
+# 10..., and so on), and a citation found under any form is recorded against
+# the exact literal. The normalized DOI is only used to search and compare.
 
 dataone_cn <- "https://cn.dataone.org/cn"
 
-doi_record_query <- "(id:doi* OR seriesId:doi*)"
-doi_record_fields <- c("id", "seriesId", "obsoletes", "obsoletedBy", "authoritativeMN",
-                       "formatType", "dateUploaded")
+# Identifiers that may be DOIs, in the serializations repositories use;
+# normalize_doi() then drops any that aren't.
+doi_record_query <- local({
+  patterns <- c("doi*", "DOI*", "Doi*", "10.*", "http*doi.org*", "info\\:doi*", "urn\\:doi*")
+  paste0("(", paste(c(paste0("id:", patterns), paste0("seriesId:", patterns)), collapse = " OR "), ")")
+})
+doi_record_fields <- c("id", "seriesId", "authoritativeMN", "formatType", "dateUploaded")
 
 # Send a Solr query to a node's (or the CN's) query endpoint and return the
 # parsed response, retrying server and network errors. Any other error stops
@@ -147,68 +154,37 @@ priority_node_records <- function(node, nodes, cn_url) {
   records
 }
 
-# Label each record with its dataset: the series identifier if any version
-# has one, or else the first-uploaded version of its version chain. Versions
-# are linked through obsoletes and obsoletedBy, including versions that
-# aren't themselves in `records` (such as a version with a UUID identifier
-# between two DOI versions).
-dataset_keys <- function(records) {
-  n <- nrow(records)
-  if (n == 0) return(character())
-  ids <- records$id
-  sids <- ifelse(is.na(records$seriesId), NA_character_, paste0("sid:", records$seriesId))
-  vertices <- unique(c(ids, stats::na.omit(records$obsoletes), stats::na.omit(records$obsoletedBy),
-                       stats::na.omit(sids)))
-  v <- function(x) match(x, vertices)
-  edges <- rbind(
-    cbind(v(ids), v(records$obsoletes)),
-    cbind(v(ids), v(records$obsoletedBy)),
-    cbind(v(ids), v(sids))
-  )
-  edges <- edges[stats::complete.cases(edges), , drop = FALSE]
-  label <- seq_along(vertices)
-  # Propagate the smallest label along the edges until every connected
-  # version shares one.
-  repeat {
-    low <- pmin(label[edges[, 1]], label[edges[, 2]])
-    candidate <- c(label, low, low)
-    vertex <- c(seq_along(label), edges[, 1], edges[, 2])
-    o <- order(vertex, candidate)
-    new <- candidate[o][!duplicated(vertex[o])]
-    new <- new[new]
-    if (identical(new, label)) break
-    label <- new
-  }
-  component <- label[v(ids)]
-  first_sid <- tapply(records$seriesId, component, function(s) sort(stats::na.omit(s))[1])
-  first_version <- tapply(seq_len(n), component, function(i) {
-    i[order(records$dateUploaded[i], records$id[i])][1]
-  })
-  key <- first_sid[as.character(component)]
-  ifelse(is.na(key), ids[first_version[as.character(component)]], key)
-}
-
-# One row per DOI found in each record's identifier and series identifier,
-# before duplicates are removed (see unique_dois()).
+# One row per DOI found in each record's identifier (PID) and series
+# identifier (SID), before duplicates are removed (see unique_dois()).
 records_to_dois <- function(records) {
-  records$dataset <- dataset_keys(records)
   rows <- lapply(c("id", "seriesId"), function(field) {
     doi <- normalize_doi(records[[field]])
     keep <- !is.na(doi)
     data.frame(doi = doi[keep], identifier = records[[field]][keep], field = rep(field, sum(keep)),
-               node = records$authoritativeMN[keep], dataset = records$dataset[keep],
-               format_type = records$formatType[keep], date_uploaded = records$dateUploaded[keep],
-               index = records$index[keep], group = records$group[keep], stringsAsFactors = FALSE)
+               node = records$authoritativeMN[keep], format_type = records$formatType[keep],
+               date_uploaded = records$dateUploaded[keep], index = records$index[keep],
+               group = records$group[keep], stringsAsFactors = FALSE)
   })
   do.call(rbind, rows)
 }
 
-# Keep one row per DOI (a series identifier appears on every version),
-# preferring a priority node's record, then an identifier over a series
-# identifier, then the earliest upload.
+# Keep one row per DOI. A SID appears on every version's record, and
+# occasionally two identifier literals are the same DOI (such as
+# "doi.org/10.18739/A29G5GG55" and "doi:10.18739/A29G5GG55"). The row kept
+# prefers a priority node's record, then a "doi:" literal, then a PID over a
+# SID, then the earliest upload; any other literals for the DOI are listed in
+# `other_identifiers`.
 unique_dois <- function(dois) {
-  dois <- dois[order(dois$group != "priority", dois$field != "id", dois$date_uploaded), , drop = FALSE]
-  dois[!duplicated(dois$doi), , drop = FALSE]
+  dois <- dois[order(dois$group != "priority", !startsWith(dois$identifier, "doi:"),
+                     dois$field != "id", dois$date_uploaded, dois$identifier), , drop = FALSE]
+  keep <- !duplicated(dois$doi)
+  all <- tapply(dois$identifier, dois$doi, function(x) unique(x), simplify = FALSE)
+  kept <- dois[keep, , drop = FALSE]
+  kept$other_identifiers <- vapply(seq_len(nrow(kept)), function(i) {
+    others <- setdiff(all[[kept$doi[i]]], kept$identifier[i])
+    if (length(others)) paste(others, collapse = " ") else NA_character_
+  }, "")
+  kept
 }
 
 #' Collect the DOIs of DataONE datasets
@@ -222,10 +198,12 @@ unique_dois <- function(dois) {
 #' to the CN, with a warning of class `scythe_index_fallback`. The other
 #' nodes' DOIs come from the CN.
 #'
-#' Every DOI of a dataset is collected: each version's identifier and the
-#' series identifier, including versions replaced by newer ones. The
-#' `dataset` column groups them: the series identifier if the dataset has one,
-#' or else the identifier of its first version.
+#' Every DOI identifier is collected: each version's identifier (PID) and the
+#' series identifier (SID), including versions replaced by newer ones. Each is
+#' kept as the string literal in DataONE's system metadata (`identifier`),
+#' however the repository serialized the DOI, so that citations can be
+#' recorded against the exact identifier; `doi` is the normalized DOI used to
+#' search.
 #'
 #' @param priority_nodes member node identifiers (such as "urn:node:ARCTIC")
 #'   whose DOIs are read from their own indexes
@@ -239,9 +217,10 @@ unique_dois <- function(dois) {
 #'   `10.5072/`, which never resolve
 #' @param cn_url the coordinating node's base URL
 #' @return data.frame with one row per DOI: `doi` (normalized), `identifier`
-#'   (as registered in DataONE), `field` ("id" or "seriesId"), `node`,
-#'   `dataset`, `format_type`, `date_uploaded`, `index` ("member" or "cn")
-#'   and `group` ("priority" or "other"). A `doi_sources` attribute summarizes
+#'   (the literal in DataONE's system metadata), `field` ("id" for a PID or
+#'   "seriesId" for a SID), `node`, `format_type`, `date_uploaded`, `index`
+#'   ("member" or "cn"), `group` ("priority" or "other") and
+#'   `other_identifiers` (any other literals in DataONE for the same DOI). A `doi_sources` attribute summarizes
 #'   each node: where its DOIs came from, the CN's count, and how many were
 #'   excluded.
 #' @export
@@ -343,9 +322,7 @@ normalize_doi_prefix <- function(prefixes) {
 #' @param path the CSV file
 #' @noRd
 write_doi_list <- function(dois, path) {
-  dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
-  utils::write.csv(dois, path, row.names = FALSE, na = "")
-  invisible(path)
+  write_csv_atomic(dois, path)
 }
 
 read_doi_list <- function(path) {

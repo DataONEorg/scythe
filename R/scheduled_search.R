@@ -79,6 +79,14 @@
 #' @param alert_paused_days alert when a track has been paused this many days
 #' @param alert_projection_days alert when the OpenAlex full-text search's
 #'   first full pass is projected to take longer than this many days
+#' @param metrics_check_hours how often to compare the citations found with
+#'   DataONE's metrics service (see [get_metrics_citations()]), marking each
+#'   in `results/citations.csv` (`in_metrics`: "yes" if the service has the
+#'   same citing work and target, "no" if not, or "unmapped" for a citation
+#'   without a DataONE identifier, which is never submitted) and writing the
+#'   ones to submit to `results/to-submit.csv`; 0 to never compare
+#' @param lock_stale_hours a run lock older than this was left by a run that
+#'   died, and is taken over; only one run at a time works in `dir`
 #' @param log_dir directory for the OpenAlex review logs
 #' @param cn_url the DataONE coordinating node's base URL
 #' @return a list describing the state after this call, invisibly
@@ -99,9 +107,16 @@ scheduled_search <- function(priority_nodes, dir,
                              alert_pass_cycles = 2,
                              alert_paused_days = 3,
                              alert_projection_days = 30,
+                             metrics_check_hours = 24,
+                             lock_stale_hours = 24,
                              log_dir = file.path(dir, "logs"),
                              cn_url = dataone_cn) {
   paths <- schedule_paths(dir)
+  if (!acquire_run_lock(dir, lock_stale_hours)) {
+    return(invisible(list(locked = TRUE, ran = character())))
+  }
+  on.exit(release_run_lock(dir), add = TRUE)
+  remove_leftover_temp_files(dir)
   ran <- character()
   openalex <- NULL
   now <- http_now()
@@ -139,8 +154,7 @@ scheduled_search <- function(priority_nodes, dir,
       }
       write_doi_list(dois, file.path(paths$dois, paste0(id, "-priority.csv")))
       if (!is.null(attr(dois, "doi_sources"))) {
-        utils::write.csv(attr(dois, "doi_sources"), file.path(paths$dois, paste0(id, "-sources.csv")),
-                         row.names = FALSE, na = "")
+        write_csv_atomic(attr(dois, "doi_sources"), file.path(paths$dois, paste0(id, "-sources.csv")))
       }
       cycle <- list(id = id, number = (cycle$number %||% 0) + 1, started = format_utc(now),
                     phase = "priority_graph", dois = nrow(dois),
@@ -238,18 +252,32 @@ scheduled_search <- function(priority_nodes, dir,
       update_text_new(file.path(paths$results, r$track$pass))
     }
   }
+  # Re-add each track's last completed pass, so that citations a run found
+  # but died before adding (after the track finished its pass) aren't lost.
+  # Pairs already in the total are skipped, so this is usually a no-op.
+  for (source in text_sources) {
+    done <- read_state(track_paths(dir, source)$state)$last_completed
+    file <- if (!is.null(done)) file.path(paths$results, done, paste0("priority-", source, ".csv"))
+    if (!is.null(file) && file.exists(file)) {
+      add_to_total(read_citations(file), paths$total, source = source, phase = "priority_text",
+                   cycle = done, found_at = format_utc(now))
+    }
+  }
+
+  # Compare with the metrics service, about once a day.
+  metrics <- check_metrics(paths, http_now(), metrics_check_hours)
 
   # Report.
   track_states <- lapply(stats::setNames(text_sources, text_sources),
                          function(s) read_state(track_paths(dir, s)$state))
   message(openalex_line(cycle, text, openalex))
   for (s in text_sources) message(track_line(s, track_states[[s]]))
-  alerts <- current_alerts(cycle, track_states, text, collection, http_now(),
+  alerts <- current_alerts(cycle, track_states, text, collection, http_now(), metrics = metrics,
                            pass_cycles = alert_pass_cycles, paused_days = alert_paused_days,
                            projection_days = alert_projection_days)
   open <- update_alerts(dir, alerts, http_now())
   others <- read_state(paths$others)
-  write_status_report(dir, cycle, others, track_states, text, openalex, open, http_now())
+  write_status_report(dir, cycle, others, track_states, text, openalex, open, http_now(), metrics)
   invisible(list(cycle = cycle$id, phase = cycle$phase, others = others$id,
                  others_status = others$status, ran = ran, openalex = openalex,
                  tracks = track_states, alerts = names(open)))
@@ -287,6 +315,7 @@ schedule_paths <- function(dir) {
     openalex = file.path(dir, "state", "openalex"),
     openalex_state = file.path(dir, "state", "openalex-state.json"),
     collection = file.path(dir, "state", "collection.json"),
+    metrics = file.path(dir, "state", "metrics.json"),
     results = file.path(dir, "results"),
     total = file.path(dir, "results", "citations.csv")
   )
@@ -345,12 +374,21 @@ collect_other_dois <- function(other_nodes, priority_nodes, exclude_nodes, last_
 
 openalex_complete <- function(found) isTRUE(attr(found, "openalex_status")$complete)
 
-# Add the node and dataset of each citation's dataset DOI.
+# Add each citation's target: the identifier literal in DataONE's system
+# metadata that the searched DOI belongs to (`target_id`), whether it is a
+# PID or a SID (`target_type`), and its node. The searches only report the
+# DOIs they were given, so a citation without a target would be a bug; it is
+# left with no target_id and never submitted.
 annotate_citations <- function(found, dois) {
   keep <- attributes(found)[c("openalex_status", "search_status")]
   i <- match(normalize_doi(found$dataset_id), dois$doi)
+  found$target_id <- dois$identifier[i]
+  found$target_type <- ifelse(dois$field[i] == "seriesId", "sid", "pid")
   found$node <- dois$node[i]
-  found$dataset <- dois$dataset[i]
+  if (anyNA(i)) {
+    message("Couldn't find the DataONE identifier of ", sum(is.na(i)), " cited DOIs (for example ",
+            found$dataset_id[is.na(i)][1], "); they won't be submitted.")
+  }
   for (a in names(keep)) if (!is.null(keep[[a]])) attr(found, a) <- keep[[a]]
   found
 }
@@ -359,12 +397,13 @@ pair_key <- function(citations) {
   paste(tolower(citations$article_id), normalize_doi(citations$dataset_id))
 }
 
-citation_columns <- c("article_id", "article_title", "dataset_id", "node", "dataset")
+citation_columns <- c("article_id", "article_title", "dataset_id", "target_id", "target_type", "node")
 
 write_citations <- function(citations, path) {
-  dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
-  for (col in setdiff(citation_columns, names(citations))) citations[[col]] <- character()
-  utils::write.csv(citations[citation_columns], path, row.names = FALSE, na = "")
+  for (col in setdiff(citation_columns, names(citations))) {
+    citations[[col]] <- rep(NA_character_, nrow(citations))
+  }
+  write_csv_atomic(citations[citation_columns], path)
 }
 
 read_citations <- function(path) {
@@ -386,22 +425,36 @@ add_to_total <- function(found, path, source, phase, cycle, found_at) {
   }
   if (nrow(found) == 0 && !is.null(total)) return(invisible(total))
   found <- found[!duplicated(pair_key(found)), , drop = FALSE]
+  changed <- is.null(total)
   if (!is.null(total) && nrow(total)) {
     known <- match(pair_key(found), pair_key(total))
     for (k in which(!is.na(known))) {
       sources <- strsplit(total$sources[known[k]], ";", fixed = TRUE)[[1]]
-      total$sources[known[k]] <- paste(unique(c(sources, source)), collapse = ";")
+      if (!source %in% sources) {
+        total$sources[known[k]] <- paste(c(sources, source), collapse = ";")
+        changed <- TRUE
+      }
     }
     found <- found[is.na(known), , drop = FALSE]
   }
   new <- data.frame(found[citation_columns], sources = rep(source, nrow(found)),
                     first_phase = rep(phase, nrow(found)), first_cycle = rep(cycle, nrow(found)),
                     first_found = rep(found_at, nrow(found)), stringsAsFactors = FALSE)
-  total <- rbind(total, new)
+  # Columns added to the total later (such as in_metrics) are blank for new rows.
+  for (col in setdiff(names(total), names(new))) new[[col]] <- rep(NA_character_, nrow(new))
+  if (!changed && nrow(new) == 0) return(invisible(total))
+  total <- rbind(total, new[names(total %||% new)])
   if (nrow(new)) message("Added ", nrow(new), " new citations to ", path)
+  write_csv_atomic(total, path)
+  invisible(total)
+}
+
+# Write a CSV file through a temporary file and a rename, so that a reader
+# (another process, or a later run after a crash) never sees part of one.
+write_csv_atomic <- function(df, path) {
   dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
   tmp <- paste0(path, ".tmp", Sys.getpid())
-  utils::write.csv(total, tmp, row.names = FALSE, na = "")
-  file.rename(tmp, path)
-  invisible(total)
+  utils::write.csv(df, tmp, row.names = FALSE, na = "")
+  if (!file.rename(tmp, path)) stop("Couldn't replace ", path)
+  invisible(path)
 }

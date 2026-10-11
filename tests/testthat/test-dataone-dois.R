@@ -27,7 +27,11 @@ knb_records <- rbind(
   record("doi:10.18739/A2REPLICA", "urn:node:ARCTIC"),
   record("doi:10.5063/OPC1", "urn:node:CA_OPC"),
   # A DOI under DataCite's test prefix.
-  record("doi:10.5072/FK2TEST", "urn:node:KNB")
+  record("doi:10.5072/FK2TEST", "urn:node:KNB"),
+  # DOIs serialized as URLs; one is also registered in doi: form.
+  record("https://doi.org/10.5063/URL1", "urn:node:KNB"),
+  record("http://dx.doi.org/10.5063/TWOFORMS", "urn:node:KNB", dateUploaded = "2001-01-01T00:00:00Z"),
+  record("doi:10.5063/TWOFORMS", "urn:node:KNB", dateUploaded = "2005-01-01T00:00:00Z")
 )
 cn_records <- rbind(
   knb_records[c(1:4, 8), ],
@@ -103,7 +107,8 @@ test_that("a priority node's DOIs come from its own index, without replicas or t
   dois <- collect(server, c("urn:node:KNB", "urn:node:ARCTIC"))
   knb <- dois[dois$node == "urn:node:KNB", ]
   expect_setequal(knb$doi, c("10.5063/aa/v1", "10.5063/aa/v3", "10.5063/f1ser1", "10.5063/series1",
-                             "10.5063/series2", "10.6073/aa/knb-lter-x.1.1", "10.6085/aa/pisco1"))
+                             "10.5063/series2", "10.6073/aa/knb-lter-x.1.1", "10.6085/aa/pisco1",
+                             "10.5063/url1", "10.5063/twoforms"))
   expect_true(all(knb$index == "member"))
   # The replica of an ARCTIC record is counted under ARCTIC, and the record
   # transferred to CA_OPC isn't counted under KNB.
@@ -122,7 +127,7 @@ test_that("excluded prefixes are skipped for their node", {
   expect_false(any(startsWith(dois$doi, "10.6073/aa/") | startsWith(dois$doi, "10.6085/aa/")))
   sources <- attr(dois, "doi_sources")
   expect_equal(sources$excluded[sources$node == "urn:node:KNB"], 2)
-  expect_equal(sources$dois[sources$node == "urn:node:KNB"], 5)
+  expect_equal(sources$dois[sources$node == "urn:node:KNB"], 7)
 })
 
 test_that("DOIs under DataCite's test prefix are skipped unless asked for", {
@@ -134,18 +139,26 @@ test_that("DOIs under DataCite's test prefix are skipped unless asked for", {
   expect_true("10.5072/fk2test" %in% dois$doi)
 })
 
-test_that("every DOI of a dataset is grouped under it", {
+test_that("each DOI identifier is kept as its literal in DataONE, PID or SID", {
   server <- fake_solr(indexes)
   dois <- collect(server, "urn:node:KNB")
-  dataset <- function(doi) dois$dataset[dois$doi == doi]
-  # Versions linked through a version with a UUID identifier share a dataset,
-  # named by the first version.
-  expect_equal(dataset("10.5063/aa/v1"), "doi:10.5063/AA/v1")
-  expect_equal(dataset("10.5063/aa/v3"), "doi:10.5063/AA/v1")
-  # A series identifier names its dataset, and is itself one of its DOIs.
-  expect_equal(dataset("10.5063/f1ser1"), "doi:10.5063/SERIES1")
-  expect_equal(dataset("10.5063/series1"), "doi:10.5063/SERIES1")
-  expect_equal(dois$field[dois$doi == "10.5063/series2"], "seriesId")
+  identifier <- function(doi) dois$identifier[dois$doi == doi]
+  expect_equal(identifier("10.5063/aa/v1"), "doi:10.5063/AA/v1")
+  expect_equal(identifier("10.5063/series1"), "doi:10.5063/SERIES1")
+  expect_equal(dois$field[dois$doi == "10.5063/series1"], "seriesId")
+  expect_equal(dois$field[dois$doi == "10.5063/f1ser1"], "id")
+  # A repository's own serialization is kept.
+  expect_equal(identifier("10.5063/url1"), "https://doi.org/10.5063/URL1")
+  expect_false("dataset" %in% names(dois))
+})
+
+test_that("when two literals are the same DOI, the doi: one is kept and the other noted", {
+  server <- fake_solr(indexes)
+  dois <- collect(server, "urn:node:KNB")
+  row <- dois[dois$doi == "10.5063/twoforms", ]
+  expect_equal(nrow(row), 1)
+  expect_equal(row$identifier, "doi:10.5063/TWOFORMS")
+  expect_equal(row$other_identifiers, "http://dx.doi.org/10.5063/TWOFORMS")
 })
 
 test_that("a node whose index refuses queries falls back to the CN", {

@@ -5,7 +5,8 @@
 # The OpenAlex phases on their own; test-tracks.R tests the full-text tracks.
 run <- function(dir, ...) {
   scheduled_search(c("urn:node:ARCTIC", "urn:node:KNB"), dir, text_sources = character(),
-                   parallel = FALSE, ...)
+                   parallel = FALSE,
+                   metrics_check_hours = 0, ...)
 }
 
 test_that("a first run does the priority phases in order, then the other nodes", {

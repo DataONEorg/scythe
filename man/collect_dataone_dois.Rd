@@ -33,9 +33,10 @@ node to its prefixes, for example
 }
 \value{
 data.frame with one row per DOI: `doi` (normalized), `identifier`
-  (as registered in DataONE), `field` ("id" or "seriesId"), `node`,
-  `dataset`, `format_type`, `date_uploaded`, `index` ("member" or "cn")
-  and `group` ("priority" or "other"). A `doi_sources` attribute summarizes
+  (the literal in DataONE's system metadata), `field` ("id" for a PID or
+  "seriesId" for a SID), `node`, `format_type`, `date_uploaded`, `index`
+  ("member" or "cn"), `group` ("priority" or "other") and
+  `other_identifiers` (any other literals in DataONE for the same DOI). A `doi_sources` attribute summarizes
   each node: where its DOIs came from, the CN's count, and how many were
   excluded.
 }
@@ -50,10 +51,12 @@ to the CN, with a warning of class `scythe_index_fallback`. The other
 nodes' DOIs come from the CN.
 }
 \details{
-Every DOI of a dataset is collected: each version's identifier and the
-series identifier, including versions replaced by newer ones. The
-`dataset` column groups them: the series identifier if the dataset has one,
-or else the identifier of its first version.
+Every DOI identifier is collected: each version's identifier (PID) and the
+series identifier (SID), including versions replaced by newer ones. Each is
+kept as the string literal in DataONE's system metadata (`identifier`),
+however the repository serialized the DOI, so that citations can be
+recorded against the exact identifier; `doi` is the normalized DOI used to
+search.
 }
 \examples{
 \dontrun{

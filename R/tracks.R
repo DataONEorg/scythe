@@ -157,20 +157,32 @@ start_tracks <- function(sources, dir, priority_nodes, deadline, parallel = TRUE
   h
 }
 
+#' Wait for the tracks and collect their results
+#'
+#' Each track stops itself at its deadline. One still running `grace`
+#' seconds after that (hung on a connection, say) is stopped and reported as
+#' failed, so that the run always finishes.
 #' @return a list of run_track() results, named by source
 #' @noRd
-finish_tracks <- function(h) {
+finish_tracks <- function(h, grace = 600) {
   if (is.null(h$procs)) {
     return(stats::setNames(lapply(h$sources, function(s) {
       tryCatch(run_track(s, h$dir, h$priority_nodes, h$deadline),
                error = function(e) track_crashed(s, h$dir, conditionMessage(e)))
     }), h$sources))
   }
+  until <- Sys.time() + max(0, as.numeric(difftime(h$deadline, http_now(), units = "secs"))) + grace
   results <- lapply(seq_along(h$procs), function(k) {
     p <- h$procs[[k]]
-    p$wait()
-    output <- p$read_all_output_lines()
+    p$wait(timeout = max(1, as.numeric(difftime(until, Sys.time(), units = "secs"))) * 1000)
+    timed_out <- p$is_alive()
+    if (timed_out) p$kill()
+    output <- tryCatch(p$read_all_output_lines(), error = function(e) character())
     if (length(output)) message(paste0("[", h$sources[k], "] ", output, collapse = "\n"))
+    if (timed_out) {
+      return(track_crashed(h$sources[k], h$dir, paste0(
+        "it was still running ", round(grace / 60), " minutes after its time limit, so it was stopped")))
+    }
     tryCatch(p$get_result(), error = function(e) track_crashed(h$sources[k], h$dir, conditionMessage(e)))
   })
   stats::setNames(results, h$sources)

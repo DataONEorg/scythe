@@ -6,7 +6,8 @@
 nodes <- c("urn:node:ARCTIC", "urn:node:KNB")
 
 run_all <- function(dir, ...) {
-  scheduled_search(nodes, dir, other_nodes = NULL, parallel = FALSE, ...)
+  scheduled_search(nodes, dir, other_nodes = NULL, parallel = FALSE,
+                   metrics_check_hours = 0, ...)
 }
 
 track <- function(dir, source) read_state(file.path(dir, "state", "tracks", paste0(source, ".json")))

@@ -22,6 +22,8 @@ scheduled_search(
   alert_pass_cycles = 2,
   alert_paused_days = 3,
   alert_projection_days = 30,
+  metrics_check_hours = 24,
+  lock_stale_hours = 24,
   log_dir = file.path(dir, "logs"),
   cn_url = dataone_cn
 )
@@ -72,6 +74,16 @@ cycles}
 
 \item{alert_projection_days}{alert when the OpenAlex full-text search's
 first full pass is projected to take longer than this many days}
+
+\item{metrics_check_hours}{how often to compare the citations found with
+DataONE's metrics service (see [get_metrics_citations()]), marking each
+in `results/citations.csv` (`in_metrics`: "yes" if the service has the
+same citing work and target, "no" if not, or "unmapped" for a citation
+without a DataONE identifier, which is never submitted) and writing the
+ones to submit to `results/to-submit.csv`; 0 to never compare}
+
+\item{lock_stale_hours}{a run lock older than this was left by a run that
+died, and is taken over; only one run at a time works in `dir`}
 
 \item{log_dir}{directory for the OpenAlex review logs}
 

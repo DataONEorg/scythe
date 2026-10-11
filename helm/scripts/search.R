@@ -35,6 +35,10 @@ main <- function() {
                     help = "Alert when a track's pass has spanned this many cycles [default %default]"),
         make_option("--alert-paused-days", type = "double", default = 3,
                     help = "Alert when a track has been paused this many days [default %default]"),
+        make_option("--metrics-check-hours", type = "double", default = 24,
+                    help = "Hours between comparisons with DataONE's metrics service; 0 for never [default %default]"),
+        make_option("--metrics-url", type = "character", default = NULL,
+                    help = "The metrics service's address [default: the scythe.metrics_url option, or the package default]"),
         make_option("--approve", type = "character", default = Sys.getenv("SCYTHE_OPENALEX_APPROVE"),
                     help = "OpenAlex credits a run may spend, or 'unlimited'; also read from SCYTHE_OPENALEX_APPROVE [default: 500]"),
         make_option("--dir", type = "character", default = "/var/data/scythe",
@@ -44,6 +48,7 @@ main <- function() {
     )
     opts <- parse_args(OptionParser(option_list = option_list))
     if (is.null(opts$`priority-nodes`)) stop("--priority-nodes is required")
+    if (!is.null(opts$`metrics-url`)) options(scythe.metrics_url = opts$`metrics-url`)
 
     split <- function(x) {
         x <- trimws(strsplit(x %||% "", ",", fixed = TRUE)[[1]])
@@ -74,6 +79,7 @@ main <- function() {
         max_credits = max_credits,
         alert_pass_cycles = opts$`alert-pass-cycles`,
         alert_paused_days = opts$`alert-paused-days`,
+        metrics_check_hours = opts$`metrics-check-hours`,
         log_dir = opts$`log-dir` %||% file.path(opts$dir, "logs")
     )
     invisible()

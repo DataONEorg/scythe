@@ -2,14 +2,16 @@
 # of the DataONE indexes, a fake OpenAlex citation graph, and fakes for the
 # full-text sources.
 
-doi_rows <- function(dois, node, group) {
-  data.frame(doi = dois, identifier = paste0("doi:", dois), field = "id", node = node,
-             dataset = paste0("doi:", dois), format_type = "METADATA",
-             date_uploaded = "2020-01-01T00:00:00Z", index = "member", group = group,
-             stringsAsFactors = FALSE)
+# DOI list rows, with each identifier's literal as DataONE records it.
+doi_rows <- function(dois, node, group, identifiers = paste0("doi:", dois), field = "id") {
+  data.frame(doi = dois, identifier = identifiers, field = field, node = node,
+             format_type = "METADATA", date_uploaded = "2020-01-01T00:00:00Z", index = "member",
+             group = group, other_identifiers = NA_character_, stringsAsFactors = FALSE)
 }
-priority_dois <- rbind(doi_rows("10.18739/p1", "urn:node:ARCTIC", "priority"),
-                       doi_rows("10.5063/p2", "urn:node:KNB", "priority"))
+# Two repositories serializing their DOIs differently, in upper case.
+priority_dois <- rbind(doi_rows("10.18739/p1", "urn:node:ARCTIC", "priority", "doi:10.18739/P1"),
+                       doi_rows("10.5063/p2", "urn:node:KNB", "priority", "https://doi.org/10.5063/P2",
+                                field = "seriesId"))
 other_dois <- rbind(doi_rows("10.1594/pangaea.1", "urn:node:PANGAEA", "other"),
                     doi_rows("10.6085/o1", "urn:node:PISCO", "other"))
 

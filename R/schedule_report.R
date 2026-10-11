@@ -13,8 +13,9 @@
 #' @param collection problems collecting DOIs (state/collection.json)
 #' @return a named list of alert messages, named by alert id
 #' @noRd
-current_alerts <- function(cycle, tracks, text, collection, now,
-                           pass_cycles = 2, paused_days = 3, projection_days = 30) {
+current_alerts <- function(cycle, tracks, text, collection, now, metrics = NULL,
+                           pass_cycles = 2, paused_days = 3, projection_days = 30,
+                           metrics_stale_days = 3) {
   alerts <- list()
   number <- cycle$number %||% 0
   for (source in names(tracks)) {
@@ -69,6 +70,19 @@ current_alerts <- function(cycle, tracks, text, collection, now,
     alerts[["dois:others"]] <- paste0(
       "Collecting the other nodes' DOIs from the CN failed (", collection$others_error,
       "). It is retried on each run; check the DataONE CN.")
+  }
+  if (!is.null(metrics$error) && !is.null(metrics$last_attempt)) {
+    since <- metrics$checked
+    # Measured from the last success, or from the first failure if none.
+    from <- since %||% metrics$failing_since %||% metrics$last_attempt
+    stale <- difftime(now, parse_utc(from), units = "days") > metrics_stale_days
+    if (stale) {
+      alerts[["metrics:stale"]] <- paste0(
+        "The comparison with DataONE's metrics service hasn't succeeded ",
+        if (is.null(since)) "yet" else paste0("since ", since), " (last error: ", metrics$error,
+        "), so results/to-submit.csv is out of date. Check the service at ", metrics_url(),
+        " (set with the scythe.metrics_url option).")
+    }
   }
   if (!is.null(collection$drop)) {
     d <- collection$drop
@@ -153,7 +167,8 @@ openalex_line <- function(cycle, text, openalex) {
 }
 
 # Rewrite state/status.md.
-write_status_report <- function(dir, cycle, others, tracks, text, openalex, alerts, now) {
+write_status_report <- function(dir, cycle, others, tracks, text, openalex, alerts, now,
+                                metrics = NULL) {
   total <- read_citations_total(file.path(dir, "results", "citations.csv"))
   sources <- read_csv_if_exists(file.path(dir, "state", "dois", paste0(cycle$id %||% "", "-sources.csv")))
   lines <- c(
@@ -193,6 +208,20 @@ write_status_report <- function(dir, cycle, others, tracks, text, openalex, aler
       "Pass ", others$id, ": ", others$status, ", started ", others$started,
       if (!is.null(others$completed)) paste0(", completed ", others$completed), "."),
     "",
+    "## Metrics service",
+    "",
+    if (is.null(metrics$checked) && is.null(metrics$last_attempt)) {
+      "Not compared yet."
+    } else c(
+      if (!is.null(metrics$checked)) paste0(
+        "Compared ", metrics$checked, ": ", fmt_count(metrics$yes), " already recorded, ",
+        fmt_count(metrics$no), " to submit (results/to-submit.csv)",
+        if (isTRUE(metrics$unmapped > 0)) paste0(", ", fmt_count(metrics$unmapped),
+                                                " without a DataONE identifier"), "."),
+      if (!is.null(metrics$error)) paste0("The last attempt (", metrics$last_attempt, ") failed: ",
+                                          metrics$error, ".")
+    ),
+    "",
     "## Citations found",
     "",
     paste0(fmt_count(nrow(total)), " in total (results/citations.csv)",
@@ -201,7 +230,9 @@ write_status_report <- function(dir, cycle, others, tracks, text, openalex, aler
   )
   path <- file.path(dir, "state", "status.md")
   dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
-  writeLines(lines, path)
+  tmp <- paste0(path, ".tmp", Sys.getpid())
+  writeLines(lines, tmp)
+  file.rename(tmp, path)
 }
 
 read_csv_if_exists <- function(path) {
