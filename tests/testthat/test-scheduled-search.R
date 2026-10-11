@@ -194,3 +194,40 @@ test_that("cycle days are found in this month or the last", {
   expect_equal(latest_cycle_day(d("2026-03-05"), c(1, 30)), d("2026-03-01"))
   expect_equal(latest_cycle_day(d("2026-03-05"), 30), d("2026-01-30"))
 })
+
+test_that("a run's OpenAlex searches share one credit allowance", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  with_fake_openalex(server, with_fake_dataone({
+    # The graph search costs 2 credits, leaving the full-text search 19: its
+    # 10-credit screening search fits, but not the next one. (With its own
+    # 21 credits, it would spend 30 and the run 32.)
+    expect_warning(status <- run(dir, max_credits = 21), "Stopped after spending")
+    expect_equal(status$ran, c("priority_graph", "priority_text"))
+    expect_equal(status$openalex$credits_used, 12)
+    expect_equal(status$phase, "priority_text")
+    # The next run continues with a new allowance.
+    server$clock$now <- server$clock$now + 3600
+    status <- run(dir, max_credits = 100)
+    expect_equal(status$phase, "done")
+  }))
+})
+
+test_that("once a run's credits are spent, the other searches wait for the next run", {
+  dir <- withr::local_tempdir()
+  server <- fake_openalex(works)
+  with_fake_openalex(server, with_fake_dataone({
+    # Exactly enough for the priority searches (2 + 30 credits).
+    messages <- capture_messages(status <- run(dir, max_credits = 32))
+    expect_equal(status$ran, c("priority_graph", "priority_text"))
+    expect_equal(status$openalex$credits_used, 32)
+    expect_true(any(grepl("This run's OpenAlex credits \\(32\\) are spent; others_graph continues", messages)))
+    # The pass over the other nodes is started (its DOIs collected), but its
+    # search waits.
+    expect_equal(status$others_status, "running")
+    server$clock$now <- server$clock$now + 3600
+    status <- run(dir, max_credits = 32)
+    expect_equal(status$ran, "others_graph")
+    expect_equal(status$others_status, "done")
+  }))
+})

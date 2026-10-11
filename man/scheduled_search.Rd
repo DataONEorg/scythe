@@ -65,7 +65,9 @@ catch works missed by the lookback}
 
 \item{parallel}{whether the tracks run in parallel processes}
 
-\item{max_credits}{the most OpenAlex credits one call may spend}
+\item{max_credits}{the most OpenAlex credits one call may spend, across all
+of its OpenAlex searches; once they're spent, the rest wait for the next
+call}
 
 \item{alert_pass_cycles}{alert when a track's pass has spanned this many
 cycles}

@@ -73,7 +73,9 @@
 #'   "springer", "scopus" and "plos"
 #' @param track_minutes the longest each track runs per call
 #' @param parallel whether the tracks run in parallel processes
-#' @param max_credits the most OpenAlex credits one call may spend
+#' @param max_credits the most OpenAlex credits one call may spend, across all
+#'   of its OpenAlex searches; once they're spent, the rest wait for the next
+#'   call
 #' @param alert_pass_cycles alert when a track's pass has spanned this many
 #'   cycles
 #' @param alert_paused_days alert when a track has been paused this many days
@@ -122,13 +124,25 @@ scheduled_search <- function(priority_nodes, dir,
   now <- http_now()
   today <- as.Date(now, tz = "UTC")
   collection <- read_state(paths$collection) %||% list()
+  # max_credits is shared by all of this run's OpenAlex searches: each gets
+  # what the earlier ones left, and once it's spent the rest wait for the
+  # next run.
+  spent <- 0
   phase_run <- function(dois, method, since, checkpoint_dir, cycle, phase) {
+    if (max_credits - spent < 1) {
+      message("This run's OpenAlex credits (", max_credits, ") are spent; ", phase,
+              " continues on the next run.")
+      return(NULL)
+    }
     ran <<- c(ran, phase)
     found <- citation_search_openalex(dois$doi, methods = method, since = since,
                                       log_dir = log_dir, checkpoint_dir = checkpoint_dir,
                                       state_file = paths$openalex_state,
-                                      max_credits = max_credits, preflight = FALSE)
-    openalex <<- attr(found, "openalex_status")
+                                      max_credits = max_credits - spent, preflight = FALSE)
+    status <- attr(found, "openalex_status")
+    spent <<- spent + (status$credits_used %||% 0)
+    status$credits_used <- spent
+    openalex <<- status
     found <- annotate_citations(found, dois)
     add_to_total(found, paths$total, source = paste0("openalex-", method), phase = phase,
                  cycle = cycle, found_at = format_utc(now))
@@ -288,7 +302,7 @@ scheduled_search <- function(priority_nodes, dir,
 text_progress <- function(dois, checkpoint_dir, full, started, now) {
   searchable <- dois$doi[!openalex_unsearchable(dois$doi)]
   total <- length(chunk_for_search(unique(searchable), 100))
-  done <- sum(startsWith(names(read_checkpoint(checkpoint_dir)), "text "))
+  done <- sum(startsWith(names(read_checkpoint(checkpoint_dir)) %||% character(), "text "))
   elapsed <- as.numeric(difftime(now, parse_utc(started), units = "days"))
   list(full = full, total = total, done = min(done, total), started = started,
        elapsed_days = elapsed,
