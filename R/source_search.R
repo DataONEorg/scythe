@@ -90,10 +90,12 @@ write_source_checkpoint <- function(checkpoint_dir, source, identifier, citation
 #'   TRUE when it just means nothing was found (Springer answers a search
 #'   without results with a 404)
 #' @param checkpoint_dir directory recording completed identifiers, or NULL
+#' @param deadline a time (POSIXct) at which to stop searching, or NULL
 #' @return a data.frame of citations, with a `search_status` attribute
 #' @noRd
 search_by_identifier <- function(source, identifiers, request, parse, limiter,
-                                 quota = NULL, no_results = NULL, checkpoint_dir = NULL) {
+                                 quota = NULL, no_results = NULL, checkpoint_dir = NULL,
+                                 deadline = NULL) {
   on.exit(limiter_save(limiter), add = TRUE)
   label <- limiter$label
   found <- read_source_checkpoint(checkpoint_dir, source)
@@ -107,8 +109,18 @@ search_by_identifier <- function(source, identifiers, request, parse, limiter,
   errors <- character()
   i <- 1
   attempts <- 0
+  out_of_time <- FALSE
   while (i <= length(todo)) {
+    if (!is.null(deadline) && http_now() >= deadline) {
+      out_of_time <- TRUE
+      break
+    }
     if (!limiter_ready(limiter)) break
+    # Waiting for the rate limiter may have used up the time.
+    if (!is.null(deadline) && http_now() >= deadline) {
+      out_of_time <- TRUE
+      break
+    }
     id <- todo[i]
     req <- request(id)
     limiter_record_requests(limiter)
@@ -182,7 +194,7 @@ search_by_identifier <- function(source, identifiers, request, parse, limiter,
   attr(results, "search_status") <- list(
     source = source,
     complete = length(pending) == 0 && length(failed) == 0,
-    stopped = limiter$stopped,
+    stopped = limiter$stopped %||% if (out_of_time) "deadline",
     paused_until = if (!is.null(limiter$paused_until)) format_utc(limiter$paused_until),
     searched = length(todo) - length(pending) - length(failed),
     cached = cached,

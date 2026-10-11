@@ -4,7 +4,12 @@
 \alias{citation_search_plos}
 \title{Search for citations in PLOS}
 \usage{
-citation_search_plos(identifiers, checkpoint_dir = NULL, state_file = NULL)
+citation_search_plos(
+  identifiers,
+  checkpoint_dir = NULL,
+  state_file = NULL,
+  deadline = NULL
+)
 }
 \arguments{
 \item{identifiers}{a vector of identifiers to be searched for}
@@ -14,6 +19,9 @@ or NULL to disable checkpointing}
 
 \item{state_file}{file recording rate-limit pauses and recent request
 times between runs; defaults to `scopus-state.json` in `checkpoint_dir`}
+
+\item{deadline}{a time (POSIXct) at which to stop searching and return the
+results found so far, or NULL to search until done}
 }
 \value{
 data.frame of matching dataset and publication identifiers, with a

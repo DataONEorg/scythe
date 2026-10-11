@@ -24,7 +24,8 @@
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 #' result <- citation_search_plos(identifiers)
 #' }
-citation_search_plos <- function(identifiers, checkpoint_dir = NULL, state_file = NULL) {
+citation_search_plos <- function(identifiers, checkpoint_dir = NULL, state_file = NULL,
+                                 deadline = NULL) {
   identifiers <- check_identifiers(identifiers)
   limiter <- source_limiter("plos", "PLOS", state_file, checkpoint_dir, min_interval = 6,
                             windows = plos_windows)
@@ -32,6 +33,7 @@ citation_search_plos <- function(identifiers, checkpoint_dir = NULL, state_file 
 
   search_by_identifier(
     "plos", identifiers, limiter = limiter, checkpoint_dir = checkpoint_dir,
+    deadline = deadline,
     request = function(id) list(url = plos_search_url(id)),
     parse = parse_plos
   )

@@ -14,14 +14,21 @@ scheduled_search(
   last_nodes = "urn:node:PANGAEA",
   others_every_days = 30,
   lookback = 90,
+  full_text_every_cycles = 0,
+  text_sources = track_sources,
+  track_minutes = 50,
+  parallel = TRUE,
   max_credits = Inf,
+  alert_pass_cycles = 2,
+  alert_paused_days = 3,
+  alert_projection_days = 30,
   log_dir = file.path(dir, "logs"),
   cn_url = dataone_cn
 )
 }
 \arguments{
 \item{priority_nodes}{member nodes searched every cycle, from their own
-indexes}
+indexes, in priority order}
 
 \item{dir}{directory holding the search's state and results}
 
@@ -40,12 +47,31 @@ node that isn't a priority node), a vector of nodes, or NULL for none}
 \item{others_every_days}{days between passes over the other nodes}
 
 \item{lookback}{days before the start of the last cycle that completed its
-full-text search, from which a later cycle's full-text search looks for
-newly published works. A cycle with no earlier complete one searches all
-works. A longer lookback catches more works that OpenAlex indexed late,
-but costs more credits.}
+OpenAlex full-text search, from which a later cycle's full-text search
+looks for newly published works. A cycle with no earlier complete one
+searches all works. A longer lookback catches more works that OpenAlex
+indexed late, but costs more credits.}
+
+\item{full_text_every_cycles}{if more than 0, every this many cycles the
+OpenAlex full-text search searches all works, not just recent ones, to
+catch works missed by the lookback}
+
+\item{text_sources}{the sources with full-text tracks: any of "xdd",
+"springer", "scopus" and "plos"}
+
+\item{track_minutes}{the longest each track runs per call}
+
+\item{parallel}{whether the tracks run in parallel processes}
 
 \item{max_credits}{the most OpenAlex credits one call may spend}
+
+\item{alert_pass_cycles}{alert when a track's pass has spanned this many
+cycles}
+
+\item{alert_paused_days}{alert when a track has been paused this many days}
+
+\item{alert_projection_days}{alert when the OpenAlex full-text search's
+first full pass is projected to take longer than this many days}
 
 \item{log_dir}{directory for the OpenAlex review logs}
 
@@ -57,18 +83,27 @@ a list describing the state after this call, invisibly
 \description{
 Does whatever work of the scheduled search is due and possible now, then
 returns; it is meant to be run hourly (see `helm/`). Each priority cycle
-collects the priority nodes' DOIs (see [collect_dataone_dois()]), runs the
-OpenAlex citation-graph search over them, then the OpenAlex full-text
-search. Once a cycle is done, a pass of the citation-graph search over the
-other nodes runs, if one is due. A search stopped by OpenAlex's rate limit
-or budget continues on a later call from its checkpoints.
+collects the priority nodes' DOIs (see [collect_dataone_dois()]) and runs
+the OpenAlex citation-graph search over them. Then the full-text searches
+work through them in node priority order: the OpenAlex full-text search,
+and a track for each of xDD, Springer, Scopus and PLOS. The tracks run in
+parallel, each for up to `track_minutes` per call, keeping to its own rate
+limits; a track that hasn't finished when the next cycle starts finishes
+its pass first. Once a cycle's OpenAlex searches are done, a pass of the
+citation-graph search over the other nodes runs, if one is due. A search
+stopped by a rate limit continues on a later call from its checkpoints.
 }
 \details{
 Citations are added to `results/citations.csv` in `dir` as they are found,
 one row per pair of dataset DOI and citing article, recording which
-searches found it and when it was first found. When a phase completes, its
-citations are also written to `results/<cycle>/`: `priority-graph.csv`,
-`priority-text.csv`, `priority-text-new.csv` (full-text citations the
-graph search didn't find), and `others-graph.csv` for a pass over the
-other nodes.
+searches found it and when it was first found. When a search completes,
+its citations are also written to `results/<cycle>/`: `priority-graph.csv`,
+`priority-text.csv` (OpenAlex full text), `priority-<source>.csv` for each
+track, `priority-text-new.csv` (full-text citations the graph search didn't
+find), and `others-graph.csv` for a pass over the other nodes.
+
+Each call logs a summary line for the OpenAlex searches and each track.
+Problems that need an operator are logged once as `ACTION NEEDED:` lines,
+and recorded in `state/alerts.log`, and `state/status.md` summarizes the
+search's state and any open alerts.
 }

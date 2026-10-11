@@ -28,7 +28,8 @@
 #' identifiers <- c("10.18739/A22274", "10.18739/A2D08X", "10.5063/F1T151VR")
 #' result <- citation_search_springer(identifiers)
 #' }
-citation_search_springer <- function(identifiers, checkpoint_dir = NULL, state_file = NULL) {
+citation_search_springer <- function(identifiers, checkpoint_dir = NULL, state_file = NULL,
+                                     deadline = NULL) {
   identifiers <- check_identifiers(identifiers)
   key <- scythe_get_key("springer")
   if (is.na(key)) {
@@ -42,6 +43,7 @@ citation_search_springer <- function(identifiers, checkpoint_dir = NULL, state_f
 
   search_by_identifier(
     "springer", identifiers, limiter = limiter, checkpoint_dir = checkpoint_dir,
+    deadline = deadline,
     request = function(id) list(
       url = paste0("https://api.springernature.com/meta/v2/json?q=",
                    utils::URLencode(id, reserved = TRUE), "&api_key=", key)

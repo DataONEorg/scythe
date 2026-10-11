@@ -3,8 +3,6 @@
 # run does whatever work is due and possible, then exits; see
 # ?scythe::scheduled_search for the cycles, phases and files under --dir.
 #
-# The searches of xDD, Springer, Scopus and PLOS are added to the priority
-# cycles in a later step (DataONEorg/scythe#47, M4).
 suppressPackageStartupMessages(library(scythe))
 library(optparse)
 
@@ -27,6 +25,16 @@ main <- function() {
                     help = "Days between passes over the other nodes [default %default]"),
         make_option("--lookback", type = "integer", default = 90,
                     help = "Days of lookback for the full-text search in later cycles [default %default]"),
+        make_option("--full-text-every-cycles", type = "integer", default = 0,
+                    help = "Every this many cycles, the OpenAlex full-text search searches all works; 0 for never [default %default]"),
+        make_option("--text-sources", type = "character", default = "xdd,springer,scopus,plos",
+                    help = "Comma-separated sources with full-text tracks [default %default]"),
+        make_option("--track-minutes", type = "double", default = 50,
+                    help = "The longest each full-text track runs per run [default %default]"),
+        make_option("--alert-pass-cycles", type = "integer", default = 2,
+                    help = "Alert when a track's pass has spanned this many cycles [default %default]"),
+        make_option("--alert-paused-days", type = "double", default = 3,
+                    help = "Alert when a track has been paused this many days [default %default]"),
         make_option("--approve", type = "character", default = Sys.getenv("SCYTHE_OPENALEX_APPROVE"),
                     help = "OpenAlex credits a run may spend, or 'unlimited'; also read from SCYTHE_OPENALEX_APPROVE [default: 500]"),
         make_option("--dir", type = "character", default = "/var/data/scythe",
@@ -60,7 +68,12 @@ main <- function() {
         last_nodes = split(opts$`last-nodes`),
         others_every_days = opts$`others-every-days`,
         lookback = opts$lookback,
+        full_text_every_cycles = opts$`full-text-every-cycles`,
+        text_sources = split(opts$`text-sources`),
+        track_minutes = opts$`track-minutes`,
         max_credits = max_credits,
+        alert_pass_cycles = opts$`alert-pass-cycles`,
+        alert_paused_days = opts$`alert-paused-days`,
         log_dir = opts$`log-dir` %||% file.path(opts$dir, "logs")
     )
     invisible()

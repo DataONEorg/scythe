@@ -1,79 +1,11 @@
 # Tests of the scheduled search's cycles and phases, with a fake clock, a fake
-# OpenAlex, and fixed DOI lists in place of the DataONE indexes.
+# OpenAlex, and fixed DOI lists in place of the DataONE indexes (see
+# helper-schedule.R).
 
-doi_rows <- function(dois, node, group) {
-  data.frame(doi = dois, identifier = paste0("doi:", dois), field = "id", node = node,
-             dataset = paste0("doi:", dois), format_type = "METADATA",
-             date_uploaded = "2020-01-01T00:00:00Z", index = "member", group = group,
-             stringsAsFactors = FALSE)
-}
-priority_dois <- rbind(doi_rows("10.18739/p1", "urn:node:ARCTIC", "priority"),
-                       doi_rows("10.5063/p2", "urn:node:KNB", "priority"))
-other_dois <- rbind(doi_rows("10.1594/pangaea.1", "urn:node:PANGAEA", "other"),
-                    doi_rows("10.6085/o1", "urn:node:PISCO", "other"))
-
-# A1 cites p1 (graph only), A2 mentions p2 (text only), A3 cites and
-# mentions p1 (both), B1 and B2 cite the other nodes' datasets.
-works <- list(
-  fake_work("D1", "10.18739/p1", type = "dataset"),
-  fake_work("D2", "10.5063/p2", type = "dataset"),
-  fake_work("O1", "10.6085/o1", type = "dataset"),
-  fake_work("P1", "10.1594/pangaea.1", type = "dataset"),
-  fake_work("A1", "10.1/a1", cites = "D1"),
-  fake_work("A2", "10.1/a2", text = "10.5063/p2"),
-  fake_work("A3", "10.1/a3", cites = "D1", text = "10.18739/p1"),
-  fake_work("B1", "10.1/b1", cites = "O1"),
-  fake_work("B2", "10.1/b2", cites = "P1")
-)
-
-# Run `code` with collect_dataone_dois() returning the fixed DOI lists, and
-# count its calls in `collected`.
-with_fake_dataone <- function(code, env = parent.frame()) {
-  collected <- new.env()
-  collected$priority <- 0
-  collected$others <- 0
-  assign("collected", collected, envir = env)
-  testthat::local_mocked_bindings(
-    collect_dataone_dois = function(priority_nodes = character(), other_nodes = NULL,
-                                    exclude_nodes = character(), ...) {
-      if (length(priority_nodes)) {
-        collected$priority <- collected$priority + 1
-        return(priority_dois)
-      }
-      collected$others <- collected$others + 1
-      other_dois[!other_dois$node %in% exclude_nodes, , drop = FALSE]
-    },
-    .package = "scythe", .env = env
-  )
-  force(code)
-}
-
+# The OpenAlex phases on their own; test-tracks.R tests the full-text tracks.
 run <- function(dir, ...) {
-  scheduled_search(c("urn:node:ARCTIC", "urn:node:KNB"), dir, ...)
-}
-
-total <- function(dir) read.csv(file.path(dir, "results", "citations.csv"), colClasses = "character")
-
-pairs <- function(path) {
-  x <- read.csv(path, colClasses = "character")
-  sort(paste(x$article_id, x$dataset_id))
-}
-
-# Make the fake answer the first request whose URL matches `pattern` with a
-# 429 that resets after `seconds`.
-rate_limit_once <- function(server, pattern, seconds = 7200) {
-  http <- server$http
-  limited <- FALSE
-  server$http <- function(urls) {
-    lapply(urls, function(url) {
-      if (!limited && grepl(pattern, url, fixed = TRUE)) {
-        limited <<- TRUE
-        server$urls <- c(server$urls, url)
-        return(list(status = 429, headers = list(`retry-after` = as.character(seconds)), body = "{}"))
-      }
-      http(url)[[1]]
-    })
-  }
+  scheduled_search(c("urn:node:ARCTIC", "urn:node:KNB"), dir, text_sources = character(),
+                   parallel = FALSE, ...)
 }
 
 test_that("a first run does the priority phases in order, then the other nodes", {

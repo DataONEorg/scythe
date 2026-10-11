@@ -24,13 +24,15 @@
 #' result <- citation_search_xdd(identifiers)
 #' }
 #'
-citation_search_xdd <- function(identifiers, checkpoint_dir = NULL, state_file = NULL) {
+citation_search_xdd <- function(identifiers, checkpoint_dir = NULL, state_file = NULL,
+                                deadline = NULL) {
   identifiers <- check_identifiers(identifiers)
   limiter <- source_limiter("xdd", "xDD", state_file, checkpoint_dir, min_interval = 0.2)
   report_est_wait(length(identifiers), limiter$min_interval)
 
   search_by_identifier(
     "xdd", identifiers, limiter = limiter, checkpoint_dir = checkpoint_dir,
+    deadline = deadline,
     request = function(id) list(
       url = paste0("https://xdd.wisc.edu/api/snippets?term=",
                    utils::URLencode(id, reserved = TRUE), "&corpus=all")

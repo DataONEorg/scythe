@@ -22,6 +22,8 @@
 #'   or NULL to disable checkpointing
 #' @param state_file file recording rate-limit pauses and recent request
 #'   times between runs; defaults to `scopus-state.json` in `checkpoint_dir`
+#' @param deadline a time (POSIXct) at which to stop searching and return the
+#'   results found so far, or NULL to search until done
 #'
 #' @return data.frame of matching dataset and publication identifiers, with a
 #'   `search_status` attribute recording whether the search completed, why it
@@ -33,7 +35,8 @@
 #' result <- citation_search_scopus(identifiers)
 #' attr(result, "search_status")
 #' }
-citation_search_scopus <- function(identifiers, checkpoint_dir = NULL, state_file = NULL) {
+citation_search_scopus <- function(identifiers, checkpoint_dir = NULL, state_file = NULL,
+                                   deadline = NULL) {
   identifiers <- check_identifiers(identifiers)
   key <- scythe_get_key("scopus")
   if (is.na(key)) {
@@ -47,6 +50,7 @@ citation_search_scopus <- function(identifiers, checkpoint_dir = NULL, state_fil
 
   search_by_identifier(
     "scopus", identifiers, limiter = limiter, checkpoint_dir = checkpoint_dir,
+    deadline = deadline,
     # The key goes in a header, so it never appears in URLs or error messages.
     request = function(id) list(
       url = paste0("https://api.elsevier.com/content/search/scopus?query=ALL:",
