@@ -1,7 +1,7 @@
 # Tests of the full-text tracks (xDD, Springer, Scopus, PLOS) in the scheduled
 # search, run one after another in this process against fake services (see
-# helper-schedule.R). The tracks' parallel processes are exercised by the live
-# check described in tools/README.md.
+# helper-schedule.R). The tracks' parallel child processes are checked live
+# by `Rscript tools/live_check.R --tracks` (see tools/README.md).
 
 nodes <- c("urn:node:ARCTIC", "urn:node:KNB")
 

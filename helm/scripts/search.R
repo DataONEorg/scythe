@@ -35,6 +35,13 @@ main <- function() {
                     help = "Alert when a track's pass has spanned this many cycles [default %default]"),
         make_option("--alert-paused-days", type = "double", default = 3,
                     help = "Alert when a track has been paused this many days [default %default]"),
+        make_option("--alert-projection-days", type = "double", default = 30,
+                    help = "Alert when the first full OpenAlex full-text pass is projected to take longer than this many days [default %default]"),
+        make_option("--lock-stale-hours", type = "double", default = 24,
+                    help = "A run lock older than this was left by a run that died, and is taken over [default %default]"),
+        make_option("--options", type = "character", default = "",
+                    help = paste("scythe options to set, as 'name=value;name=value' without the 'scythe.' prefix,",
+                                 "for example 'plos.min_interval=6;max_wait=300'")),
         make_option("--metrics-check-hours", type = "double", default = 24,
                     help = "Hours between comparisons with DataONE's metrics service; 0 for never [default %default]"),
         make_option("--metrics-url", type = "character", default = NULL,
@@ -48,7 +55,10 @@ main <- function() {
     )
     opts <- parse_args(OptionParser(option_list = option_list))
     if (is.null(opts$`priority-nodes`)) stop("--priority-nodes is required")
-    if (!is.null(opts$`metrics-url`)) options(scythe.metrics_url = opts$`metrics-url`)
+    if (!is.null(opts$`metrics-url`) && nzchar(opts$`metrics-url`)) {
+        options(scythe.metrics_url = opts$`metrics-url`)
+    }
+    set_scythe_options(opts$options)
 
     split <- function(x) {
         x <- trimws(strsplit(x %||% "", ",", fixed = TRUE)[[1]])
@@ -79,6 +89,8 @@ main <- function() {
         max_credits = max_credits,
         alert_pass_cycles = opts$`alert-pass-cycles`,
         alert_paused_days = opts$`alert-paused-days`,
+        alert_projection_days = opts$`alert-projection-days`,
+        lock_stale_hours = opts$`lock-stale-hours`,
         metrics_check_hours = opts$`metrics-check-hours`,
         log_dir = opts$`log-dir` %||% file.path(opts$dir, "logs")
     )
@@ -95,6 +107,21 @@ parse_exclude_prefixes <- function(text) {
         p[nzchar(p)]
     })
     stats::setNames(prefixes, nodes)
+}
+
+# Set scythe options from "name=value;name=value", such as
+# "plos.min_interval=6;springer.failure_breaker=10;max_wait=300". Numbers are
+# set as numbers; anything else as text.
+set_scythe_options <- function(text) {
+    entries <- trimws(strsplit(text %||% "", ";", fixed = TRUE)[[1]])
+    entries <- entries[nzchar(entries)]
+    for (entry in entries) {
+        name <- trimws(sub("=.*$", "", entry))
+        value <- trimws(sub("^[^=]*=", "", entry))
+        number <- suppressWarnings(as.numeric(value))
+        options(stats::setNames(list(if (is.na(number)) value else number), paste0("scythe.", name)))
+        message("Option scythe.", name, " = ", value)
+    }
 }
 
 `%||%` <- function(x, y) if (is.null(x)) y else x

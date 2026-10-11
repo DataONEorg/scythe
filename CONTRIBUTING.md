@@ -100,19 +100,19 @@ code, such as a Springer request rejected for quota, or an exhausted OpenAlex
 daily budget. They are also skipped on CRAN. So **a passing CI run does not
 mean the live searches work**; run the live tests below before each release.
 
-**Live network tests**. These run against the real services. They are
-skipped on CRAN and on CI (any system that sets `CI=true`), and otherwise run
-only when their keys or switches are set:
+**What runs where**. Most tests run offline, against fake services and a fake clock. The live tests run against the real services, so they are skipped where they'd cost money or fail for reasons unrelated to the code:
 
-| Tests | Runs locally when |
-|---|---|
-| PLOS, xDD | always (they need no key; they also run on CI) |
-| Springer, Scopus | the `springer` or `scopus` key is set |
-| OpenAlex, and the searches in the OpenAlex vignette | `SCYTHE_TEST_OPENALEX=true` is set; uses up to 100 OpenAlex credits per test, plus more when building the vignette |
-| DataCite relation classification | always (a few free requests) |
+| Where | Runs | Skipped |
+|---|---|---|
+| CRAN (`R CMD check --as-cran`) | the offline tests | every live test |
+| CI (any system that sets `CI=true`, such as GitHub Actions) | the offline tests, and the PLOS and xDD live tests | Springer, Scopus, OpenAlex and DataCite live tests |
+| Locally, by default (`devtools::test()`) | the offline tests, and the PLOS, xDD and DataCite live tests | the two OpenAlex live tests (to save credits), and Springer and Scopus if their keys aren't set |
+| Locally, with API keys set | as above, plus Springer and Scopus | the two OpenAlex live tests |
+| Locally, with `SCYTHE_TEST_OPENALEX=true` | as above, plus the two OpenAlex live tests (up to 100 credits each) | nothing |
 
-To run the full live suite before a release, from a clean checkout of
-`develop`, with a good network connection and no `CI` variable set:
+`SCYTHE_TEST_OPENALEX=true` also makes building the OpenAlex vignette run its searches, which spends more credits; without it, the vignette only shows their code.
+
+**Before a release**, run every test, from a clean checkout of `develop`, with a good network connection and no `CI` variable set:
 
 1. Set the API keys. `scythe_set_key()` stores them in the `scythe` keyring;
    environment variables with the same names (`springer`, `scopus`,
@@ -137,8 +137,19 @@ To run the full live suite before a release, from a clean checkout of
    that and rerun it before releasing. (An OpenAlex test that skips because
    of a rate limit can be rerun after the time it reports.)
 
-4. Optionally, build the OpenAlex vignette with its searches, as described in
+4. Run the live checks of the scheduled search in `tools/live_check.R` (see
+   [tools/README.md](tools/README.md)). They cover what the tests can't: the
+   parallel tracks' child processes, the comparison with the real metrics
+   service, and one real scheduled run (about 12 OpenAlex credits).
+
+5. Optionally, build the OpenAlex vignette with its searches, as described in
    its "Running this vignette" section; this spends more OpenAlex credits.
+
+**Pitfalls when testing locally**:
+
+- **macOS keychain prompts:** a run that reads API keys from the keyring can stop at a macOS keychain prompt and wait indefinitely in a non-interactive session. Allow access when prompted, or set the keys as environment variables instead.
+- **Long-running R sessions:** in an R session that has been open for days, `callr` (which runs the parallel tracks) may warn that a directory "already exists", because macOS removed its temporary files. It's harmless; restart R, or set `CALLR_NO_TEMP_DLLS=true`.
+- **Child processes use the installed package:** the parallel tracks' child processes load the *installed* scythe, not `devtools::load_all()`'s. Run `devtools::install()` before the live checks.
 
 ## Code style
 

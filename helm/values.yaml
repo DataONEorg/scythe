@@ -20,8 +20,12 @@ persistence:
 cronjob:
   name: scythe
   # Hourly: each run does whatever work of the scheduled search is due and
-  # possible, then exits (see ?scythe::scheduled_search).
+  # possible, then exits (see ?scythe::scheduled_search and helm/README.md).
   schedule: "5 * * * *"
+  # The longest a run may take before Kubernetes stops it.
+  activeDeadlineHours: 23
+  # A run lock older than this was left by a run that died, and is taken over.
+  lockStaleHours: 24
   script: /apps/scythe/search.R
   priority:
     # Member nodes searched every cycle, in priority order, from their own
@@ -47,8 +51,37 @@ cronjob:
     approve: ""
     # Days of lookback for the full-text search in later cycles: each looks
     # for works published since the start of the last complete cycle, less
-    # this many days.
+    # this many days. See "Lookback" in helm/README.md.
     lookback: 90
+    # Every this many cycles, the full-text search searches all works, to
+    # catch any the lookback missed; 0 for never.
+    fullTextEveryCycles: 0
+  tracks:
+    # Sources with a full-text track, run in parallel in each cycle.
+    sources: "xdd,springer,scopus,plos"
+    # The longest each track runs per hourly run, in minutes.
+    minutes: 50
+    # Overrides of scythe's rate-limit settings, as "name=value;..." without
+    # the "scythe." prefix. The tracks adapt to each service's limits, so
+    # these are only starting points, for example
+    # "springer.min_interval=2;plos.failure_breaker=5;max_wait=300".
+    options: ""
+  metrics:
+    # Hours between comparisons with DataONE's metrics service, which mark
+    # each citation's in_metrics and write results/to-submit.csv; 0 for never.
+    checkHours: 24
+    # The service's address; empty for the package default, until
+    # metrics.dataone.org's certificate covers that name
+    # (DataONEorg/metrics-service#103).
+    url: ""
+  alerts:
+    # Alert when a track's pass has spanned this many cycles.
+    passCycles: 2
+    # Alert when a track has been paused this many days.
+    pausedDays: 3
+    # Alert when the first full OpenAlex full-text pass is projected to take
+    # longer than this many days.
+    projectionDays: 30
 
 serviceAccount:
   # Specifies whether a service account should be created

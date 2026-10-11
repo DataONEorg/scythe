@@ -12,6 +12,9 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 0
+      # Stop a run that hangs, so that later runs aren't blocked; its run lock
+      # is taken over once it is cronjob.lockStaleHours old.
+      activeDeadlineSeconds: {{ mul .Values.cronjob.activeDeadlineHours 3600 }}
       template:
         spec:
           containers:
@@ -19,16 +22,20 @@ spec:
               image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               env:
+              # Optional: without a key, that source's track waits and an alert
+              # is raised (see state/status.md).
               - name: springer
                 valueFrom:
                   secretKeyRef:
                     name: api-keys
                     key: springer
+                    optional: true
               - name: scopus
                 valueFrom:
                   secretKeyRef:
                     name: api-keys
                     key: scopus
+                    optional: true
               - name: openalex
                 valueFrom:
                   secretKeyRef:
@@ -63,6 +70,26 @@ spec:
                 - "{{ .Values.cronjob.others.everyDays }}"
                 - "--lookback"
                 - "{{ .Values.cronjob.openalex.lookback }}"
+                - "--full-text-every-cycles"
+                - "{{ .Values.cronjob.openalex.fullTextEveryCycles }}"
+                - "--text-sources"
+                - "{{ .Values.cronjob.tracks.sources }}"
+                - "--track-minutes"
+                - "{{ .Values.cronjob.tracks.minutes }}"
+                - "--options"
+                - "{{ .Values.cronjob.tracks.options }}"
+                - "--metrics-check-hours"
+                - "{{ .Values.cronjob.metrics.checkHours }}"
+                - "--metrics-url"
+                - "{{ .Values.cronjob.metrics.url }}"
+                - "--alert-pass-cycles"
+                - "{{ .Values.cronjob.alerts.passCycles }}"
+                - "--alert-paused-days"
+                - "{{ .Values.cronjob.alerts.pausedDays }}"
+                - "--alert-projection-days"
+                - "{{ .Values.cronjob.alerts.projectionDays }}"
+                - "--lock-stale-hours"
+                - "{{ .Values.cronjob.lockStaleHours }}"
                 - "--dir"
                 - "{{ .Values.persistence.mountPath }}"
                 - "--log-dir"

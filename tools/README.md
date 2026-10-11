@@ -2,6 +2,22 @@
 
 The scripts here aren't part of the package and aren't run by the tests or by CI.
 
+## Live checks of the scheduled search
+
+`live_check.R` checks the parts of the scheduled search (`scythe::scheduled_search()`) that the offline tests can't, against the real services. Install the package first (`devtools::install()`), because the parallel tracks' child processes load the installed scythe. Run it from the package's source directory:
+
+```
+Rscript tools/live_check.R --tracks             # parallel tracks; no credits
+Rscript tools/live_check.R --metrics            # the metrics comparison; no credits
+Rscript tools/live_check.R --cycle --approve    # one scheduled run; about 12 OpenAlex credits
+```
+
+Each check uses one small repository (`--node`, default `urn:node:SDR`) and a temporary directory, and prints PASS or FAIL for each step:
+
+- **`--tracks`:** starts the xDD and PLOS tracks as parallel `callr` child processes on the repository's DOIs, and checks that both finish their pass.
+- **`--metrics`:** fetches the citations the metrics service has for the repository, records each as scythe would (against the exact DataONE identifier its DOI belongs to), and checks that all of them are recognized as already recorded. A large repository is a stronger check: on 2026-10-10, all 2,143 of ARCTIC's and 1,203 of ESS-DIVE's matched.
+- **`--cycle --approve`:** runs one scheduled run of the repository (its OpenAlex searches, then the xDD and PLOS tracks on the next run), and prints the status summary.
+
 ## Benchmarking the OpenAlex adapter
 
 `benchmark_openalex.R` measures how well `citation_search_openalex()` finds a gold set of known dataset citations:
@@ -27,7 +43,7 @@ If OpenAlex rate-limits the run, or the daily budget runs out, the script stops 
 
 ### Gold set
 
-Use a CSV with `article_id` and `dataset_id` columns (DOIs, in any form), and optionally a `source` column. For example, export the confirmed citations from the DataONE metrics service with `get_metrics_citations()` in `helm/scripts/search.R`, renaming `source_id` to `article_id` and `target_id` to `dataset_id`.
+Use a CSV with `article_id` and `dataset_id` columns (DOIs, in any form), and optionally a `source` column. For example, export the confirmed citations from the DataONE metrics service with `scythe::get_metrics_citations()`, renaming `source_id` to `article_id` and `target_id` to `dataset_id`.
 
 ```
 Rscript tools/benchmark_openalex.R --gold gold.csv --out openalex-benchmark --approve 20000

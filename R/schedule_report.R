@@ -168,7 +168,7 @@ openalex_line <- function(cycle, text, openalex) {
 
 # Rewrite state/status.md.
 write_status_report <- function(dir, cycle, others, tracks, text, openalex, alerts, now,
-                                metrics = NULL) {
+                                metrics = NULL, track_names = names(tracks)) {
   total <- read_citations_total(file.path(dir, "results", "citations.csv"))
   sources <- read_csv_if_exists(file.path(dir, "state", "dois", paste0(cycle$id %||% "", "-sources.csv")))
   lines <- c(
@@ -190,7 +190,7 @@ write_status_report <- function(dir, cycle, others, tracks, text, openalex, aler
              if (!is.null(cycle$completed)) paste0(", OpenAlex phases completed ", cycle$completed), "."),
       "",
       paste0("- ", openalex_line(cycle, text, openalex)),
-      vapply(track_sources, function(s) paste0("- ", track_line(s, tracks[[s]])), "")
+      vapply(track_names, function(s) paste0("- ", track_line(s, tracks[[s]])), "")
     ),
     "",
     if (nrow(sources)) c(

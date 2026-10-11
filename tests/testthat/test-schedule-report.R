@@ -193,3 +193,15 @@ test_that("the status summary describes the cycle, tracks, nodes and citations",
     expect_match(status, "5 in total (results/citations.csv): openalex-graph 2, ", fixed = TRUE)
   }))
 })
+
+test_that("the status summary lists only the configured tracks", {
+  dir <- withr::local_tempdir()
+  with_fake_http(fake_services(works), with_fake_dataone({
+    run_all(dir, text_sources = c("xdd", "plos"))
+    status <- status_md(dir)
+    expect_match(status, "- xDD: done with cycle", fixed = TRUE)
+    expect_match(status, "- PLOS: done with cycle", fixed = TRUE)
+    expect_no_match(status, "Springer", fixed = TRUE)
+    expect_no_match(status, "Scopus", fixed = TRUE)
+  }))
+})

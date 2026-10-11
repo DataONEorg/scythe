@@ -105,18 +105,64 @@ results <- citation_search_openalex(identifiers, max_credits = Inf,
 
 If OpenAlex rate-limits a search, or the daily budget runs out, the search stops sending requests and returns what it has found so far. It records when the limit resets, so later runs that use the same `checkpoint_dir` wait until then. A rerun with the same `checkpoint_dir` skips the batches that already finished.
 
-For the scheduled helm job, approve OpenAlex spending with the `cronjob.openalex.approve` value: a number of credits, or `unlimited`. See `tools/README.md` for measuring OpenAlex's precision and recall.
+For the scheduled search, approve OpenAlex spending with the helm chart's `cronjob.openalex.approve` value: a number of credits, or `unlimited`. See `tools/README.md` for measuring OpenAlex's precision and recall.
 
-The package tests never spend OpenAlex credits by default. The live OpenAlex tests are skipped on CRAN and on CI, and run locally only when you opt in. Each one is capped at 100 credits:
+
+## How citations are identified
+
+Scythe records each citation as a pair: the citing work (usually an article's DOI) and the dataset identifier it cites. DataONE's metrics service records citations the same way, as `source_id` and `target_id`.
+
+**The cited identifier is the one the citation used, PID or SID:**
+- in DataONE, every version of a dataset has its own identifier (PID), and a series identifier (SID) always resolves to the newest version;
+- a paper that cites a SID is recorded against that SID, and one that cites a PID against that PID;
+- citations aren't moved between versions or grouped under one dataset; reporting can add up versions later.
+
+**The recorded identifier is DataONE's exact string.** Repositories write DOIs in many ways, as `doi:10.18739/A2X`, `https://doi.org/10.18739/A2X`, a bare `10.18739/A2X` and more, and DataONE keeps each exactly as submitted. Scythe searches for the DOI, but records the citation against the identifier exactly as DataONE has it (`target_id`), whatever form the citing paper used.
+
+**How the sources are searched.** Every source is searched for the bare DOI name, `10.xxxx/yyyy`. Each source matches it regardless of case, and however the citing text writes the DOI, for example as a `doi:` identifier or a `https://doi.org/` link. OpenAlex's citation-graph search works differently: it finds the dataset's own record in OpenAlex by its DOI, then follows OpenAlex's citation links to it, so it only finds datasets that OpenAlex has a record for.
+
+Scythe currently searches only for identifiers that are DOIs. Other identifier types may be added later.
+
+## Searching DataONE's repositories
+
+`collect_dataone_dois()` gathers the DOI identifiers of DataONE repositories (member nodes), ready to search:
 
 ```
-Sys.setenv(SCYTHE_TEST_OPENALEX = "true")
-devtools::test(filter = "openalex")
+dois <- collect_dataone_dois(c("urn:node:ARCTIC", "urn:node:ESS_DIVE"))
+attr(dois, "doi_sources")
 ```
 
-The same switch runs the searches in the OpenAlex vignette when it's built, which spends more credits; without it, the vignette only shows their code.
+It collects every DOI, whichever way the repository uses them: ARCTIC gives each metadata record a DOI PID, ESS-DIVE gives each dataset a DOI SID, and EDI gives each package's ORE resource map a DOI PID. Each row has the normalized `doi` used for searching and the exact `identifier` in DataONE.
 
-See the Testing section of [CONTRIBUTING.md](CONTRIBUTING.md) for running all the live tests, including Springer and Scopus, before a release.
+**Where the DOIs come from:**
+- **Up-to-date indexes:** each repository's own search index is used where possible, because the DataONE coordinating node (CN) can lag behind.
+- **Fallback:** if a repository's index refuses queries, or has fewer records than the CN, the CN is used instead.
+- **Authority:** only records the repository is authoritative for are kept, so copies of other repositories' records are left out.
+- **Skipped:** DataCite test DOIs (`10.5072/…`) are skipped, as are any prefixes given in `exclude_prefixes`.
+
+## Comparing with DataONE's metrics service
+
+`get_metrics_citations()` fetches the citations DataONE's metrics service has recorded for one or more repositories. `citations_not_in_metrics()` keeps only the found citations it doesn't have yet. It compares (citing work, cited identifier) pairs, with DOIs compared regardless of how they're written or their case:
+
+```
+recorded <- get_metrics_citations(c("urn:node:ARCTIC", "urn:node:KNB"))
+new <- citations_not_in_metrics(found, recorded)
+```
+
+The service's address is set with `options(scythe.metrics_url = ...)`.
+
+## Scheduled search
+
+`scheduled_search()` runs an ongoing search of DataONE. It's designed to be called hourly:
+- **Priority cycles:** twice a month, it searches a list of priority repositories with OpenAlex and, in parallel, xDD, Springer, Scopus and PLOS;
+- **Other repositories:** monthly, it runs OpenAlex's citation-graph search over all other DataONE repositories;
+- **Metrics:** daily, it lists the citations the metrics service doesn't have yet.
+
+It keeps to each source's rate limits, resuming where it stopped, and reports progress and problems in a status file. The helm chart in [`helm/`](helm/README.md) runs it as a Kubernetes CronJob; its README explains the cycle, the files it writes, and how to watch it.
+
+## Testing
+
+The tests never spend OpenAlex credits by default: two live OpenAlex tests are skipped unless you set `SCYTHE_TEST_OPENALEX=true`. See the Testing section of [CONTRIBUTING.md](CONTRIBUTING.md) for what runs where, and how to run all the live tests before a release.
 
 ## Acknowledgments
 Work on this package was supported by:
