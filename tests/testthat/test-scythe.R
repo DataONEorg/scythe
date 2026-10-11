@@ -29,8 +29,9 @@ test_that("scythe finds multiple dois", {
   # search for single known doi citation in specified library/source
   else{
     # Use scythe to search for each of the doi citations, and verify they are found
+    # The sources' progress messages aren't needed; warnings still show.
     results_doi <-
-      citation_search(doi$dataone_pid, sources = keyed_sources)
+      suppressMessages(citation_search(doi$dataone_pid, sources = keyed_sources))
     expect_true(all(doi$pub_id %in% results_doi$article_id))
     
   }

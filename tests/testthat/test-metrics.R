@@ -177,10 +177,10 @@ test_that("citations added after a comparison wait for the next one", {
   path <- file.path(dir, "citations.csv")
   found <- data.frame(article_id = "10.1/a", article_title = "A", dataset_id = "10.5/d",
                       target_id = "doi:10.5/D", target_type = "pid", node = "urn:node:KNB")
-  total <- add_to_total(found, path, "xdd", "priority_text", "c1", "t1")
+  total <- suppressMessages(add_to_total(found, path, "xdd", "priority_text", "c1", "t1"))
   total$in_metrics <- "yes"
   write_csv_atomic(total, path)
   found$article_id <- "10.1/b"
-  total <- add_to_total(found, path, "xdd", "priority_text", "c1", "t2")
+  total <- suppressMessages(add_to_total(found, path, "xdd", "priority_text", "c1", "t2"))
   expect_equal(total$in_metrics, c("yes", NA))
 })

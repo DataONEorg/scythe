@@ -36,7 +36,7 @@ test_that("the running total isn't rewritten when nothing is new", {
   path <- file.path(dir, "citations.csv")
   found <- data.frame(article_id = "10.1/a", article_title = "A", dataset_id = "10.5/d",
                       target_id = "doi:10.5/D", target_type = "pid", node = "urn:node:KNB")
-  add_to_total(found, path, "xdd", "priority_text", "2026-10-01", "2026-10-01T12:00:00Z")
+  suppressMessages(add_to_total(found, path, "xdd", "priority_text", "2026-10-01", "2026-10-01T12:00:00Z"))
   writes <- 0
   local_mocked_bindings(write_csv_atomic = function(df, path) writes <<- writes + 1)
   add_to_total(found, path, "xdd", "priority_text", "2026-10-01", "2026-10-01T13:00:00Z")
@@ -71,7 +71,7 @@ test_that("a track still running after its time limit is stopped and reported", 
   h <- list(sources = "xdd", dir = dir, priority_nodes = nodes, deadline = Sys.time() + 1,
             procs = list(hung))
   started <- Sys.time()
-  results <- finish_tracks(h, grace = 2)
+  results <- suppressMessages(finish_tracks(h, grace = 2))
   expect_lt(as.numeric(difftime(Sys.time(), started, units = "secs")), 30)
   expect_false(hung$is_alive())
   track <- results$xdd$track
