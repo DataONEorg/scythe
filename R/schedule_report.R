@@ -80,7 +80,7 @@ current_alerts <- function(cycle, tracks, text, collection, now, metrics = NULL,
       alerts[["metrics:stale"]] <- paste0(
         "The comparison with DataONE's metrics service hasn't succeeded ",
         if (is.null(since)) "yet" else paste0("since ", since), " (last error: ", metrics$error,
-        "), so results/to-submit.csv is out of date. Check the service at ", metrics_url(),
+        "), so results/to-submit.csv is out of date. Check the service at ", default_metrics_url(),
         " (set with the scythe.metrics_url option).")
     }
   }

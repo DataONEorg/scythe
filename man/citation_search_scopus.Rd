@@ -26,7 +26,8 @@ results found so far, or NULL to search until done}
 \value{
 data.frame of matching dataset and publication identifiers, with a
   `search_status` attribute recording whether the search completed, why it
-  stopped if not, and which identifiers failed
+  stopped if not (`"no_key"` when no API key is set), and which identifiers
+  failed
 }
 \description{
 This function searches Scopus for works that mention each identifier. It

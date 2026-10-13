@@ -205,6 +205,18 @@ search_by_identifier <- function(source, identifiers, request, parse, limiter,
   results
 }
 
+# The result of a search skipped because its API key isn't set: no
+# citations, with a search_status saying so and every identifier pending.
+no_key_result <- function(source, identifiers) {
+  results <- empty_citations()
+  attr(results, "search_status") <- list(
+    source = source, complete = FALSE, stopped = "no_key", paused_until = NULL,
+    searched = 0L, cached = 0L, failed = character(),
+    pending = length(unique(identifiers)), requests = 0
+  )
+  results
+}
+
 # A source's limiter, with its settings overridable by options named
 # scythe.<source>.<setting> (for example scythe.plos.max_wait).
 source_limiter <- function(source, label, state_file, checkpoint_dir, min_interval,

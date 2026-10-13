@@ -174,6 +174,7 @@ finish_tracks <- function(h, grace = 600) {
   until <- Sys.time() + max(0, as.numeric(difftime(h$deadline, http_now(), units = "secs"))) + grace
   results <- lapply(seq_along(h$procs), function(k) {
     p <- h$procs[[k]]
+    # processx's wait() takes its timeout in milliseconds.
     p$wait(timeout = max(1, as.numeric(difftime(until, Sys.time(), units = "secs"))) * 1000)
     timed_out <- p$is_alive()
     if (timed_out) p$kill()

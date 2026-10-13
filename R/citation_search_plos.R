@@ -45,7 +45,7 @@ plos_windows <- list(c(60, 10), c(3600, 300), c(86400, 7200))
 # Search for the identifier as a phrase, so that Solr doesn't treat the "/"
 # in a DOI as the start of a regular expression, returning only full articles.
 plos_search_url <- function(identifier) {
-  query <- list(q = paste0("\"", identifier, "\""), fl = "id,title", fq = "doc_type:full",
+  query <- list(q = paste0("\"", bare_doi(identifier), "\""), fl = "id,title", fq = "doc_type:full",
                 rows = "1000", wt = "json")
   values <- vapply(query, utils::URLencode, "", reserved = TRUE)
   paste0("https://api.plos.org/search?", paste(names(query), values, sep = "=", collapse = "&"))

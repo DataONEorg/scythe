@@ -7,7 +7,7 @@
 # to switch once it does.
 metrics_url_default <- "https://logproc-stage-ucsb-1.test.dataone.org/metrics"
 
-metrics_url <- function() getOption("scythe.metrics_url", metrics_url_default)
+default_metrics_url <- function() getOption("scythe.metrics_url", metrics_url_default)
 
 #' Get the citations recorded in DataONE's metrics service
 #'
@@ -35,7 +35,7 @@ metrics_url <- function() getOption("scythe.metrics_url", metrics_url_default)
 #' }
 get_metrics_citations <- function(nodes = "urn:node:ARCTIC", from = as.Date("2000-01-01"),
                                   to = Sys.Date(), metrics_url = NULL) {
-  metrics_url <- metrics_url %||% metrics_url()
+  metrics_url <- metrics_url %||% default_metrics_url()
   rows <- lapply(nodes, function(node) {
     query <- list(
       metricsPage = list(total = 0, start = 0, count = 0),

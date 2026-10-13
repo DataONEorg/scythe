@@ -85,6 +85,31 @@ test_that("a track paused for more than 3 days is alerted", {
   }))
 })
 
+test_that("a pause alert is resolved once the track runs normally again", {
+  dir <- withr::local_tempdir()
+  reset <- as.numeric(as.POSIXct("2026-10-05 12:00:00", tz = "UTC"))
+  server <- fake_services(works, list(scopus = function(doi, k) {
+    r <- found_by("scopus", character())
+    # The quota is used up on the first request, and fine after its reset.
+    r$headers <- list(`x-ratelimit-remaining` = if (k == 1) "0" else "100",
+                      `x-ratelimit-reset` = as.character(reset))
+    r
+  }))
+  with_fake_http(server, with_fake_dataone({
+    suppressWarnings(run_all(dir, text_sources = "scopus"))
+    server$clock$now <- as.POSIXct("2026-10-04 13:00:00", tz = "UTC")
+    # (Captured first: expect_match() evaluates its argument twice.)
+    raised <- alert_messages(capture_messages(run_all(dir, text_sources = "scopus")))
+    expect_match(raised, "^ACTION NEEDED: Scopus has been paused since")
+    server$clock$now <- as.POSIXct("2026-10-05 13:00:00", tz = "UTC")
+    resolved <- alert_messages(capture_messages(run_all(dir, text_sources = "scopus")))
+    expect_match(resolved, "^RESOLVED: Scopus has been paused since")
+    scopus <- read_state(file.path(dir, "state", "tracks", "scopus.json"))
+    expect_equal(scopus$status, "done")
+    expect_null(scopus$paused_since)
+  }))
+})
+
 test_that("a pass that spans two cycles is alerted", {
   dir <- withr::local_tempdir()
   server <- fake_services(works)

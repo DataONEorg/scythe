@@ -36,7 +36,7 @@ citation_search_springer <- function(identifiers, checkpoint_dir = NULL, state_f
     warning(
       "Skipping Springer search due to missing API key. Set an API key using scythe_set_key() to include Springer results."
     )
-    return(empty_citations())
+    return(no_key_result("springer", identifiers))
   }
   limiter <- source_limiter("springer", "Springer", state_file, checkpoint_dir, min_interval = 1)
   report_est_wait(length(identifiers), limiter$min_interval)
@@ -46,7 +46,7 @@ citation_search_springer <- function(identifiers, checkpoint_dir = NULL, state_f
     deadline = deadline,
     request = function(id) list(
       url = paste0("https://api.springernature.com/meta/v2/json?q=",
-                   utils::URLencode(id, reserved = TRUE), "&api_key=", key)
+                   utils::URLencode(bare_doi(id), reserved = TRUE), "&api_key=", key)
     ),
     parse = parse_springer,
     no_results = springer_no_results

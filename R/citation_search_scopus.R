@@ -27,7 +27,8 @@
 #'
 #' @return data.frame of matching dataset and publication identifiers, with a
 #'   `search_status` attribute recording whether the search completed, why it
-#'   stopped if not, and which identifiers failed
+#'   stopped if not (`"no_key"` when no API key is set), and which identifiers
+#'   failed
 #' @export
 #' @examples
 #' \dontrun{
@@ -43,7 +44,7 @@ citation_search_scopus <- function(identifiers, checkpoint_dir = NULL, state_fil
     warning(
       "Skipping Scopus search due to missing API key. Set an API key using scythe_set_key() to include Scopus results."
     )
-    return(empty_citations())
+    return(no_key_result("scopus", identifiers))
   }
   limiter <- source_limiter("scopus", "Scopus", state_file, checkpoint_dir, min_interval = 0.12)
   report_est_wait(length(identifiers), limiter$min_interval)
@@ -54,7 +55,7 @@ citation_search_scopus <- function(identifiers, checkpoint_dir = NULL, state_fil
     # The key goes in a header, so it never appears in URLs or error messages.
     request = function(id) list(
       url = paste0("https://api.elsevier.com/content/search/scopus?query=ALL:",
-                   utils::URLencode(id, reserved = TRUE)),
+                   utils::URLencode(bare_doi(id), reserved = TRUE)),
       headers = list(`X-ELS-APIKey` = key, Accept = "application/json")
     ),
     parse = parse_scopus,

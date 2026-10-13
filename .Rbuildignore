@@ -3,15 +3,6 @@
 ^LICENSE\.md$
 ^codecov\.yml$
 ^CONTRIBUTING\.md$
-^api-scopus-search.sh$
 ^\.github$
-^logo$
-^data$
-^results$
 ^tools$
 ^helm$
-^TODO\.md$
-^openalex-duckdb$
-^dev$
-^doc$
-^Meta$

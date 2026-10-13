@@ -35,7 +35,7 @@ citation_search_xdd <- function(identifiers, checkpoint_dir = NULL, state_file =
     deadline = deadline,
     request = function(id) list(
       url = paste0("https://xdd.wisc.edu/api/snippets?term=",
-                   utils::URLencode(id, reserved = TRUE), "&corpus=all")
+                   utils::URLencode(bare_doi(id), reserved = TRUE), "&corpus=all")
     ),
     parse = parse_xdd
   )

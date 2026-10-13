@@ -239,11 +239,31 @@ test_that("a rejected Scopus key stops the search with a scythe_auth_error", {
   })
 })
 
-test_that("without a key, Scopus and Springer are skipped with a warning", {
-  with_fake_http(fake_http(), keys = list(), {
-    expect_warning(res <- citation_search_scopus(ids), "missing API key")
-    expect_equal(nrow(res), 0)
-    expect_warning(citation_search_springer(ids), "missing API key")
+test_that("without a key, Scopus and Springer are skipped with a warning and a no_key status", {
+  server <- fake_http()
+  with_fake_http(server, keys = list(), {
+    for (search in list(citation_search_scopus, citation_search_springer)) {
+      expect_warning(res <- search(ids), "missing API key")
+      expect_equal(nrow(res), 0)
+      status <- attr(res, "search_status")
+      expect_false(status$complete)
+      expect_equal(status$stopped, "no_key")
+      expect_equal(status$pending, length(ids))
+    }
+    expect_length(server$urls(), 0)
+  })
+})
+
+test_that("DOIs given in any serialization are searched for by their bare name", {
+  expect_equal(bare_doi(c("https://doi.org/10.18739/A22274", "info:doi/10.5063/F1T151VR",
+                          "10.18739%2FA2X", "doi:10.18739/A2Y", "urn:uuid:abc")),
+               c("10.18739/A22274", "10.5063/F1T151VR", "10.18739/A2X", "10.18739/A2Y", "urn:uuid:abc"))
+  server <- fake_http(xdd_handler(list("10.18739/A0001" = "10.1/x")))
+  with_fake_http(server, {
+    res <- citation_search_xdd(c("https://doi.org/10.18739/A0001", "http://dx.doi.org/10.18739/A0002"))
+    expect_equal(requested_id(server$urls()), c("10.18739/A0001", "10.18739/A0002"))
+    # Results keep the identifier as it was given.
+    expect_equal(res$dataset_id, "https://doi.org/10.18739/A0001")
   })
 })
 

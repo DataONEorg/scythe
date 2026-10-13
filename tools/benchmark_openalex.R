@@ -96,15 +96,23 @@ lookup <- function(dois, select) {
     list(filter = paste0("doi:", paste(b, collapse = "|")), select = select, `per-page` = "200")
   }), paginate = FALSE)
   works <- unlist(run$results, recursive = FALSE)
-  stats::setNames(works, vapply(works, function(w) scythe:::openalex_doi(w$doi), ""))
+  works <- stats::setNames(works, vapply(works, function(w) scythe:::openalex_doi(w$doi), ""))
+  # The DOIs actually looked up: a batch that wasn't sent (the credits ran
+  # out) tells us nothing about whether OpenAlex has them.
+  attr(works, "checked") <- unlist(batches[run$status == "done"])
+  works
 }
 gold$found <- gold_key %in% found_key
 missed <- gold[!gold$found, ]
 articles <- lookup(missed$article_doi, "id,doi,has_fulltext,referenced_works")
 datasets <- lookup(missed$dataset_doi, "id,doi")
+checked <- c(attr(articles, "checked"), attr(datasets, "checked"))
 missed$reason <- vapply(seq_len(nrow(missed)), function(i) {
   if (is.na(missed$article_doi[i]) || is.na(missed$dataset_doi[i])) {
     return("identifier is not a DOI that scythe can normalize")
+  }
+  if (!all(c(missed$article_doi[i], missed$dataset_doi[i]) %in% checked)) {
+    return("not checked (the lookups ran out of OpenAlex credits)")
   }
   a <- articles[[missed$article_doi[i]]]
   d <- datasets[[missed$dataset_doi[i]]]
@@ -118,6 +126,11 @@ missed$reason <- vapply(seq_len(nrow(missed)), function(i) {
     "article has full text but the exact DOI search did not match it"
   }
 }, "")
+unchecked <- sum(missed$reason == "not checked (the lookups ran out of OpenAlex credits)")
+if (unchecked > 0) {
+  warning(unchecked, " missed citations weren't checked, because the search used the approved ",
+          "credits; rerun with a larger --approve to find out why they were missed.", call. = FALSE)
+}
 gold$reason <- NA_character_
 gold$reason[!gold$found] <- missed$reason
 gold$prefix <- sub("/.*$", "", gold$dataset_doi)

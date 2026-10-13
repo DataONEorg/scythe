@@ -81,6 +81,23 @@ normalize_doi <- function(x) {
   x
 }
 
+# The bare DOI name (10.xxxx/yyyy) of each identifier that is a DOI in any
+# serialization (doi:, https://doi.org/, info:doi/, URL-encoded, ...), keeping
+# its letter case, for use as a search term; other identifiers are returned
+# unchanged.
+bare_doi <- function(x) {
+  x <- as.character(x)
+  doi <- normalize_doi(x)
+  ok <- !is.na(doi)
+  decoded <- vapply(x[ok], function(s) tryCatch(utils::URLdecode(s), error = function(e) s), "",
+                    USE.NAMES = FALSE)
+  x[ok] <- mapply(function(d, s) {
+    start <- regexpr(d, tolower(s), fixed = TRUE)
+    if (start > 0) substr(s, start, start + nchar(d) - 1) else d
+  }, doi[ok], decoded, USE.NAMES = FALSE)
+  x
+}
+
 # Split a vector into consecutive chunks of at most `size` elements.
 chunk <- function(x, size) {
   if (length(x) == 0) return(list())
