@@ -160,11 +160,48 @@ The service's address is set with `options(scythe.metrics_url = ...)`.
 
 It keeps to each source's rate limits, resuming where it stopped, and reports progress and problems in a status file. The helm chart in [`helm/`](helm/README.md) runs it as a Kubernetes CronJob; its README explains the cycle, the files it writes, and how to watch it.
 
+## Submitting citations to DataONE's metrics service
+
+The DataONE metrics service records citations and provides an endpoint for submitting newly discovered citations to datasets in the network:
+
+```
+POST https://logproc-stage-ucsb-1.test.dataone.org/citations
+```
+
+The POST message format is:
+
+```json
+{
+  "request_type": "dataset",
+  "submitter": "<DataONE-Subject-Identifier>",
+  "citations": [
+    {
+      "related_identifiers": [
+        {
+          "identifier": "doi:10.5063/F1JS9NCJ",
+          "relation_type": "isCitedBy"
+        }
+      ],
+      "source_id": "10.1016/j.marenvres.2009.12.006"
+    }
+  ]
+}
+```
+The `request_type` is always `dataset`, the `submitter` is the subject identifier of the user or system submitting the request, and the `identifier` is the exact string literal identifier of the target dataset in DataONE. The `source_id` is the DOI name of the source publication.  Two relation types are supported:
+
+- `isCitedBy`: most common, used for a source work that directly cites the target dataset (usually by listing its DOI in the references list, a data availability statement, the methods, etc.)
+- `isReferencedBy`: used for a source work that uses a dataset in its corpus, but only refers to it obliquely -- usually only used when a person is asserting the relationship
+
+Authentication is handled via an `Authorization` header that provides a DataONE JWT token for the submitter.
+
+The scythe package will provide a function for uploading the citations that are found by the various search functions in the package.
+
 ## Testing
 
 The tests never spend OpenAlex credits by default: two live OpenAlex tests are skipped unless you set `SCYTHE_TEST_OPENALEX=true`. See the Testing section of [CONTRIBUTING.md](CONTRIBUTING.md) for what runs where, and how to run all the live tests before a release.
 
 ## Acknowledgments
+
 Work on this package was supported by:
 
 - NSF-PLR grant #1546024 to M. B. Jones, S. Baker-Yeboah, J. Dozier, M. Schildhauer, and A. Budden
