@@ -1,4 +1,5 @@
-# Shared HTTP client for every search source: sending requests, rate limiting,
+# Shared HTTP client for every search source, and for submitting citations to
+# the metrics service: sending requests, rate limiting,
 # and the state file that records rate-limit pauses between runs.
 #
 # Each source sends its requests through a rate limiter, an environment made
@@ -56,6 +57,28 @@ http_get <- function(urls, headers = list()) {
   }
   curl::multi_run(pool = pool)
   out
+}
+
+# Send a POST request to `url` with `body` (JSON text) and the request
+# `headers` (a named list; Content-Type defaults to application/json), and
+# return a list like each of http_get()'s: the HTTP `status` (NA on a network
+# error, with the message in `error`), the response `headers` and the `body`.
+http_post <- function(url, body, headers = list()) {
+  if (is.null(headers[["Content-Type"]])) headers[["Content-Type"]] <- "application/json"
+  handle <- curl::new_handle(
+    useragent = "scythe (https://github.com/DataONEorg/scythe)",
+    timeout = 120,
+    post = TRUE,
+    postfields = enc2utf8(as.character(body))
+  )
+  curl::handle_setheaders(handle, .list = headers)
+  tryCatch({
+    res <- curl::curl_fetch_memory(url, handle = handle)
+    list(status = res$status_code, headers = curl::parse_headers_list(res$headers),
+         body = rawToChar(res$content))
+  }, error = function(e) {
+    list(status = NA_integer_, headers = list(), body = NULL, error = conditionMessage(e))
+  })
 }
 
 format_utc <- function(time) format(time, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")

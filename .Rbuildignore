@@ -6,3 +6,4 @@
 ^\.github$
 ^tools$
 ^helm$
+^*\.code-workspace$

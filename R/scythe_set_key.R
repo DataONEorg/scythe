@@ -7,14 +7,15 @@
 #' or unlock it. See `keyring::keyring_unlock` for more details.
 #'
 #' @param source (char) Key source, one of "scopus", "springer", "openalex"
-#'   (an OpenAlex API key) or "openalex_mailto" (the email address sent to
-#'   OpenAlex with each request)
+#'   (an OpenAlex API key), "openalex_mailto" (the email address sent to
+#'   OpenAlex with each request) or "dataone_token" (a DataONE authentication
+#'   token, for [submit_citations()])
 #' @param secret (char) API key value
 #'
 #' @export
 
 scythe_set_key <- function(source, secret) {
-  sources <- c("springer", "scopus", "openalex", "openalex_mailto")
+  sources <- c("springer", "scopus", "openalex", "openalex_mailto", "dataone_token")
   if (!(source %in% sources)) {
     stop("Please set the key source to be one of ",
          paste0("'", sources, "'", collapse = ", "), ".",

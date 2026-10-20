@@ -104,13 +104,24 @@ mean the live searches work**; run the live tests below before each release.
 
 | Where | Runs | Skipped |
 |---|---|---|
-| CRAN (`R CMD check --as-cran`) | the offline tests | every live test |
-| CI (any system that sets `CI=true`, such as GitHub Actions) | the offline tests, and the PLOS and xDD live tests | Springer, Scopus, OpenAlex and DataCite live tests |
-| Locally, by default (`devtools::test()`) | the offline tests, and the PLOS, xDD and DataCite live tests | the two OpenAlex live tests (to save credits), and Springer and Scopus if their keys aren't set |
+| CRAN (`R CMD check --as-cran`) | the offline tests | every live and integration test |
+| CI (any system that sets `CI=true`, such as GitHub Actions) | the offline tests, and the PLOS and xDD live tests | Springer, Scopus, OpenAlex and DataCite live tests, and the metrics service integration tests |
+| Locally, by default (`devtools::test()`) | the offline tests, and the PLOS, xDD and DataCite live tests | the two OpenAlex live tests (to save credits), Springer and Scopus if their keys aren't set, and the metrics service integration tests |
 | Locally, with API keys set | as above, plus Springer and Scopus | the two OpenAlex live tests |
-| Locally, with `SCYTHE_TEST_OPENALEX=true` | as above, plus the two OpenAlex live tests (up to 100 credits each) | nothing |
+| Locally, with `SCYTHE_TEST_OPENALEX=true` | as above, plus the two OpenAlex live tests (up to 100 credits each) | the metrics service integration tests |
+| Locally, with `SCYTHE_TEST_CITATIONS_URL` set to a development metrics service | as above, plus the integration tests of submitting citations (see below) | nothing |
 
 `SCYTHE_TEST_OPENALEX=true` also makes building the OpenAlex vignette run its searches, which spends more credits; without it, the vignette only shows their code.
+
+**The metrics service integration tests** (`test-submit-live.R`) post citations to a metrics service, so they need a development service, and run only when `SCYTHE_TEST_CITATIONS_URL` names its `/citations` endpoint. They refuse DataONE's production service: with its address, every one of them stops with an error before sending anything. They read citations back from `SCYTHE_TEST_METRICS_URL`, which defaults to the same service's `/metrics` endpoint, and use the `dataone_token` key. `SCYTHE_TEST_THROUGHPUT_N` (default 20) sets how many citations the throughput test sends, twice: back to back, and three at a time. Several of them document the metrics service's current behaviour (see DataONEorg/scythe#49); if the service changes, update them.
+
+```r
+Sys.setenv(SCYTHE_TEST_CITATIONS_URL = "http://localhost:8080/citations")
+scythe_set_key(source = "dataone_token", secret = "...")
+devtools::test(filter = "submit-live")
+```
+
+The offline tests of submitting (`test-submit.R`) use a fake metrics service, and run everywhere.
 
 **Before a release**, run every test, from a clean checkout of `develop`, with a good network connection and no `CI` variable set:
 
@@ -142,7 +153,11 @@ mean the live searches work**; run the live tests below before each release.
    parallel tracks' child processes, the comparison with the real metrics
    service, and one real scheduled run (about 12 OpenAlex credits).
 
-5. Optionally, build the OpenAlex vignette with its searches, as described in
+5. If a development metrics service is available, run the metrics service
+   integration tests against it, as described above. Never point them at the
+   production service.
+
+6. Optionally, build the OpenAlex vignette with its searches, as described in
    its "Running this vignette" section; this spends more OpenAlex credits.
 
 **Pitfalls when testing locally**:

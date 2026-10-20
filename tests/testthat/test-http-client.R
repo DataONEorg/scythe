@@ -215,3 +215,58 @@ test_that("the wait estimate accounts for request windows", {
   expect_match(plos, "28000 searches: 3.9 day")
   expect_match(paste(capture_messages(report_est_wait(100, 1)), collapse = ""), "1.7 minute")
 })
+
+test_that("http_post() sends the body as JSON, with the given headers", {
+  url <- local_echo_server()
+  body <- jsonlite::toJSON(list(source_id = "10.1/x", note = "café"), auto_unbox = TRUE)
+  res <- http_post(paste0(url, "/citations"), body, headers = list(Authorization = "Bearer abc"))
+  expect_equal(res$status, 200)
+  echo <- jsonlite::fromJSON(res$body)
+  expect_equal(echo$method, "POST")
+  expect_equal(echo$path, "/citations")
+  expect_equal(echo$content_type, "application/json")
+  expect_equal(echo$authorization, "Bearer abc")
+  expect_match(echo$user_agent, "^scythe")
+  expect_equal(jsonlite::fromJSON(echo$body), list(source_id = "10.1/x", note = "café"))
+  expect_equal(res$headers[["content-type"]], "application/json")
+})
+
+test_that("http_post() keeps a Content-Type the caller sets", {
+  url <- local_echo_server()
+  res <- http_post(url, "x=1", headers = list("Content-Type" = "text/plain"))
+  expect_equal(jsonlite::fromJSON(res$body)$content_type, "text/plain")
+})
+
+test_that("http_post() returns error statuses with their body", {
+  url <- local_echo_server()
+  res <- http_post(paste0(url, "/status/500"), "{}")
+  expect_equal(res$status, 500)
+  expect_equal(jsonlite::fromJSON(res$body)$method, "POST")
+})
+
+test_that("http_post() reports a network error as status NA, with the message", {
+  skip_if_not_installed("httpuv")
+  res <- http_post(closed_port_url(), "{}")
+  expect_true(is.na(res$status))
+  expect_type(res$error, "character")
+  expect_null(res$body)
+})
+
+test_that("the fake records POSTs, and fails a test on requests it can't answer", {
+  server <- fake_http(post = function(url, body, headers, n) respond(202, list(message = "Registered")))
+  res <- with_fake_http(server, http_post("https://example.org/citations", "{\"a\":1}",
+                                          headers = list(Authorization = "Bearer t")))
+  expect_equal(res$status, 202)
+  posts <- server$posts()
+  expect_length(posts, 1)
+  expect_equal(posts[[1]]$body, "{\"a\":1}")
+  expect_equal(posts[[1]]$headers$Authorization, "Bearer t")
+
+  # Without a POST handler, or with a handler returning NULL, the request
+  # gets a network error and the test fails.
+  expect_failure(with_fake_http(fake_http(), http_post("https://example.org/x", "{}")),
+                 "wasn't set up to answer")
+  expect_failure(with_fake_http(fake_http(function(url, headers, n) NULL),
+                                http_get("https://example.org/y")),
+                 "wasn't set up to answer")
+})

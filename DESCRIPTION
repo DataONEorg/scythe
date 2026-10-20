@@ -23,6 +23,7 @@ Remotes: ropensci/bib2df@a8e96e13f5
 Suggests:
     bib2df,
     covr,
+    httpuv,
     knitr,
     purrr,
     rmarkdown,
