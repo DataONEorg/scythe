@@ -6,4 +6,4 @@
 ^\.github$
 ^tools$
 ^helm$
-^*\.code-workspace$
+^scythe\.code-workspace$
